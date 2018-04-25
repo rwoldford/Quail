@@ -69,6 +69,10 @@
 (format t "~%and ASDF version ~s ~%" (asdf:asdf-version))
 (format t "~%At the top of quail-make")
 
+;;; We require this package to find lambda lists etc.
+;;; Seemed to be automatically in Linux but not Mac.
+#+:sbcl (require "sb-introspect")
+
 ;;;
 ;;;  Now get the correct name for the Common Lisp's user package
 ;;;  to be used for this file
