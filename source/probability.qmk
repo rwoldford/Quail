@@ -1,0 +1,101 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;                               probability.qmk                              
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;
+;;; Copyright (c) 1993 Statistical Computing Laboratory, University of Waterloo
+;;;
+;;;
+;;;  Authors:
+;;;     R.W. Oldford 1993.
+;;;
+;;;
+;;;--------------------------------------------------------------------------------
+
+(in-package :make)
+
+(eval-when (compile load eval)
+  (load-pathnames "probability")
+  )
+        
+(defsystem probability
+   :source-pathname (identity (append-directories
+                                 (path-source)
+                                 (path-probability)))
+   :binary-pathname (identity (append-directories
+                                 (path-binary)
+                                 (bin (path-probability))))
+   :components
+   ((:module generators
+             :source-pathname (path-generators)
+             :binary-pathname (bin (path-generators))
+             :components
+             ((:file "random")
+              (:file "system")
+              (:file "congruential")
+              (:file "default")
+              ))
+    
+    (:module distributions
+             :source-pathname (path-distributions)
+             :binary-pathname (bin (path-distributions))
+             :components
+             ((:file "prob-measure")
+              (:file "findlimits")
+              (:file "discrete-dist")
+              (:file "bisection")
+              (:file "continuous-dist")
+              (:file "location-scale")
+              (:file "beta")
+              (:file "uniform")
+              (:file "prob-methods")
+              (:file "gamma")
+              (:file "exponential")
+              (:file "chi-squared")
+              (:file "student")
+              (:file "gaussian")
+              (:file "cauchy")
+              (:file "binomial")
+              (:file "bernoulli")
+              (:file "negative-binomial")
+              (:file "geometric")
+              (:file "hypergeometric") ;;; <---- fix simultaneous setting
+              (:file "discrete-uniform")
+              (:file "poisson")
+              (:file "finite-mixture")
+              (:file "data-prob")
+              (:file "pareto")
+              (:file "weibull")
+              (:file "F-dist")
+              (:file "K-dist")
+              (:file "init-dist")
+              ))
+    (:module random
+             :source-pathname (path-random)
+             :binary-pathname (bin (path-random))
+             :components
+             ((:file "permute")))
+    
+    
+    )
+    )
+
+(defun compile-probability (&rest op-on-sys-keyword-pairs
+                        &key (verbose T)
+                        &allow-other-keys)
+  "Compiles the probability system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'probability 'compile
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))
+
+(defun load-probability (&rest op-on-sys-keyword-pairs
+                           &key (verbose T)
+                           &allow-other-keys)
+  "Loads the probability system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'probability 'load
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))

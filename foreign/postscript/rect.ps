@@ -1,0 +1,33 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:    ps_canvas_draw_rectangle
+%------------------------------------------------------------------------------
+% DESCRIPTION:  This procedure draws a rectangle (or square) given the x and y
+%               coordinates of the lower left and upper right corners of the
+%               rectangle.  Optional arguments are line width and colour.
+%
+% COMMAND LINE:
+%       lwr_lft_x lwr_lft_y upr_rt_x upr_rt_y [lwidth] [r g b]
+%                       ps_canvas_draw_rectangle
+%
+%       Arguments in brackets are optional.
+%       If optional arguments are not specified, default values will be used.
+%
+% NOTE: If colour is specified, all three of red, green, and blue MUST be
+%       specified.
+%------------------------------------------------------------------------------
+/ps_canvas_draw_rectangle
+        {ps_draw_dict begin
+                /upper_right_y exch def
+                /upper_right_x exch def
+                /lower_left_y exch def
+                /lower_left_x exch def
+                newpath
+                lower_left_x lower_left_y moveto
+                upper_right_x lower_left_y lineto
+                upper_right_x upper_right_y lineto
+                lower_left_x upper_right_y lineto
+                lower_left_x lower_left_y lineto
+                stroke
+                end
+        }def
+/r {ps_canvas_draw_rectangle} bind def

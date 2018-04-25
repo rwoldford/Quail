@@ -1,0 +1,729 @@
+
+RCS file: RCS/accumulate.lisp,v
+Working file: accumulate.lisp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+Initial check in
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/adjust-array.lisp,v
+Working file: adjust-array.lisp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+Initial check in
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/array.lisp,v
+Working file: array.lisp
+head: 1.3
+branch:
+locks: strict
+	rwoldford: 1.3
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+Initial check in
+----------------------------
+revision 1.3	locked by: rwoldford;
+date: 1994/03/27 23:21:32;  author: dganglin;  state: Exp;  lines: +12 -3
+Misc fixes (during Quaff port)
+----------------------------
+revision 1.2
+date: 1994/02/15 16:42:07;  author: rwoldford;  state: Exp;  lines: +34 -0
+Added documentation to the array generic function.
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/collapse.lisp,v
+Working file: collapse.lisp
+head: 1.3
+branch:
+locks: strict
+	rwoldford: 1.3
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+Initial check in
+----------------------------
+revision 1.3	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +68 -46
+*** empty log message ***
+----------------------------
+revision 1.2
+date: 1994/03/01 15:20:07;  author: rwoldford;  state: Exp;  lines: +77 -74
+Completely rewrote collapse to take slices argument and order.
+THis brings it in line with other slice mapping functions.
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/copy-dispatch.lisp,v
+Working file: copy-dispatch.lisp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+Initial check in
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/count-slices.lisp,v
+Working file: count-slices.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Provides facility like the sequence count and count-if for ref-objects.
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +30 -8
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/24 21:10:07;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/doodles.lisp,v
+Working file: doodles.lisp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+Initial check in
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/file-matrix.lisp,v
+Working file: file-matrix.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Initial check in
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/10/27 17:42:09;  author: rwoldford;  state: Exp;  lines: +2 -1
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/find-slices.lisp,v
+Working file: find-slices.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+ Provides facility like the sequence find and find-if for ref-objects
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +36 -14
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/24 21:11:26;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/glue.lisp,v
+Working file: glue.lisp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+Initial check in
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/init-return-classes.lisp,v
+Working file: init-return-classes.lisp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+Initial check in
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/map-element.lisp,v
+Working file: map-element.lisp
+head: 1.3
+branch:
+locks: strict
+	rwoldford: 1.3
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+Initial check in
+----------------------------
+revision 1.3	locked by: rwoldford;
+date: 1994/07/21 21:09:25;  author: dganglin;  state: Exp;  lines: +16 -11
+Fixed dimensions problem when first thing is scalar or #0m(..)
+and later things all have exactly one element.  Now returns
+biggest dimensions as expected.
+----------------------------
+revision 1.2
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +24 -4
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/map-slices.lisp,v
+Working file: map-slices.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Provides map-element like facility for slices of a ref-object
+Together map-element and map-slices allow mapping over ref objects very much
+like map does for sequences.
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +15 -3
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/24 21:12:13;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/mapply.lisp,v
+Working file: mapply.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Initial check in
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +1 -1
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/matrix.lisp,v
+Working file: matrix.lisp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+Initial check in
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/mk-array.lisp,v
+Working file: mk-array.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Initial check in
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/27 23:22:43;  author: dganglin;  state: Exp;  lines: +38 -30
+deprecated make-ref-array
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/num-array.lisp,v
+Working file: num-array.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Initial check in
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/10/27 17:45:54;  author: rwoldford;  state: Exp;  lines: +2 -1
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/ones-array.lisp,v
+Working file: ones-array.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Initial check in
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +12 -1
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/order.lisp,v
+Working file: order.lisp
+head: 1.3
+branch:
+locks: strict
+	rwoldford: 1.3
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+Initial check in
+----------------------------
+revision 1.3	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +48 -21
+*** empty log message ***
+----------------------------
+revision 1.2
+date: 1994/02/17 21:25:28;  author: rwoldford;  state: Exp;  lines: +26 -11
+Updated doc string.
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/ranks.lisp,v
+Working file: ranks.lisp
+head: 1.3
+branch:
+locks: strict
+	rwoldford: 1.3
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+Initial check in
+----------------------------
+revision 1.3	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +22 -18
+*** empty log message ***
+----------------------------
+revision 1.2
+date: 1994/02/17 21:26:01;  author: rwoldford;  state: Exp;  lines: +27 -7
+Updated doc string
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/reduce-slices.lisp,v
+Working file: reduce-slices.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Reduce-slices is a lot like the CL reduce function but for
+multi-way ref-objects.
+It completely replaces the old QUail function accumulate.
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +33 -14
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/03/01 15:18:04;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/ref-array.lisp,v
+Working file: ref-array.lisp
+head: 1.2
+branch:
+locks: strict
+	dganglin: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Initial check in
+----------------------------
+revision 1.2	locked by: dganglin;
+date: 1994/03/27 23:21:32;  author: dganglin;  state: Exp;  lines: +4 -3
+Misc fixes (during Quaff port)
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/remove-slices.lisp,v
+Working file: remove-slices.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+ Provides facility like the sequence remove ande remove-if functions
+for ref-objects.
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +12 -4
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/24 21:14:20;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/replace-slices.lisp,v
+Working file: replace-slices.lisp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/slice-positions.lisp,v
+Working file: slice-positions.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Provides ref-objects with a function much like the sequence functions
+position and position-if
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +34 -12
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/24 21:15:04;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/slice.lisp,v
+Working file: slice.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Initial check in
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +121 -60
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/sort-object.lisp,v
+Working file: sort-object.lisp
+head: 1.5
+branch:
+locks: strict
+	rwoldford: 1.5
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 5;	selected revisions: 5
+description:
+Initial check in
+----------------------------
+revision 1.5	locked by: rwoldford;
+date: 1994/06/16 17:51:43;  author: rwoldford;  state: Exp;  lines: +1 -0
+Balanced parens in the sort-object docs.
+----------------------------
+revision 1.4
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +21 -9
+*** empty log message ***
+----------------------------
+revision 1.3
+date: 1994/02/24 21:19:01;  author: rwoldford;  state: Exp;  lines: +1 -1
+Fixed miscellaneous bugs.
+----------------------------
+revision 1.2
+date: 1994/02/17 21:26:55;  author: rwoldford;  state: Exp;  lines: +61 -25
+Cleaned up considerably. Making :exterior the default
+And rationalized :interior sorts.
+Now :interior and :exterior with null slices no longer do the same thing.
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/sort-position.lisp,v
+Working file: sort-position.lisp
+head: 1.3
+branch:
+locks: strict
+	rwoldford: 1.3
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+Initial check in
+----------------------------
+revision 1.3	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +22 -20
+*** empty log message ***
+----------------------------
+revision 1.2
+date: 1994/02/17 21:31:58;  author: rwoldford;  state: Exp;  lines: +29 -8
+:exterior is now default type
+Documentation string expanded.
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/sort.lisp,v
+Working file: sort.lisp
+head: 1.3
+branch:
+locks: strict
+	rwoldford: 1.3
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+Initial check in
+----------------------------
+revision 1.3	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +21 -21
+*** empty log message ***
+----------------------------
+revision 1.2
+date: 1994/02/17 21:26:28;  author: rwoldford;  state: Exp;  lines: +48 -25
+updated doc string.
+----------------------------
+revision 1.1
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================
+
+RCS file: RCS/substitute-slices.lisp,v
+Working file: substitute-slices.lisp
+head: 1.2
+branch:
+locks: strict
+	rwoldford: 1.2
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Provide ref-objects with facility for substituting arbitrary slices
+much like the sequence functions substitute and substitute-if
+----------------------------
+revision 1.2	locked by: rwoldford;
+date: 1994/03/08 18:04:44;  author: rwoldford;  state: Exp;  lines: +31 -9
+*** empty log message ***
+----------------------------
+revision 1.1
+date: 1994/02/24 21:16:27;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/tp.lisp,v
+Working file: tp.lisp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+comment leader: ";;; "
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+Initial check in
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/02/03 19:16:56;  author: dganglin;  state: Exp;
+Initial check in
+=============================================================================

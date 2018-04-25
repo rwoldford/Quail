@@ -1,0 +1,3 @@
+foreach i (`cat dir-names`)
+  mv $i.lisp $i.lsp
+  end

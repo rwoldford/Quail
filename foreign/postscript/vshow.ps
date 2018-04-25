@@ -1,0 +1,28 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:	vshow
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure replaces the normal 'show' procedure to print
+%		the given string vertically downwards from the current point.
+%
+% COMMAND LINE:	
+%	lineskip string vshow
+%------------------------------------------------------------------------------
+/vshow{
+	ps_draw_dict begin
+	/thestring exch def
+	/lineskip exch def
+        /count 0 def
+	thestring{
+		/charcode exch def
+		/thechar ( ) dup 0 charcode put def
+                count 1 ge{
+		        0 lineskip neg rmoveto
+                }if
+                /count 1 def
+		gsave
+			thechar stringwidth pop 2 div neg 0 rmoveto
+			thechar show
+		grestore
+	}forall
+	end
+}def

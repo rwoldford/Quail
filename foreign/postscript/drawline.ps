@@ -1,0 +1,28 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:	ps_canvas_draw_line
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure draws a line between given coordinates (x1,y1)
+%		and (x2,y2).  Optional arguments are colour and line width.
+%
+% COMMAND LINE:	
+%	x1 y1 x2 y2 [lwidth] [r g b] ps_canvas_draw_line
+%
+%	Arguments in brackets are optional.
+%	Optional commands which are not specified will be replaced by default
+%	values.
+%
+% NOTE:	When specifying colours explicitly, all three of red, green, and blue
+%	MUST be specified.
+%------------------------------------------------------------------------------
+/ps_canvas_draw_line
+	{ps_draw_dict begin
+		/y_dest exch def
+		/x_dest exch def
+		/y_init exch def
+		/x_init exch def
+		x_init y_init moveto
+		x_dest y_dest lineto
+		stroke
+		end
+	}def
+/l {ps_canvas_draw_line} bind def

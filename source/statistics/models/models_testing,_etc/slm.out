@@ -1,0 +1,1298 @@
+Working data will be in /usr/people/dganglin/.Data
+> add1.lm           
+function(object, scope = . ~ ., scale, keep, x = NULL)
+{
+	add.all <- function(qr, effect, x, assgn, tol = .Machine$double.eps^
+		0.5)
+	{
+		dx <- dim(x)
+		n <- as.integer(dx[1])
+		p <- as.integer(dx[2])
+		pold <- as.integer(length(qr$pivot))
+		number <- as.integer(length(assgn))
+		lngth <- as.integer(sapply(assgn, length))
+		start <- as.integer(sapply(assgn, "[[", 1))
+		.Fortran("addall",
+			x = x,
+			n,
+			p,
+			start,
+			lngth,
+			number,
+			effect,
+			effects = matrix(0, n, number),
+			pivot = integer(p),
+			rank = integer(number),
+			chisq = double(number),
+			pold,
+			qr$qr,
+			qr$qraux,
+			qr$pivot,
+			qr$rank,
+			double(3 * p + n),
+			tol)[c("x", "effects", "chisq", "pivot", "rank")]
+	}
+	p <- length(object$coef)
+	if(!is.character(scope))
+		scope <- add.scope(object, update.formula(object, scope, 
+			evaluate = F))
+	if(!length(scope))
+		stop("no terms in scope for adding to object")
+	if(is.null(x)) {
+# when called iteratively x can be known
+
+	# need to do the following since the scope might be a character vector of term labels
+	
+		add.rhs <- paste(scope, collapse = "+")
+		add.rhs <- eval(parse(text = paste("~ . +", add.rhs)))
+		new.form <- update.formula(object, add.rhs, evaluate = F)
+		fc <- object$call
+		Terms <- terms(new.form)
+		fc$formula <- Terms
+		fob <- list(call = fc)
+		class(fob) <- class(object)
+		m <- model.frame(fob)
+		x <- model.matrix(Terms, m)
+	}
+	cnames <- dimnames(x)[[2]]
+	iswt <- !is.null(wt <- object$weights)
+	if(iswt)
+		x <- x * sqrt(wt)
+	n <- dim(x)[[1]]
+	asgn <- attr(x, "assign")
+	tl <- names(asgn)
+	if(!all(match(scope, tl, F)))
+		stop("scope is not a subset of term labels of the supplied x")
+	xasgn <- unlist(asgn[names(object$assign)])
+	asgn <- asgn[scope]
+	k <- length(scope)
+	rdf <- object$df.resid
+	chisq <- deviance.lm(object)
+	if(missing(scale))
+		scale <- sqrt(chisq/rdf)
+	if(!missing(keep)) {
+		max.keep <- c("coefficients", "fitted", "residuals", 
+			"x.residuals", "effects", "R")
+		if(is.logical(keep) && keep)
+			keep <- max.keep
+		else {
+			if(!all(match(keep, max.keep, F)))
+				stop(paste("Can only keep one or more of: \"",
+					paste(max.keep, collapse = "\", \""),
+					"\"", sep = ""))
+		}
+		fv <- predict(object)
+		y <- object$residuals + fv
+		if(iswt) {
+			if(any(wt == 0))
+				stop(
+					"\"keep\" not allowed when some of the weights are zero"
+					)
+			wt <- sqrt(wt)
+		}
+	}
+	else keep <- character(0)
+	xr <- match("x.residuals", keep, F)
+	value <- array(vector("list", 6 * k), c(k, 6), list(scope, c(
+		"coefficients", "fitted", "residuals", "x.residuals", "effects",
+		"R")))
+	if(length(ef <- object$effects) < n)
+		stop(
+			"function only currently defined for methods that compute effects"
+			)
+	dfs <- double(k)
+	chis <- double(k)
+	R <- object$R
+	if(length(xasgn))
+		oldx <- x[, xasgn, drop = F]
+	else stop("need a term or an intercept in initial model")
+	qR <- object$qr
+	if(is.null(qR)) {
+		qR <- qr(oldx)
+	}
+	if(xr) {
+		xresid <- qr.resid(qR, x[, unlist(asgn)])
+		if(iswt)
+			xresid <- xresid/wt
+	}
+	newx <- x[, unlist(asgn), drop = F]
+	newnames <- cnames[unlist(asgn)]
+	TT <- rep(T, (p + length(newnames)))
+	TT[xasgn] <- F
+	asgn <- assign.sub(asgn, TT)
+	addall <- add.all(qR, ef, newx, asgn)
+	chis <- addall$chis
+	dfs <- addall$rank
+	if(length(keep)) {
+		pivot <- addall$pivot
+		newqr <- addall$x
+		effects <- addall$effects
+		Rnames <- dimnames(R)[[1]]
+		oldrank <- object$rank
+		oldns <- !is.na(object$coef)
+		oldns <- seq(oldns)[oldns]
+		for(i in 1:k) {
+			asgni <- asgn[[i]]
+			ranki <- dfs[i]
+			pivoti <- pivot[asgni]
+			pi <- length(asgni)
+			if(xr) {
+				value[[i, 4]] <- xresid[, asgni]
+			}
+			newrank <- oldrank + ranki
+			goodcols <- seq(newrank)
+			nR <- newqr[oldrank + seq(pi), asgni, drop = F]
+			nR[lower.tri(nR)] <- 0
+			nR <- rbind(newqr[seq(oldrank), pivoti, drop = F],
+				nR)
+			rnames <- c(Rnames, newnames[pivoti])
+			r <- array(0, c(p + pi, p + pi), list(rnames, rnames))
+			r[seq(p), seq(p)] <- R
+			r[seq(oldrank + pi), seq(pi) + p] <- nR	
+	#reshuffle R if it was rank defficient
+			if(Tr <- p - oldrank)
+				r <- r[, c(seq(oldrank), seq(pi) + p, seq(
+					Tr) + oldrank)]
+			efi <- effects[, i]
+			names(efi) <- c(dimnames(r)[[2]][goodcols], rep("",
+				n - newrank))
+			attr(r, "rank") <- newrank
+			class(r) <- "upper"
+			bi <- backsolve(r[goodcols, goodcols], efi[goodcols])	
+	#now slot in the NAs
+			if(Tr | (pi - ranki)) {
+				Bi <- rep(NA, p + pi)
+				names(Bi) <- c(cnames[xasgn], newnames[asgni])
+				if(ranki) {
+					TT <- (pivoti - asgni[1] + 1)[seq(
+						ranki)]
+					Bi[c(oldns, p + TT)] <- bi
+					fvi <- cbind(oldx[, oldns, drop = F],
+						newx[, asgni[TT]]) %*% bi
+				}
+				else {
+					Bi[seq(p)] <- object$coef
+					fvi <- object$fitted
+				}
+				bi <- Bi
+			}
+			else fvi <- cbind(oldx, newx[, asgni]) %*% bi
+			if(iswt)
+				fvi <- fvi/wt
+			value[i, -4] <- list(bi, fvi, y - fvi, efi, r)
+		}
+	}
+	scope <- c("<none>", scope)
+	dfs <- c(0, dfs)
+	chis <- c(chisq, chis)
+	aics <- chis + 2 * (n - rdf + dfs) * scale^2
+	dfs[1] <- NA
+	aod <- data.frame(Df = dfs, "Sum of Sq" = c(NA, chis[1] - chis[-1]),
+		RSS = chis, Cp = aics, row.names = scope, check.names = F)
+	head <- c("Single term additions", "\nModel:", deparse(as.vector(
+		formula(object))))
+	if(!missing(scale))
+		head <- c(head, paste("\nscale: ", format(scale), "\n"))
+	class(aod) <- c("anova", "data.frame")
+	attr(aod, "heading") <- head
+	if(length(keep))
+		list(anova = aod, keep = structure(value[, keep, drop = F],
+			class = "matrix"))
+	else aod
+}
+> alias.lm          
+function(object, complete = T, partial = T, pattern.arg = T, ...)
+{
+	value <- list(Model = attr(object$terms, "formula"))
+	what <- object$qr
+	if(is.null(what))
+		qr <- object$R
+	else qr <- what$qr
+	d <- dim(qr)
+	rank <- object$rank
+	p <- d[2]
+	if(complete) {
+		if(is.null(p) || rank == p) beta12 <- NULL else {
+			p1 <- 1:rank
+			dn <- dimnames(qr)[[2]]
+			beta12 <- backsolve(qr[p1, p1], qr[p1,  - p1, drop = F]
+				)
+			dimnames(beta12) <- list(dn[p1], dn[ - p1])
+			beta12 <- t(beta12)
+			if(pattern.arg)
+				beta12 <- pattern(beta12, abb = F)
+		}
+# full rank, no aliasing
+		value$Complete <- beta12
+	}
+	if(partial) {
+		beta11 <- summary.lm(object)$correl
+		if(pattern.arg)
+			beta11 <- zapsmall(beta11)
+		beta11[row(beta11) >= col(beta11)] <- 0
+		if(all(beta11 == 0))
+			beta11 <- NULL
+		else if(pattern.arg) {
+			mx <- max(abs(beta11))
+			beta11 <- pattern(beta11)
+			attr(beta11, "Notes") <- list("Max. Abs. Corr." = round(
+				mx, 3))
+		}
+		value$Partial <- beta11
+	}
+	class(value) <- "listof"
+	value
+}
+> alias.mlm        
+function(object, ...)
+{
+# aliases are unrelated to response, so this method arranges
+# to call alias.lm with a suitable object
+	object[c("coefficients", "residuals", "effects", "fitted.values")] <-
+		list(object$coef[, 1], object$resid[, 1], object$effects[,
+		1], object$fitted[, 1])
+	class(object) <- "lm"
+	alias.lm(object, ...)
+}
+> all.equal.lm      
+function(target, current, ...)
+{
+	rt <- target$R
+	rc <- current$R
+	if(length(rt) && length(rc) && length(dim(rt)) == 2 && length(dim(
+		rc)) == 2) {
+		s <- sign(diag(rt)) * sign(diag(rc))
+		if(any(s < 0)) {
+			p1 <- 1:length(s)
+			current$effects <- c(s * current$effects[p1], sum(
+				current$effects[ - p1]^2)^0.5)
+			target$effects <- c(target$effects[p1], sum(target$
+				effects[ - p1]^2)^0.5)
+			rc[] <- rc[] * s
+			current$R <- rc
+		}
+	}
+	NextMethod("all.equal")
+}
+> anova.lm          
+function(object, ..., test = c("F", "none", "Chisq", "Cp"))
+{
+	test <- match.arg(test)
+	margs <- function(...)
+	nargs()
+	if(margs(...))
+		anova.lmlist(list(object, ...), test = test)
+	else {
+		aod <- summary.aov(object)
+		heading <- c("Analysis of Variance Table\n", paste("Response: ",
+			as.character(formula(object))[2], "\n", sep = ""),
+			"Terms added sequentially (first to last)")
+		attr(aod, "heading") <- heading
+		if(test == "F")
+			aod
+		else {
+			aod$"F Value" <- NULL
+			aod$"Pr(F)" <- NULL
+			last <- unlist(aod[dim(aod)[1], c(1, 2), drop = T])
+			scale <- last[2]/last[1]
+			n <- length(object$residuals)
+			stat.anova(aod, test, last[2]/last[1], last[1], n)
+		}
+	}
+}
+> anova.lmlist      
+function(object, ..., test = c("none", "Chisq", "F", "Cp"))
+{
+	diff.term <- function(term.labels, i)
+	{
+		t1 <- term.labels[[1]]
+		t2 <- term.labels[[2]]
+		m1 <- match(t1, t2, F)
+		m2 <- match(t2, t1, F)
+		if(all(m1)) {
+			if(all(m2))
+				return("=")
+			else return(paste(c("", t2[ - m1]), collapse = "+"))
+		}
+		else {
+			if(all(m2))
+				return(paste(c("", t1[ - m2]), collapse = "-"))
+				
+			else return(paste(i - 1, i, sep = " vs. "))
+		}
+	}
+	test <- match.arg(test)
+	rt <- length(object)
+	if(rt == 1) {
+		object <- object[[1]]
+		UseMethod("anova")
+	}
+	forms <- sapply(object, function(x)
+	as.character(formula(x)))
+	subs <- as.logical(match(forms[2,  ], forms[2, 1], F))
+	if(!all(subs))
+		warning(
+			"Some fit objects deleted because response differs from the first model"
+			)
+	if(sum(subs) == 1)
+		stop("The first model has a different response from the rest")
+	forms <- forms[, subs]
+	object <- object[subs]
+	dfres <- sapply(object, "[[", "df.resid")
+	dev <- sapply(object, deviance.lm)
+	tl <- lapply(object, labels)
+	rt <- length(dev)
+	effects <- character(rt)
+	for(i in 2:rt)
+		effects[i] <- diff.term(tl[c(i - 1, i)], i)
+	ddev <-  - diff(dev)
+	ddf <-  - diff(dfres)
+	heading <- c("Analysis of Variance Table", paste("\nResponse: ", forms[
+		2, 1], "\n", sep = ""))
+	aod <- data.frame(Terms = forms[3,  ], "Resid. Df" = dfres, RSS = dev,
+		Test = effects, Df = c(NA, ddf), "Sum of Sq" = c(NA, ddev),
+		check.names = F)
+	aod <- as.anova(aod, heading)
+	if(test != "none") {
+		n <- length(object[[1]]$residuals)
+		o <- order(dfres)
+		stat.anova(aod, test, dev[o[1]]/dfres[o[1]], dfres[o[1]], n)
+	}
+	else aod
+}
+> coef.lm          
+function(object)
+{
+	cf <- object$coefficients
+	r <- object$rank
+	asgn <- object$assign
+	if(!length(r)) {
+	}
+	else if(r == 0) {
+		nsing <- length(coef)
+		asgn <- list()
+		cf <- numeric()
+	}
+	else if(nsing <- length(cf) - r) {
+		cf <- cf[unlist(asgn)]
+		ii <- 1:r
+		for(i in names(asgn)) {
+			ai <- asgn[[i]]
+			if(ni <- length(ai)) {
+				asgn[[i]] <- ii[ni <- 1:ni]
+				ii <- ii[ - ni]
+			}
+		}
+	}
+	structure(cf, assign = asgn, singular = nsing, class = "coef")
+}
+> deviance.lm       
+function(object, ...)
+if(is.null(w <- object$weights)) sum(object$residuals^2) else sum(w * object$
+		residuals^2)
+> drop1.lm          
+function(object, scope, scale, keep)
+{
+	b <- coef(object)
+	cnames <- labels(b)
+	singular <- attr(b, "singular")
+	p <- length(b)
+	x <- object$x
+	if(is.null(x))
+		x <- model.matrix(object$terms, model.frame(object))
+	iswt <- !is.null(wt <- object$weights)
+	if(iswt)
+		x <- x * sqrt(wt)
+	n <- dim(x)[[1]]
+	asgn <- attr(x, "assign")
+	tl <- attr(object$terms, "term.labels")
+	if(missing(scope))
+		scope <- drop.scope(object)
+	else {
+		if(!is.character(scope))
+			scope <- attr(terms(update.formula(object, scope)),
+				"term.labels")
+		if(!all(match(scope, tl, F)))
+			stop("scope is not a subset of term labels")
+	}
+	asgn <- asgn[scope]
+	k <- length(scope)
+	rdf <- object$df.resid
+	chisq <- deviance.lm(object)
+	if(missing(scale))
+		scale <- sqrt(chisq/rdf)
+	if(!missing(keep)) {
+		max.keep <- c("coefficients", "fitted", "residuals", 
+			"x.residuals", "effects", "R")
+		if(is.logical(keep) && keep)
+			keep <- max.keep
+		else {
+			if(!all(match(keep, max.keep, F)))
+				stop(paste("Can only keep one or more of: \"",
+					paste(max.keep, collapse = "\", \""),
+					"\"", sep = ""))
+		}
+		fv <- predict(object)
+		y <- object$residuals + fv
+		if(iswt) {
+			if(any(wt == 0))
+				stop(
+					"\"keep\" not allowed when some of the weights are zero"
+					)
+			wt <- sqrt(wt)
+		}
+	}
+	else keep <- character(0)
+	xr <- match("x.residuals", keep, F)
+	value <- array(vector("list", 6 * k), c(k, 6), list(scope, c(
+		"coefficients", "fitted", "residuals", "x.residuals", "effects",
+		"R")))
+	if(length(ef <- object$effects) < n)
+		stop(
+			"function only currently defined for methods that compute effects"
+			)
+	dfs <- double(k)
+	chis <- double(k)
+	if(singular) {
+		if(iswt) {
+			if(!length(keep))
+				wt <- sqrt(wt)
+			y <- (object$residuals + predict(object)) * wt
+		}
+		rank <- object$rank
+		for(i in 1:k) {
+			ii <- asgn[[i]]	#brute force method
+			z <- lm.fit.qr(x[,  - ii, drop = F], y, singular = T,
+				qr = xr)
+			efi <- z$effects
+			dfs[i] <- rank - (ranki <- z$rank)
+			chis[i] <- sum(efi[ - seq(ranki)]^2)
+			if(length(keep)) {
+				fvi <- z$fitted
+				res <- z$residuals
+				if(iswt) {
+					fvi <- fvi/wt
+					res <- res/wt
+				}
+				value[i, -4] <- list(z$coef, fvi, res, efi,
+					z$R)
+				if(xr) {
+					xres <- qr.resid(z$qr, x[, ii, drop = F
+						])
+					if(iswt)
+						xres <- xres/wt
+					value[[i, 4]] <- xres
+				}
+			}
+		}
+	}
+	else {
+		R <- object$R
+		R <- array(R, dim(R), dimnames(R))
+		if(xr) {
+			xk <- array(0, dim(x), dimnames(x))
+			xk[1:p,  ] <- R
+		}
+		else xk <- array(ef, c(n, 1), list(dimnames(x)[[1]], NULL))
+		for(i in 1:k) {
+			ii <- asgn[[i]]
+			pii <- length(ii)
+			dfs[i] <- pii
+			if(xr) {
+				xi <- xk[, c(1, ii)]
+				xi[, 1] <- ef
+			}
+			else xi <- xk
+			r <- R
+			pi <- 1:(p - pii)
+			pp <-  - p
+			for(j in rev(ii)) {
+				z <- delcol(r, xi, j)
+				r <- z[[1]][pp,  ]
+				xi <- z[[2]]
+				pp <- pp + 1
+			}
+			efi <- xi[, 1]
+			chis[i] <- sum(efi[ - pi]^2)
+			if(length(keep)) {
+# compute it all, even though all may not be reqd
+				bi <- as.matrix(backsolve(r, xi[pi,  ]))
+				dimnames(bi)[[1]] <- cnames[ - ii]
+				fvi <- x[,  - ii, drop = F] %*% bi
+				if(iswt)
+					fvi <- fvi/wt
+				names(efi)[] <- ""
+				names(efi)[pi] <- cnames[ - ii]
+				value[i, -4] <- list(bi[, 1], fvi[, 1], y -
+					fvi[, 1], efi, r)
+				if(xr) {
+					xres <- x[, ii] - fvi[, -1]
+					if(iswt)
+						xres <- xres/wt
+					value[[i, 4]] <- xres
+				}
+			}
+		}
+	}
+	scope <- c("<none>", scope)
+	dfs <- c(0, dfs)
+	chis <- c(chisq, chis)
+	aics <- chis + 2 * (n - rdf - dfs) * scale^2
+	dfs[1] <- NA
+	aod <- data.frame(Df = dfs, "Sum of Sq" = c(NA, chis[-1] - chis[1]),
+		RSS = chis, Cp = aics, row.names = scope, check.names = F)
+	head <- c("Single term deletions", "\nModel:", deparse(as.vector(
+		formula(object))))
+	if(!missing(scale))
+		head <- c(head, paste("\nscale: ", format(scale), "\n"))
+	class(aod) <- c("anova", "data.frame")
+	attr(aod, "heading") <- head
+	if(length(keep))
+		list(anova = aod, keep = structure(value[, keep, drop = F],
+			class = "matrix"))
+	else aod
+}
+> effects.lm       
+function(object)
+structure(object$effects, assign = object$assign, class = "coef")
+> family.lm         
+function(object)
+gaussian()
+> formula.lm      
+function(object)
+attr(object$terms, "formula")
+> kappa.lm          
+function(z)
+{
+# this should check for the method used; e.g., svd
+	z <- z$R
+	NextMethod("kappa")
+}
+> labels.lm         
+function(object, ...)
+{
+	TL <- object$terms
+	if(!is.null(TL)) {
+		TL <- attr(TL, "term.labels")
+		TA <- object$assign
+		if(!is.null(TA)) {
+			TA <- names(TA)
+			TL <- TL[match(TA, TL, 0)]
+		}
+	}
+	TL
+}
+> lm               
+function(formula, data, weights, subset, na.action, method = "qr", model = F,
+	x = F, y = F, ...)
+{
+	call <- match.call()
+	m <- match.call(expand = F)
+	m$method <- m$model <- m$x <- m$y <- m$... <- NULL
+	m[[1]] <- as.name("model.frame")
+	m <- eval(m, sys.parent())
+	if(method == "model.frame")
+		return(m)
+	Terms <- attr(m, "terms")
+	weights <- model.extract(m, weights)
+	Y <- model.extract(m, response)
+	X <- model.matrix(Terms, m)
+	fit <- if(length(weights)) lm.wfit(X, Y, weights, method, ...) else 
+			lm.fit(X, Y, method, ...)
+	fit$terms <- Terms
+	fit$call <- call
+	if(model)
+		fit$model <- m
+	if(x)
+		fit$x <- X
+	if(y)
+		fit$y <- Y
+	fit
+}
+> lm.fit            
+function(x, y, method = "qr", ...)
+{
+	if(!is.numeric(x))
+		stop("model matrix must be numeric")
+	if(!is.numeric(y))
+		stop("response must be numeric")
+	if(!length(x))
+		method <- "null"
+	switch(method,
+		qr = lm.fit.qr(x, y, ...),
+		chol = lm.fit.chol(x, y, ...),
+		svd = lm.fit.svd(x, y, ...),
+		{
+			what <- paste("lm.fit.", method, sep = "")
+			if(exists(what, mode = "function"))
+				(get(what, mode = "function"))(x, y, ...)
+			else stop(paste("unimplemented method:", method))
+		}
+		)
+}
+> lm.fit.chol       
+function(x, y, singular.ok = F, qr = F)
+{
+	storage.mode(x) <- "double"
+	ny <- length(y)
+	storage.mode(y) <- "double"
+	dx <- dim(x)
+	n <- dx[1]
+	dn <- dimnames(x)
+	xn <- dn[[2]]
+	if(n != ny)
+		stop("Number of observations in x and y not equal")
+	p <- dx[2]
+	xx <- crossprod(x)
+	xy <- crossprod(x, y)
+	if(singular.ok) {
+		z <- .Fortran("chol",
+			R = xx,
+			as.integer(p),
+			double(p),
+			pivot = as.integer(rep(0, p)),
+			as.integer(1),
+			rank = as.integer(0))[c(1, 4, 6)]
+	}
+	else {
+		z <- .Fortran("chol",
+			R = xx,
+			as.integer(p),
+			double(p),
+			as.integer(0),
+			as.integer(0),
+			rank = as.integer(0))[c(1, 6)]
+		if(z$rank < p)
+			stop("Choleski decomposition not of full rank")
+	}
+	R <- z$R
+	if((singular <- z$rank < p)) {
+		if(length(xn)) {
+			xn <- xn[z$pivot]
+			dimnames(z$qr)[[2]] <- xn
+		}
+		r <- R[1:p, 1:p]
+		xyp <- xy[1:p]
+		eff <- backsolvet(r, xyp)
+		b <- backsolve(r, eff)
+		fitted <- xx[, pivot[1:p]] %*% b
+	}
+	else {
+		eff <- backsolvet(R, xy)
+		b <- backsolve(R, eff)
+		fitted <- x %*% b
+	}
+	fitted <- fitted[,  ]
+	z <- c(z, list(coefficients = b[,  ], residuals = y - fitted, 
+		fitted.values = fitted, effects = eff[,  ]))
+	class(z) <- "lm"
+	z
+}
+> lm.fit.null      
+function(x, y, ...)
+{
+# fit a null model: used to provide the raw information, like the model matrix
+	dy <- dim(y)
+	q <- if(multiy <- length(dy) == 2) dy[2] else 1
+	if(!length(x)) {
+		structure(list(coefficients = numeric(), residuals = y, 
+			fitted.values = 0 * y, effects = y, df.residuals = if(
+			multiy) dy[1] else length(y), assign = list(), rank = 0
+			), class = if(multiy) "mlm" else "lm")
+	}
+	else {
+		p <- (dx <- dim(x))[2]
+		structure(list(coefficients = if(multiy) array(NA, c(p, q))
+			 else as.numeric(rep(NA, p)), residuals = y, 
+			fitted.values = 0 * y, R = array(0, c(p, p)), effects
+			 = if(multiy) array(0, dim(y)) else rep(0, p), 
+			df.residuals = dx[1], assign = list(), rank = 0), class
+			 = if(multiy) "mlm" else "lm")
+	}
+}
+> lm.fit.qr         
+function(x, y, singular.ok = F, tolerance = 1e-07, qr = F)
+{
+	class(x) <- class(y) <- NULL
+	storage.mode(x) <- storage.mode(y) <- "double"
+	dx <- dim(x)
+	dn <- dimnames(x)
+	dy <- dim(y)
+	qty <- y
+	n <- dx[1]
+	n1 <- 1:n
+	p <- dx[2]
+	p1 <- 1:p
+	qtyn <- xn <- dn[[2]]
+	if(n > p && length(qtyn))
+		length(qtyn) <- n
+	if(multiy <- length(dy) == 2) {
+		cl <- c("mlm", "lm")
+		dny <- dimnames(y)
+		b <- array(double(1), c(dx[2], dy[2]), list(dn[[2]], dny[[2]]))
+			
+		if(length(dn[[1]]) > length(dny[[1]]))
+			dimnames(y) <- list(dn[[1]], dny[[2]])
+	}
+	else {
+		dy <- c(length(y), 1)
+		cl <- "lm"
+		b <- x[1,  ]	#inherit the column names
+		if(length(dn[[1]]) > length(names(y)))
+			names(y) <- dn[[1]]
+	}
+	if(n != dy[1])
+		stop("Number of observations in x and y not equal")
+	asgn <- attr(x, "assign")
+	z <- .Fortran("dqrls",
+		qr = x,
+		as.integer(dx),
+		pivot = as.integer(p1),
+		qraux = double(p),
+		y,
+		as.integer(dy),
+		coef = b,
+		residuals = y,
+		qt = qty,
+		tol = as.double(tolerance),
+		double(2 * p),
+		rank = as.integer(p))
+	b <- z$coef
+	qt <- z$qt
+	if((singular <- (r <- z$rank) < p)) {
+		if(!singular.ok)
+			stop(paste("computed fit is singular, rank", z$rank))
+		pivot <- z$pivot
+		if(length(qtyn)) qtyn[p1] <- qtyn[pivot]	
+	# coefs in original order, NA's in unestimable locations
+# effects are in left in pivoted order -- names pivoted too
+		if(multiy) {
+			b[(r + 1):p,  ] <- NA
+			b[pivot,  ] <- b
+			if(n < p) {
+				tmp <- array(0, c(p, dim(qt)[2]))
+				tmp[n1,  ] <- qt
+				qt <- tmp
+			}
+			dimnames(qt) <- list(qtyn, dimnames(qt)[[2]])
+		}
+		else {
+			b[(r + 1):p] <- NA
+			b[pivot] <- b
+			if(n < p)
+				qt[(n + 1):p] <- 0
+			names(qt) <- qtyn
+		}
+		pasgn <- asgn
+		newpos <- match(1:p, pivot)
+		if(length(xn))
+			names(newpos) <- xn
+		for(j in names(asgn)) {
+			aj <- asgn[[j]]
+			aj <- aj[ok <- (nj <- newpos[aj]) <= r]
+			if(length(aj)) {
+				asgn[[j]] <- aj
+				pasgn[[j]] <- nj[ok]
+			}
+			else asgn[[j]] <- pasgn[[j]] <- NULL
+		}
+		if(length(xn))
+			dimnames(z$qr)[[2]] <- xn <- xn[pivot]
+	}
+	else if(length(qtyn)) {
+		if(multiy)
+			dimnames(qt) <- list(qtyn, dny[[2]])
+		else names(qt) <- qtyn
+	}
+	fitted <- y - z$residuals
+	if(n < p) {
+		R <- (z$qr)[n1,  , drop = F]
+		R[lower.tri(R)] <- 0
+		dimnames(R) <- list(xn[n1], xn)
+	}
+	else {
+		R <- (z$qr)[p1,  , drop = F]
+		R[lower.tri(R)] <- 0
+		dimnames(R) <- list(xn, xn)
+	}
+	attr(R, "rank") <- r
+	class(R) <- "upper"
+	fit <- list(coefficients = b, residuals = z$residuals, fitted.values = 
+		fitted, effects = qt, R = R, rank = z$rank, assign = asgn,
+		df.residual = max(n - r, 0))
+	if(singular) {
+		if(fit$df.residual > 0)
+			fit$assign.residual <- (r + 1):n
+		fit$R.assign <- pasgn
+	}
+	if(qr)
+		fit$qr <- z[c("qr", "qraux", "rank", "pivot", "tol")]
+	class(fit) <- cl
+	fit
+}
+> lm.fit.svd        
+function(x, y, u.return = 0)
+{
+	dmx <- dim(x)
+	dnx <- dimnames(x)
+	dnp <- dnx[[2]]
+	n <- dmx[1]
+	p <- dmx[2]
+	nv <- min(dmx)
+	mm <- min(n + 1, p)
+	mn <- min(dmx)
+	nu <- if(u.return > 0) max(u.return, mn) else mn
+	code <- 1 + 10 * (if(nu == n) 1 else 2)
+	u <- double(n * nu)
+	dim(u) <- c(n, nu)
+	v <- double(p * p)
+	dim(v) <- c(p, p)
+	z <- .Fortran("dsvdc1",
+		as.double(x),
+		as.integer(dmx),
+		as.integer(code),
+		double(n),
+		double(p),
+		d = double(mm),
+		u = u,
+		v = v,
+		errorcode = integer(1))
+	if(z$errorcode)
+		stop(paste("Numerical error (code", z$errorcode, 
+			") in algorithm"))
+	multiy <- length(dim(y)) == 2
+	u <- crossprod(z$u, y)
+	d <- z$d
+	if(all(dp <- d > 0))
+		d <- 1/d
+	else {
+		d[dp] <- 1/d[dp]
+		d[!dp] <- 0
+	}
+	v <- z$v %*% (d * u[1:p,  ])	#coefficients
+	x <- x %*% v	#fitted
+	r <- sum(dp)
+	R <- list(d = z$d, v = z$v, dinv = d, rank = r)
+	class(R) <- "svd.right"
+	y[] <- y - x
+	if(multiy) {
+		dny <- dimnames(y)[[2]]
+		dimnames(v) <- list(dnp, dny)
+		if(nu > p) {
+			dnu <- character(nu)
+			dnu[1:p] <- dnp
+		}
+		else dnu <- dnp
+		dimnames(u) <- list(dnu, dny)
+		dimnames(x) <- list(dnx[[1]], dny)
+	}
+	else {
+		v <- as.vector(v)
+		u <- as.vector(u)
+		if(length(dnp))
+			names(u) <- names(v) <- dnp
+		names(x) <- dnx[[1]]
+	}
+	val <- list(coefficients = v, residuals = y, fitted.values = x, effects
+		 = u, R = R, rank = r)
+	if(u.return)
+		val$u <- z$u
+	class(val) <- c(if(length(dim(y))) "mlm" else NULL, "lm")
+	val
+}
+> lm.hat           
+function(lm, Q = F)
+{
+	qr <- lm$qr
+	if(is.null(qr)) {
+		x <- lm$x
+		if(is.null(x))
+			x <- model.matrix(lm$terms, model.frame(lm))
+		basis <- left.solve(lm$R, x)
+	}
+	else basis <- qr.Q(qr)
+	p <- dim(basis)[2]
+	wt <- lm$weights
+	if(is.null(wt))
+		h <- (basis^2 %*% array(1, c(p, 1)))[, 1]
+	else {
+		out <- wt == 0
+		d <- dim(basis)
+		if(any(out)) {
+			w <- wt[!out]^0.5
+			hh <- array(1/w, d) * basis * t(array(w, d[2:1]))
+			h <- 0 * w
+			h[!out] <- hh
+		}
+		else h <- array(1/wt, d) * basis * t(array(wt, d[2:1]))
+		h <- (h^2 %*% array(1, c(p, 1)))[, 1]
+	}
+	if(Q)
+		attr(h, "Q") <- basis
+	h
+}
+> lm.influence      
+function(lm)
+{
+	wt <- lm$weights	
+	# should really test for < 1/BIG if machine pars available
+	e <- lm$residuals
+	n <- length(e)
+	if(!is.null(wt))
+		e <- e * sqrt(wt)
+	beta <- lm$coef
+	if(is.matrix(beta)) {
+		beta <- beta[, 1]
+		e <- e[, 1]
+		warning("multivariate response, only first y variable used")
+	}
+	na <- is.na(beta)
+	beta <- beta[!na]
+	p <- lm$rank
+	if(is.null(p))
+		p <- sum(!na)
+	R <- lm$R
+	if(p < max(dim(R)))
+		R <- R[1:p, 1:p]
+	qr <- lm$qr
+	if(is.null(qr)) {
+		x <- lm$x
+		if(is.null(x))
+			x <- model.matrix(lm$terms, model.frame(lm))
+		if(!is.null(wt))
+			x <- x * sqrt(wt)
+		if(any(na))
+			x <- x[, !na]
+		Q <- left.solve(R, x)
+	}
+	else {
+		if(!is.null(wt) && any(zero <- wt == 0)) {
+			Q <- matrix(0, n, p)
+			dimnames(Q) <- list(names(e), names(beta))
+			Q[!zero,  ] <- qr.Q(qr)
+		}
+		else Q <- qr.Q(qr)
+	}
+	h <- as.vector((Q^2 %*% array(1, c(p, 1))))
+	h.res <- (1 - h)
+	z <- e/h.res
+	v1 <- e^2
+	z <- t(Q * z)
+	v.res <- sum(v1)
+	v1 <- (v.res - v1/h.res)/(n - p - 1)	# BKW (2.8)
+	dbeta <- backsolve(R, z)
+	list(coefficients = t(dbeta + beta), sigma = sqrt(v1), hat = h)
+}
+> lm.kappa          
+function(z)
+{
+#        library.dynam("statistics", "dtrco.o")
+	if(is.list(z)) z <- z$R
+	if(!is.matrix(z))
+		stop("z should be an lm object or its R component")
+	storage.mode(z) <- "double"
+	dz <- dim(z)
+	if(diff(dz))
+		stop("matrix should be square")
+	p <- as.integer(dz[1])
+	1/.Fortran("dtrco",
+		z,
+		p,
+		p,
+		k = double(1),
+		xx = double(p),
+		as.integer(1))$k
+}
+> lm.sensitivity   
+function(z, condition = lm.kappa(z$R))
+{
+	nrm <- function(x)
+	.Fortran("nrmsub",
+		as.integer(length(x)),
+		as.double(x),
+		n = double(1))$n
+	e <- z$resid
+	y <- z$fitted + e
+	sn <- nrm(e)/nrm(y)
+	cs <- 1 - sn^2
+	n <- length(e)
+	p <- length(z$coef)
+	x <- c((1 + 2 * condition) * max(n - p, 1), (condition * (2 + sn * 
+		condition))/cs)
+	names(x) <- c("residuals", "coefficients")
+	x
+}
+> lm.wfit           
+function(x, y, w, method, ...)
+{
+	if(!is.numeric(x))
+		stop("model matrix must be numeric")
+	if(!is.numeric(y))
+		stop("response must be numeric")
+	if(any(w < 0))
+		stop("negative weights not allowed")
+	zero <- w == 0
+	multiy <- length(dim(y)) == 2
+	if(any(zero)) {
+		pos <- !zero
+		r <- f <- y
+		ww <- w
+		x0 <- x[zero,  , drop = F]
+		y0 <- if(multiy) y[zero,  , drop = F] else y[zero]
+		x <- x[pos,  , drop = F]
+		y <- if(multiy) y[pos,  , drop = F] else y[pos]
+		w <- w[pos]
+	}
+	w.factor <- w^0.5
+	x <- x * w.factor
+	y <- y * w.factor
+	fit <- lm.fit(x, y, method, ...)
+	fit$residuals <- fit$residuals/w.factor
+	fit$fitted.values <- fit$fitted.values/w.factor
+	if(any(zero) && method != "null") {
+		nas <- is.na(fit$coef)
+		if(any(nas))
+			f0 <- x0[, !nas] %*% fit$coef[!nas]
+		else f0 <- x0 %*% fit$coef
+		if(multiy) {
+			r[pos,  ] <- fit$resid
+			f[pos,  ] <- fit$fitted
+			r[zero,  ] <- y0 - f0
+			f[zero,  ] <- f0
+		}
+		else {
+			r[pos] <- fit$resid
+			f[pos] <- fit$fitted
+			r[zero] <- y0 - f0
+			f[zero] <- f0
+		}
+		fit$residuals <- r
+		fit$fitted.values <- f
+		w <- ww
+	}
+	fit$weights <- w
+	fit
+}
+> model.frame.lm    
+function(formula, data = NULL, na.action = NULL, ...)
+{
+	m <- formula$model
+	if(!is.null(m))
+		return(m)
+	oc <- formula$call
+	oc$method <- "model.frame"
+	oc[[1]] <- as.name("lm")
+	if(length(data)) {
+		oc$data <- substitute(data)
+		eval(oc, sys.parent())
+	}
+	else eval(oc, list())
+}
+> plot.lm           
+function(x, y, ...)
+{
+	op <- par(ask = T)
+	on.exit(par(op))
+	form <- formula(x)
+	f <- predict(x)
+	r <- residuals(x)
+	if(missing(y)) {
+		y <- f + r
+		yname <- deparse(form[[2]])
+	}
+	else yname <- deparse(substitute(y))
+	fname <- paste("Fitted:", deparse(form[[3]]), collapse = " ")
+	plot(f, y, xlab = fname, ylab = yname)
+	abline(0, 1, lty = 2)
+	plot(f, abs(r), xlab = fname, ylab = deparse(substitute(abs(resid(
+		x)))))
+}
+> predict.lm       
+function(object, newdata, type = c("response", "terms"), se.fit = F, terms = 
+	labels(object))
+{
+	type <- match.arg(type)
+	if(missing(newdata) && type != "terms" && !se.fit)
+		return(object$fitted)
+	Terms <- object$terms
+	if(!inherits(Terms, "terms"))
+		stop("invalid terms component of  object")
+	offset <- attr(Terms, "offset")
+	xbar <- NULL
+	if(missing(newdata)) {
+		x <- object$x
+		if(is.null(x)) x <- model.matrix(Terms, model.frame(object))	
+	#center x if terms are to be computed
+		if(type == "terms") {
+			xbar <- apply(x, 2, mean)
+			x <- sweep(x, 2, xbar)
+		}
+	}
+	else if(!(is.atomic(newdata) | is.list(newdata))) {
+#try and coerce newdata to look like the x matrix
+		if(!is.null(offset)) {
+			warning("Offset not included")
+			offset <- NULL
+		}
+		TT <- length(object$coef)
+		if(is.matrix(newdata) && ncol(newdata) == TT)
+			x <- newdata
+		else if(length(newdata) == TT)
+			x <- matrix(newdata, 1, TT)
+		else stop(
+				"Argument \"newdata\" is not a data frame, and cannot be coerced to an appropriate model matrix"
+				)
+	}
+	else {
+#newdata is a list, data frame or frame number
+		x <- model.matrix(delete.response(Terms), newdata)
+		if(!is.null(offset))
+			offset <- eval(attr(Terms, "variables")[offset], 
+				newdata)
+	}
+	if(!missing(newdata) && type == "terms") {
+#need to center x 
+		xold <- object$x
+		if(is.null(xold))
+			xold <- model.matrix(Terms, model.frame(object))
+		xbar <- apply(xold, 2, mean)
+		x <- sweep(x, 2, xbar)
+	}
+	coefs <- coef(object)
+	asgn <- attr(coefs, "assign")
+	if(type == "terms") {
+		terms <- match.arg(terms, labels(object))
+		asgn <- asgn[terms]
+	}
+	nac <- is.na(object$coef)
+	if(any(nac)) {
+		xbar <- xbar[!nac]
+		x <- x[, !nac]
+	}
+	attr(x, "constant") <- xbar
+	if(se.fit) {
+		fit.summary <- summary.lm(object)
+		pred <- Build.terms(x, coefs, fit.summary$cov * fit.summary$
+			sigma, asgn, collapse = type != "terms")
+		pred$residual.scale <- fit.summary$sigma
+		pred$df <- object$df.resid
+	}
+	else pred <- Build.terms(x, coefs, NULL, assign = asgn, collapse = type !=
+			"terms")
+	if(!is.null(offset) && type != "terms") {
+		if(missing(newdata))
+			warning("Offset not included")
+		else {
+			if(se.fit)
+				pred$fit <- pred$fit + offset
+			else pred <- pred + offset
+		}
+	}
+	pred
+}
+> print.lm         
+function(x, ...)
+{
+	if(!is.null(cl <- x$call)) {
+		cat("Call:\n")
+		dput(cl)
+	}
+	coef <- coefficients(x)
+	if(ns <- attr(coef, "singular"))
+		cat("\nCoefficients: (", ns, 
+			" not defined because of singularities)\n", sep = "")
+		
+	else cat("\nCoefficients:\n")
+	print(coef, ...)
+	rank <- x$rank
+	if(is.null(rank))
+		rank <- sum(!nas)
+	nobs <- length(residuals(x))
+	rdf <- x$df.resid
+	if(is.null(rdf))
+		rdf <- nobs - rank
+	cat("\nDegrees of freedom:", nobs, "total;", rdf, "residual\n")
+	if(rdf > 0) {
+		if(is.null(w <- x$weights))
+			cat("Residual standard error:", format((sum(x$residuals^
+				2)/rdf)^0.5), "\n")
+		else cat("Residual standard error (on weighted scale):", format(
+				(sum(w * x$residuals^2)/rdf)^0.5), "\n")
+	}
+	invisible(x)
+}
+> proj.lm           
+function(object, onedf = F)
+{
+	prj <- object$proj
+	if(!is.null(prj)) {
+		if(is.null(attr(prj, "onedf"))) {
+		}
+		else if(attr(prj, "onedf") == onedf)
+			return(prj)
+		else if(onedf)
+			stop(
+				"Cannot recover single degree of freedom projections"
+				)
+		else {
+			ncol.prj <- ncol(prj)
+			if(ncol.prj == 1)
+				return(prj)
+			if(dimnames(prj)[[2]][ncol.prj] == "Residuals") {
+				tmp <- prj[,  - ncol.prj, drop = F]
+				attr.assign(tmp) <- attr.xdim(prj)
+				attr(tmp, "df") <- attr(prj, "df")[ - ncol.prj]
+					
+				prj <- tmp
+			}
+		}
+	}
+	else {
+		if(is.null(object$qr))
+			object <- update(object, qr = T)
+		if(object$rank > 0)
+			prj <- proj.default(object, onedf = T)[, seq(object$
+				rank), drop = F]
+		else prj <- numeric(0)	
+	# needed for strata with no treatment effects
+	}
+	if(onedf) {
+		df <- rep(1, object$rank)
+		result <- prj
+	}
+	else {
+		asgn <- object$assign
+		ldf <- length(asgn)
+		df <- vector("numeric", ldf)
+		result <- matrix(0, length(object$residuals), ldf)
+		dimnames(result) <- list(dimnames(object$fitted.values)[[1]],
+			names(asgn))
+		is.qr.object <- is.qr(object$qr)
+		for(i in seq(along = asgn)) {
+			if(is.qr.object)
+				select <- match(asgn[[i]], object$qr$pivot)
+				
+			else select <- asgn[[i]]
+			df[i] <- length(select)
+			result[, i] <- prj[, select, drop = F] %*% rep(1, df[
+				i])
+		}
+	}
+	if(object$df.residual > 0) {
+		dn <- dimnames(result)
+		d <- dim(result)
+		result <- c(result, object$residuals)
+		dim(result) <- d + c(0, 1)
+		dn[[1]] <- names(object$residuals)
+		names(result) <- NULL
+		dn[[2]] <- c(dn[[2]], "Residuals")
+		dimnames(result) <- dn
+		df <- c(df, object$df.residual)
+	}
+	names(df) <- dimnames(result)[[2]]
+	attr(result, "df") <- df
+	attr(result, "formula") <- object$call$formula
+	attr(result, "onedf") <- onedf
+	result
+}
+> 

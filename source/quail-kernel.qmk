@@ -1,0 +1,158 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;                               quail-kernel.system                               
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;
+;;; Copyright (c) 1990 Statistical Computing Laboratory, University of Waterloo
+;;;
+;;;
+;;;  Authors:
+;;;     Greg Anglin 1989, 1990, 1991.
+;;;     R.W. Oldford 1989 +
+;;;     Bob White
+;;;
+;;;
+;;;----------------------------------------------------------------------------
+
+(in-package :make)
+
+(eval-when (compile load eval)
+  (load-pathnames "quail-kernel"))
+
+(defsystem "quail-kernel"
+  :source-pathname (identity (append-directories
+                                (path-source)
+                                (path-kernel)))
+  :binary-pathname (identity (append-directories
+                                (path-binary)
+                                (bin (path-kernel))))
+  :components ((:file "quail-kernel-package")
+               (:file (add-system-extension "quail-kernel-system"))
+               (:module mop
+                        :source-pathname (path-mop)
+                        :binary-pathname (bin (path-mop))
+                        :components ((:file (add-system-extension "mop"))
+                                     (:file "mixin-to-quail")
+                                     (:file (add-system-extension "function-info"))))
+
+               (:module basic
+                        :source-pathname (path-basic)
+                        :binary-pathname (bin (path-basic))
+                        :components ((:file "defmethod-multi")
+                                     (:file "special-vars")
+                                     (:file "synonym")
+                                     (:file "seq")
+                                     (:file "tree")
+                                     (:file "search-tree")
+                                     (:file "utility"
+                                            :depends-on ("special-vars"))
+                                     (:file (add-system-extension "utility"))
+                                     (:file "seq-utilities")
+                                     (:file "symbols")
+                                     (:file "quail-object")
+                                     (:file "proto-mixin")
+                                     (:file "open-mixin")
+                                     (:file "return-class")
+                                     (:file "make-result")))
+
+               (:module io
+                        :source-pathname (path-io)
+                        :binary-pathname (bin (path-io))
+                        :components ((:file "quail-io")
+                                     (:file "quail-file")
+                                     (:file "scan")
+                                     (:file "slots")
+                                     (:file (add-system-extension "save"))
+                                     (:file "restore")
+                                     ;; (:file (add-system-extension "restore"))
+                                     )
+                        ;; :depends-on ("basic")
+                        )
+               (:module ref
+                        :source-pathname (path-ref)
+                        :binary-pathname (bin (path-ref))
+                        :components ((:file "ref-object")
+                                     (:file "eref")
+                                     (:file "ref")
+                                     (:file "indices")
+                                     (:file "ref-if")
+                                     (:file "ref-eq")
+                                     (:file "setf-ref")
+                                     (:file "sel")
+                                     (:file "with-ref")
+                                     (:file "number-of-elements")
+                                     (:file "number-of-slices")
+                                     (:file "subscript-utility")
+                                     (:file "row-major-ops")
+                                     (:file "column-major-ops")
+                                     ;; this wasn't doing anything anywhere ... dga 94 03
+                                     ;; (:file "ref-behavior")
+                                     )
+                        ;; :depends-on ("basic" "io")
+                        )
+               (:module math
+                        :source-pathname (path-math)
+                        :binary-pathname (bin (path-math))
+                        :components ((:file "extended-ops")
+                                     (:file "matrix-multiply")) 
+                        ;; :depends-on ("basic" "io" "ref")
+                        )
+               (:module array
+                        :source-pathname (path-array)
+                        :binary-pathname (bin (path-array))
+                        :components ((:file "map-element")
+                                     (:file "map-slices")
+                                     (:file "array")
+                                     (:file "ref-array")
+                                     (:file "mk-array")
+                                     (:file "copy-dispatch")
+                                     (:file "num-array")
+                                     (:file "ones-array")
+                                     (:file "matrix")
+                                     (:file "file-matrix")
+                                     (:file "collapse")
+                                     (:file "tp")
+                                     (:file "glue")
+                                     (:file "slice")
+                                     (:file "sort-object"
+                                            :depends-on ("slice"))
+                                     (:file "sort")
+                                     (:file "sort-position"
+                                            :depends-on ("slice"))
+                                     (:file "ranks")
+                                     (:file "order")
+                                     (:file "remove-slices")
+                                     (:file "find-slices")
+                                     (:file "count-slices"
+                                            :depends-on ("slice"))
+                                     (:file "substitute-slices")
+                                     (:file "replace-slices")
+                                     (:file "slice-positions")
+                                     (:file "reduce-slices")
+                                     )
+                        ;; :depends-on ("basic" "io" "ref" "math")
+                        )
+               ))
+
+
+
+(defun compile-quail-kernel (&rest op-on-sys-keyword-pairs
+                              &key (verbose T)
+                              &allow-other-keys)
+  "Compiles the quail-kernel system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'quail-kernel 'compile
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))
+
+(defun load-quail-kernel (&rest op-on-sys-keyword-pairs
+                           &key (verbose T)
+                           &allow-other-keys)
+  "Loads the quail-kernel system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'quail-kernel 'load
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))
+

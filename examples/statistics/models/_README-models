@@ -1,0 +1,37 @@
+Models examples
+---------------
+
+The examples in this folder concern Generalized Linear Models, using
+the function glm.  For the Gaussian Linear Model, you may use the function lm,
+which defaults to the gaussian family.
+
+Some of these examples are quite large and may take a while to execute
+on smaller configurations.  They will, however, at least illustrate the
+syntax of model formulae etc.
+
+binary/logit:       eg-glm-kyphosis.lisp
+poisson/log:        eg-glm-ship.lisp
+gamma/reciprocal:   eg-glm-cars.lisp
+
+Restrictions and Caveats
+------------------------
+
+--  The fitting code has not yet been exercised extensively.
+
+--  The data types are not well developed at all, so manipulation can
+    be a bit cumbersome right now.
+
+--  Fitting of Generalized Additive Models is not yet implemented.
+
+--  The degrees of freedom computations work fine in nice cases, but can
+    break currently if there are structural zeros.
+
+--  The generic function residuals is largely untested.
+
+--  Summaries, plots, and model searching aren't there.
+
+
+Greg Anglin
+Statistical Computing Laboratory
+University of Waterloo
+March 1993

@@ -1,0 +1,5 @@
+y _ matrix(c(10, 30, 11, 30, 11, 29,  28, 12, 32, 8, 29, 9), ncol=2, byrow=T)
+x _ c(-1,-1,-1,1,1,1)
+g1 _ glm(y ~ x, family=binomial())
+
+

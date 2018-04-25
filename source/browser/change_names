@@ -1,0 +1,3 @@
+foreach i (`cat names`)
+  mv $i.lisp,v $i.lsp,v
+  end

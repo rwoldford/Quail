@@ -1,0 +1,208 @@
+? 
+;Loading "HardDisk:Common Lisp:Z Test:benchmark.fasl"...
+
+Testing (make-instance 'foo :bar i) for 10000 iterations:
+
+(LOOP FOR I FROM 1 TO *N* DO (MAKE-INSTANCE 'FOO :BAR I)) took 45371 ticks (756.18
+3 seconds) to run.
+Of that, 14868 ticks (247.800 seconds) was spent in GC.
+
+Testing (setf (bar-of f) i), f an instance of foo, for 10000 iterations:
+
+(LOOP FOR I FROM 1 TO *N* DO (SETF (BAR-OF F) I)) took 86 ticks (1.433 seconds) to
+ run.
+
+Testing (setf (hand-coded-accessor f) i), f an instance of foo, for 10000 iteratio
+ns:
+
+(LOOP FOR I FROM 1 TO *N* DO (SETF (HAND-CODED-ACCESSOR F) I)) took 337 ticks (5.6
+17 seconds) to run.
+
+Testing (snerd i i) [specialize on t] for 10000 iterations:
+
+(LOOP FOR I FROM 1 TO *N* DO (SNERD I I)) took 595 ticks (9.917 seconds) to run.
+Of that, 255 ticks (4.250 seconds) was spent in GC.
+
+Testing (snerd an-array i) for 10000 iterations:
+
+(LOOP FOR I FROM 1 TO *N* DO (SNERD AN-ARRAY I)) took 284 ticks (4.733 seconds) to
+ run.
+
+Testing (snerd a-foo i) for 10000 iterations:
+
+(LOOP FOR I FROM 1 TO *N* DO (SNERD A-FOO I)) took 457 ticks (7.617 seconds) to ru
+n.
+Of that, 257 ticks (4.283 seconds) was spent in GC.
+
+**** Do zref, ref, and sel tests for class num-array, 500 iterations ****
+
+
+Testing a single direct zref for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (ZREF A 1 (- I I))) took 49 ticks (0.817 second
+s) to run.
+
+Testing a single direct ref for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF A 1 (- I I))) took 1324 ticks (22.067 seco
+nds) to run.
+Of that, 495 ticks (8.250 seconds) was spent in GC.
+
+Testing a single direct sel for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL A 1 (- I I))) took 1544 ticks (25.733 seco
+nds) to run.
+Of that, 495 ticks (8.250 seconds) was spent in GC.
+
+Testing a single indirect zref for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (ZREF B 1 (- I I))) took 179 ticks (2.983 secon
+ds) to run.
+
+Testing a single indirect ref for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF B 1 (- I I))) took 1737 ticks (28.950 seco
+nds) to run.
+Of that, 748 ticks (12.467 seconds) was spent in GC.
+
+Testing a single indirect sel for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL B 1 (- I I))) took 1699 ticks (28.317 seco
+nds) to run.
+Of that, 497 ticks (8.283 seconds) was spent in GC.
+
+Testing a submatrix direct ref for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF A '(0 1) (- I I))) took 1325 ticks (22.083
+ seconds) to run.
+Of that, 497 ticks (8.283 seconds) was spent in GC.
+
+Testing a submatrix direct sel for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL A '(0 1) (- I I))) took 3255 ticks (54.250
+ seconds) to run.
+Of that, 1508 ticks (25.133 seconds) was spent in GC.
+
+Testing a submatrix indirect ref for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF B '(0 1) (- I I))) took 1492 ticks (24.867
+ seconds) to run.
+Of that, 497 ticks (8.283 seconds) was spent in GC.
+
+Testing a submatrix indirect sel for 500 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL B '(0 1) (- I I))) took 3674 ticks (61.233
+ seconds) to run.
+Of that, 1759 ticks (29.317 seconds) was spent in GC.
+
+**** Do zref, ref, and sel tests for class num-array, 20 iterations ****
+
+
+Testing a single direct zref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (ZREF A 1 (- I I))) took 2 ticks (0.033 seconds
+) to run.
+
+Testing a single direct ref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF A 1 (- I I))) took 33 ticks (0.550 seconds
+) to run.
+
+Testing a single direct sel for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL A 1 (- I I))) took 43 ticks (0.717 seconds
+) to run.
+
+Testing a single indirect zref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (ZREF B 1 (- I I))) took 7 ticks (0.117 seconds
+) to run.
+
+Testing a single indirect ref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF B 1 (- I I))) took 40 ticks (0.667 seconds
+) to run.
+
+Testing a single indirect sel for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL B 1 (- I I))) took 48 ticks (0.800 seconds
+) to run.
+
+Testing a submatrix direct ref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF A '(0 1) (- I I))) took 33 ticks (0.550 se
+conds) to run.
+
+Testing a submatrix direct sel for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL A '(0 1) (- I I))) took 68 ticks (1.133 se
+conds) to run.
+
+Testing a submatrix indirect ref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF B '(0 1) (- I I))) took 39 ticks (0.650 se
+conds) to run.
+
+Testing a submatrix indirect sel for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL B '(0 1) (- I I))) took 76 ticks (1.267 se
+conds) to run.
+
+**** Do zref, ref, and sel tests for class file-matrix, 20 iterations ****
+
+
+Testing a single direct zref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (ZREF A 1 (- I I))) took 13 ticks (0.217 second
+s) to run.
+
+Testing a single direct ref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF A 1 (- I I))) took 36 ticks (0.600 seconds
+) to run.
+
+Testing a single direct sel for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL A 1 (- I I))) took 56 ticks (0.933 seconds
+) to run.
+
+Testing a single indirect zref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (ZREF B 1 (- I I))) took 18 ticks (0.300 second
+s) to run.
+
+Testing a single indirect ref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF B 1 (- I I))) took 291 ticks (4.850 second
+s) to run.
+Of that, 244 ticks (4.067 seconds) was spent in GC.
+
+Testing a single indirect sel for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL B 1 (- I I))) took 62 ticks (1.033 seconds
+) to run.
+
+Testing a submatrix direct ref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF A '(0 1) (- I I))) took 37 ticks (0.617 se
+conds) to run.
+
+Testing a submatrix direct sel for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (SEL A '(0 1) (- I I))) took 1001 ticks (16.683
+ seconds) to run.
+Of that, 244 ticks (4.067 seconds) was spent in GC.
+
+Testing a submatrix indirect ref for 20 iterations:
+
+(LOOP FOR I FROM 1 TO *SMALL-N* DO (REF B '(0 1) (- I I))) took 43 ticks (0.717 se
+conds) to run.
+
+Testing a submatrix indirect sel for 20 iterations:
+
+> Error: Unbound variable: CCL::FBLOCK .
+> While executing: FILE-LENGTH
+> Type Command-/ to continue, Command-. to abort.
+1 > 
+Aborted
+? 

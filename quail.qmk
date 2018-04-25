@@ -1,0 +1,65 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;                               quail.qmk                               
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;
+;;; Copyright (c) 1990, 1991 
+;;; Statistical Computing Laboratory, University of Waterloo
+;;;
+;;;
+;;;  Authors:
+;;;     Greg Anglin 1989, 1990.
+;;;     BobWhite 1991 ...
+;;;
+;;;----------------------------------------------------------------------------
+
+(in-package :MAKE)
+(format t "~%At the top of quail.qmk")
+#-(or :aclpc-linux :ccl-1.11 :sbcl-linux)(eval-when (compile load eval)
+  (load-pathnames "quail"))
+
+(setf *quail-systems* (list "quail-user" ;.asd15F2018
+                            "initialization" ;.asd15F2018
+                            ;; "analysis-map"
+                            ;;"browser" 15F2018
+                            "statistics" ;.asd15F2018
+                            "probability" ;.asd15F2018
+                            "mathematics" ;.asd15F2018
+                            "linear" ;.asd 15F2018
+                            ;;"top-level" 15F2018
+                            ;; "foreign-to-cl"
+                            ;;"documentation" 15F2018
+                            ;; systems above this line use Quail package.
+                            "quail" ;.asd
+                            ;;"views" 15F2018
+                            ;;"window-basics" 15F2018
+                            "new-math" ;.asd
+                            ;; "quaff"  Quail no longer relies on or supports
+                            ;;          a foreign function interface.
+                            "quail-kernel" ;.asd
+                            ))
+(format t "~%*quail-systems* is ~s " *quail-systems*)
+(format t "~%Defining system quail")
+#-(or :aclpc-linux :ccl-1.11 :sbcl-linux)(defsystem "quail"
+  :source-pathname (path-source)
+  :binary-pathname (path-binary)
+  :components ((:file "quail-package")
+               ))
+
+#+(or :ccl-1.11 :sbcl-linux)(asdf:defsystem "quail"
+  :components ((:file "quail-package")
+              ))
+(format t "~%system quail defined")
+(format t "~%Defining system quail-user")
+#-(or :aclpc-linux :ccl-1.11 :sbcl-linux)(defsystem "quail-user"
+   :source-pathname (path-source)
+   :binary-pathname (path-binary)
+  :components ((:file "quail-user-package")
+               ))
+
+#+(or :aclpc-linux :ccl-1.11 :sbcl-linux)(asdf:defsystem "quail-user"
+   :components ((:file "quail-user-package")
+               ))
+(format t "~%system quail-user defined")

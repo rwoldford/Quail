@@ -1,0 +1,119 @@
+? (mk::compile-display-network)
+
+;  - Compiling system "display-network"
+;    - Compiling source file
+;      "q;Source:Analysis-map:display-network:quail-functions-mcl.lisp"
+;Compiler warnings for "Devel:Quail:Source:Analysis-map:display-network:quail-functions-mcl.lisp" :
+;   Unused lexical variable VARIABLE, in ACCESS-EXPRESSION.
+;   Undeclared free variable *CURRENT-EVENT*, in WINDOW-ZOOM-EVENT-HANDLER.
+;   Unused lexical variable MESSAGE, in WINDOW-ZOOM-EVENT-HANDLER.
+;   Undeclared free variable *CURRENT-EVENT* (2 references), in WINDOW-EVENT.
+;Compiler warnings for "Devel:Quail:Source:Analysis-map:display-network:quail-functions-mcl.lisp" :
+;   Undefined function QUAIL::MAKE-RECORD, in QUAIL::WINDOW-EVENT.
+;   Undefined function QUAIL::RREF (2 references), in QUAIL::WINDOW-EVENT.
+;   Undefined function QUAIL::WPTR, in QUAIL::WINDOW-EVENT.
+;   Undefined function QUAIL::WINDOW-SELECT, in QUAIL::WINDOW-CLICK-EVENT-HANDLER.
+;   Undefined function QUAIL::WINDOW-HIDE, in QUAIL::WINDOW-CLICK-EVENT-HANDLER.
+;   Undefined function QUAIL::DOUBLE-CLICK-P, in QUAIL::WINDOW-CLICK-EVENT-HANDLER.
+;   Undefined function QUAIL::CANVAS-DRAW-STRING, in QUAIL::VIEW-DRAW-CONTENTS.
+;   Undefined function QUAIL::STRING-WIDTH, in QUAIL::VIEW-DRAW-CONTENTS.
+;   Undefined function QUAIL::BITMAP-WIDTH, in QUAIL::VIEW-DRAW-CONTENTS.
+;   Undefined function QUAIL::CANVAS-MOVE-TO, in QUAIL::VIEW-DRAW-CONTENTS.
+;   Undefined function QUAIL::SET-VIEW-FONT, in QUAIL::VIEW-DRAW-CONTENTS.
+;   Undefined function QUAIL::BITMAP-HEIGHT, in QUAIL::VIEW-DRAW-CONTENTS.
+;   Undefined function QUAIL::CANVAS-BITBLT, in QUAIL::VIEW-DRAW-CONTENTS.
+;   Undefined function QUAIL::GET-WINDOW-BROWSER, in QUAIL::VIEW-DRAW-CONTENTS.
+;   Undefined function QUAIL::ICON-TITLE, in QUAIL::VIEW-DRAW-CONTENTS.
+;   Undefined function QUAIL::WINDOW-HIDE, in QUAIL::WINDOW-ZOOM-EVENT-HANDLER.
+;   Undefined function QUAIL::WINDOW-SHOW, in QUAIL::WINDOW-ZOOM-EVENT-HANDLER.
+;   Undefined function SETF::|QUAIL::ICON-W-OF|, in QUAIL::WINDOW-ZOOM-EVENT-HANDLER.
+;   Undefined function QUAIL::MAKE-POINT, in QUAIL::WINDOW-ZOOM-EVENT-HANDLER.
+;   Undefined function QUAIL::MAKE-CANVAS, in QUAIL::WINDOW-ZOOM-EVENT-HANDLER.
+;   Undefined function QUAIL::GET-WINDOW-BROWSER (2 references), in QUAIL::WINDOW-ZOOM-EVENT-HANDLER.
+;   Undefined function QUAIL::ICON-W-OF, in QUAIL::WINDOW-ZOOM-EVENT-HANDLER.
+;   Undefined function QUAIL::MAKE-POINT (2 references), in QUAIL::QUAIL-PRINT-HELP.
+;   Undefined function QUAIL::WPTR, in QUAIL::QUAIL-PRINT-HELP.
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:quail-functions-mcl.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:utility.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:quail-icon-mcl.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:prompt-mixin.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:dated-object.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:initable-object.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:editable-object.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:indexed-object.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:named-object.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:documented-object.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:linked-object.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:zoom-mixin.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:tool-box-link.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:find-where-mixin.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:body-menu.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:title-bar-mixin.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:quail-object.fasl"
+;Warning:  CCL::CLASS QUAIL-OBJECT previously defined in: q;Source:Kernel:Basic:quail-object.lisp
+;                  is now being redefined in: q;Source:Analysis-map:display-network:quail-object.lisp
+;         
+; While executing: CCL:RECORD-SOURCE-FILE
+
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:memo.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:quail-browser.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:network-view.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:micro-view.fasl"
+;    - Compiling source file
+;      "q;Source:Analysis-map:display-network:analysis-network.lisp"
+;Compiler warnings for "Devel:Quail:Source:Analysis-map:display-network:analysis-network.lisp" :
+;   Unused lexical variable ITEM-CV, in GET-CLASS-MENU-ITEMS.
+;Compiler warnings for "Devel:Quail:Source:Analysis-map:display-network:analysis-network.lisp" :
+;   Undefined function QUAIL::APPLY-ANALYSIS-PATH, in QUAIL::ADD-ANALYSIS-NODE.
+;   Undefined function QUAIL::PROMPT-PRINT (4 references), in QUAIL::INTERPOSE-MEMO.
+;   Undefined function QUAIL::RECOMPUTE, in QUAIL::BREAK-LINK.
+;   Undefined function QUAIL::PROMPT-PRINT (2 references), in QUAIL::BREAK-LINK.
+;   Undefined function QUAIL::RECOMPUTE, in QUAIL::MAKE-LINK.
+;   Undefined function QUAIL::PROMPT-PRINT (2 references), in QUAIL::MAKE-LINK.
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:analysis-network.fasl"
+;    - Compiling source file
+;      "q;Source:Analysis-map:display-network:toolbox-network.lisp"
+;Compiler warnings for "Devel:Quail:Source:Analysis-map:display-network:toolbox-network.lisp" :
+;   Undeclared free variable *HORIZ-TREE*, in an anonymous lambda form inside an anonymous lambda form.
+;   Unused lexical variable REST, in SUB-TOOLBOX.
+;Compiler warnings for "Devel:Quail:Source:Analysis-map:display-network:toolbox-network.lisp" :
+;   Undefined function QUAIL::PUSH-IN-BUFFER, in QUAIL::UNREAD.
+;   Undefined function QUAIL::RECOMPUTE, in QUAIL::WIDEN-VIEW.
+;   Undefined function QUAIL::RECOMPUTE, in QUAIL::SUB-TOOLBOX.
+;   Undefined function QUAIL::BROWSE, in QUAIL::SUB-TOOLBOX.
+;   Undefined function QUAIL::PROMPT-PRINT, in QUAIL::NAME-THIS-ITEM.
+;   Undefined function QUAIL::RECOMPUTE, in QUAIL::NARROW-VIEW.
+;   Undefined function QUAIL::RECOMPUTE, in QUAIL::ADD-TOOLBOX-TREE.
+;   Undefined function QUAIL::RECOMPUTE, in QUAIL::CREATE-VIEW.
+;   Undefined function QUAIL::BROWSE, in QUAIL::CREATE-VIEW.
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:toolbox-network.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:analysis-path.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:display-network
+;      bin:quail-methods-mcl.fasl"
+;  - Providing system display-network
+NIL
+? 

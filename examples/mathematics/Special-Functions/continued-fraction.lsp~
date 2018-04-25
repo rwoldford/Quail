@@ -1,0 +1,128 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;                   Continued Fraction approximations
+;;;
+;;;
+;;;  Authors:
+;;;     R.W. Oldford 1994.
+
+(in-package :quail-user)
+
+;;;
+;;; In this file we consider the special function:
+;;;
+;;;      continued-fraction-eval       ... evaluate an arbitrary continued
+;;;                                        fraction approximation
+;;;
+;;;  See also the overview file for other special functions.
+
+(edit-file "eg:Mathematics;Special-Functions;overview.lsp")
+
+;;;---------------------------------------------------------------------------------
+;;;
+;;;  Continued fraction approximations
+;;;
+;;;---------------------------------------------------------------------------------
+;;;
+;;; Call
+;;; 
+;;;  (continued-fraction-eval numerator-fun denominator-fun)
+;;;
+;;; Given two functions numerator-fun denominator-fun this function 
+;;; returns a function which will calculated the continued fraction
+;;; expansion whose succesive numerators n_i(x) are defined by numerator-fun
+;;; and whose successive denominators d_i(x) are defined by denominator-fun.
+;;; The continued fraction is
+;;;
+;;;                n_1(x)
+;;;    d_0(x) +  ------------------------------------------- ...
+;;;                          n_2(x)
+;;;               d_1(x) +  -------------------------------- ...
+;;;                                     n_3(x)
+;;;                          d_2(x) +  --------------------- ...
+;;;                                                n_4(x)
+;;;                                     d_3(x) +  ---------- ...
+;;;                                                d_4(x) +  ...
+;;;  
+;;;
+;;;  numerator-fun must be a function of two arguments which when applied 
+;;;  to two numbers x and i returns the value of the i'th (i = 1, 2, 3, ... )
+;;;  numerator in the continued fraction evaluated at x.
+;;;
+;;;  denominator-fun must be function of two arguments which when applied 
+;;;  to two numbers x and i returns the value of the i'th (i = 0, 1, 2, ... )
+;;;  denominator in the continued fraction evaluated at x.
+;;;
+;;;
+;;;  It returns a function which will calculate the continued fraction 
+;;;  expansion d_0(x) + [n_1(x) / [d_1(x) + [n_2(x) / [d_2(x) + ... ]]]]
+;;;  at arbitrary argument x to a tolerance determined 
+;;;  by the keyword epsilon, and to a maximum number of iterations 
+;;;  given by the keyword max-iterations.  The method of calculation 
+;;;  employs the well-known forward recurrence relations.
+;;;
+;;;
+;;;  Here's a continued-fraction approximation to the incomplete gamma.
+;;;
+
+(defun incomplete-gamma-cf (alpha)
+  ;;
+  ;; First set up the numerator and denominator functions locally
+  ;;
+  (flet ((num-fun (y j)
+           "The numerator function."
+           (cond ((= j 1) 1.0)
+                 ((oddp j) (/ (- j 1) 2))
+                 ((evenp j) (- (+ 1 (/ (- j 2) 2)) alpha)
+                  )))
+         (den-fun (y j)
+           "The denominator function."
+           (cond ((= j 0) 0.0)
+                 ((oddp j) y)
+                 ((evenp j) 1)))
+         
+         )
+    ;; Now we call continued-fraction-eval and return
+    ;; the function it returns
+    (continued-fraction-eval (function num-fun) (function den-fun))))
+  
+;;; And we write our function to take the expansion function as another
+;;; keyword argument
+;;; 
+
+(defun my-incomplete-gamma (alpha x &key expansion-function )
+  "The incomplete gamma function.  This is just the cumulative ~
+   distribution function of a gamma random variable with parameter alpha."
+  (unless (functionp expansion-function)
+    (setf expansion-function (incomplete-gamma-cf alpha)))
+  (if (>= x (+ 1 alpha))
+    ;; Here's the mathematical relation with the expansion.
+    (- 1 (/ (* (funcall expansion-function x)
+               (exp (- 0 x))
+               (expt x alpha))
+            (exp (log-gamma alpha))))
+    ;; out of the convergence area of the expansion.
+    (quail-error "Out of area of convergence for the continued fraction ~
+                  expansion."))
+  )
+
+;;; Compare
+
+(incomplete-gamma 2 5)
+(my-incomplete-gamma 2 5)
+
+;;; Or we could have calculated the expansion function once and reused it.
+
+(setf foo (incomplete-gamma-cf 2))
+(my-incomplete-gamma 2 5 :expansion-function foo)
+
+;;; Of course, you now need to be careful that the alphas match!
+
+(my-incomplete-gamma 1 5 :expansion-function foo)
+
+;;; is not the same as
+
+(my-incomplete-gamma 1 5)
+
+;;; The latter is correct because it would have created an expansion function
+;;; that also had alpha = 1 whereas foo has alpha = 2 inside it.

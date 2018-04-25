@@ -1,0 +1,53 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;                               new-math.qmk                               
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;
+;;; Copyright (c) 1990 Statistical Computing Laboratory, University of Waterloo
+;;;
+;;;
+;;;  Authors:
+;;;     M.E.Lewis 1991.
+;;; 
+;;;
+;;;----------------------------------------------------------------------------
+
+(in-package :make)
+
+(eval-when (compile load eval)
+  (load-pathnames "new-math"))
+
+(defsystem new-math
+  :source-pathname (identity (append-directories
+                                (path-source)
+                                (path-new-math)))
+  :binary-pathname (identity (append-directories
+                                (path-binary)
+                                (bin (path-new-math))))
+  
+  :components ((:file "new-math-package")
+               (:file "new-math")
+               (:file "num-array-math")
+               (:file "init-new-math")))
+
+
+(defun compile-new-math (&rest op-on-sys-keyword-pairs
+                               &key (verbose T)
+                               &allow-other-keys)
+  "Compiles the new-math system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'new-math 'compile
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))
+
+(defun load-new-math (&rest op-on-sys-keyword-pairs
+                            &key (verbose T)
+                            &allow-other-keys)
+  "Loads the new-math system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'new-math 'load
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))
+          

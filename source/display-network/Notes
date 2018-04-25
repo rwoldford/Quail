@@ -1,0 +1,135 @@
+Notes:
+
+A. quail-functions-mcl
+
+     -  in package specific
+     - exports
+       access-expression
+         quail-print-help
+         quail-prompt-read
+         edit-text
+         get-last-typed-command
+         get-user-name
+     - other definitions
+        edit-text
+        set-window-icon
+     - classes
+        icon-window (canvas)
+     - methods
+        window-zoom-event-handler (graph-window)
+        view-draw-contents (self icon-window)
+        window-click-event-handler (self icon-window)
+        window-event (self icon-window)
+
+B. utility
+
+    (in-package :quail)
+(import '(specific:push-in-buffer
+          Quail:*quail-object-names*))
+
+(export '(list-slot-contents! 
+          class-direct-subclasses
+          class-direct-supers
+          class-p
+          class-slots
+          classify-local-methods
+          classify-inherited-methods
+          classify-combined-methods
+          should-not-implement
+          slot-initarg
+          slot-initform
+          sub-class-responsibility
+          list-required-inits
+          descriptive-label
+          get-name
+          class-understands
+
+          required-init
+
+          $
+          $!
+          get-mc))
+
+C. quail-icon-mcl
+
+       (in-package :quail)
+       (use-package :specific)
+       get-icon-from-list
+       transform-array-in-bitmap 
+       init-list-of-icons
+       analysis-map-icon
+       analysis-path-icon
+       analysis-path-icon-mask
+       analysis-path-map-icon
+       quail-objects-icon
+       quail-objects-icon-mask
+       map-icon 
+       map-icon-mask
+       toolbox-icon
+       toolbox-icon-mask
+       toolbox-map-icon
+       view-icon
+       zoom-icon
+       zoom-icon-mask
+       *list-of-icons*
+       
+
+D. mixins   ---> distributed over 12 files 1 per class
+      - in :quail
+
+      -classes 
+           dated-object
+           initable-object
+           body-menu
+           documented-object
+           editable-object
+           find-where-mixin
+           indexed-object
+           linked-object
+           named-object
+           prompt-mixin
+           title-bar-mixin
+           tool-box-link-mixin
+      - methods
+           get-local-methods-classification
+           get-inherited-methods-classification
+           read-notes
+           edit-notes
+           add-notes
+           references
+           short-summary
+           long-summary
+           print-summary
+           describe-contents
+           how-this-works
+           buttoning-behavior
+           get-class-menu-items
+           build-middle-menu
+           middle-choice
+           prompt-eval
+           prompt-read
+           get-name
+           set-name
+           remove-back-analysis-link
+           remove-forward-analysis-link
+           analysis-unlink
+           analysis-link
+           causal-link
+           add-forward-analysis-link
+           add-forward-causal-link
+           add-back-analysis-link
+           add-back-causal-link
+           initialize-instance :after ((object initable-object)
+           init-ivs
+           after-init
+           after-building
+           toolbox-link
+           toolbox-unlink
+           remove-forward-toolbox-link
+           remove-back-toolbox-link
+           make-link
+           find-link
+           break-link
+           add-forward-toolbox-link
+           add-back-toolbox-link
+

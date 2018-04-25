@@ -1,0 +1,35 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:    ps_canvas_draw_ellipse
+%------------------------------------------------------------------------------
+% DESCRIPTION:  This function draws an ellipse (or circle) given the x and y
+%               offsets from the origin and the x and y radii (defined as the
+%               length of the line segment between the intersection of the
+%               major and minor axes and the edge of the ellipse in the x and
+%               y directions.  Optional arguments are the line width and color.
+%
+% COMMAND LINE:
+%       x_off y_off x_rad y_rad [lwidth] [red grn blue] ps_canvas_draw_ellipse
+%
+%       Arguments in brackets are optional.
+%       Optional arguments which are omitted will be replaced by the
+%       corresponding default values.
+%
+% NOTE: If colours are to be specified, all three of red, green and blue MUST
+%       be specified.
+%------------------------------------------------------------------------------
+/ps_canvas_draw_ellipse
+        {ps_draw_dict begin
+                /y_radius exch def
+                /x_radius exch def
+                /y_translate exch def
+                /x_translate exch def
+                /savematrix mtrx currentmatrix def
+                x_translate y_translate translate
+                x_radius y_radius scale
+                newpath
+                0 0 1 0 360 arc
+                stroke
+                savematrix setmatrix
+                end
+        }def
+/e {ps_canvas_draw_ellipse} bind def

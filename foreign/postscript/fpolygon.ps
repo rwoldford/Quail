@@ -1,0 +1,29 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:    ps_canvas_draw_filled_polygon
+%------------------------------------------------------------------------------
+% DESCRIPTION:  This procedure accepts a variable number of pairs of
+%               coordinates on the stack (points), an iteration counter
+%               (= n, the number of points on the stack), and a colour to fill
+%               the polygon with.
+%
+% COMMAND LINE:
+%               x1 y1 x2 y2 ... xn yn counter ps_canvas_draw_filled_polygon
+%------------------------------------------------------------------------------
+/ps_canvas_draw_filled_polygon {
+   ps_draw_dict begin
+      /counter exch def
+      /last_y exch def
+      /last_x exch def
+      newpath
+      last_x last_y moveto
+      counter 1 sub {
+         /current_y exch def
+         /current_x exch def
+         current_x current_y lineto
+      } repeat
+      closepath
+      fill
+   end
+} def
+
+/fp {ps_canvas_draw_filled_polygon} bind def

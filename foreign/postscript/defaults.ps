@@ -1,0 +1,173 @@
+/ps_draw_dict 30 dict def
+ps_draw_dict /mtrx matrix put           % Allocated space for save mtrx
+
+%------------------------------------------------------------------------------
+% PROCEDURE:	ps_convert_canvas_to_pages
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This function converts the xpixels by ypixels input to 
+%		ps_canvas_redraw to the number of pages required for the
+%		canvas in the x and y directions.
+%
+% COMMAND LINE:
+%	xpixels ypixels ps_convert_canvas_to_pages
+%
+% RETURNS:
+%	columns (pages in the x dir) and rows (pages in the y dir) 
+%------------------------------------------------------------------------------
+/ps_convert_canvas_to_pages{
+	ps_draw_dict begin
+	/canvas_height exch def
+	/canvas_width exch def
+	canvas_width ps_paper_width canvas_horizontal_margin 2 mul sub idiv
+	canvas_width ps_paper_width canvas_horizontal_margin 2 mul sub mod
+	ps_paper_width canvas_horizontal_margin 2 mul sub div 0 gt{1 add}if
+	canvas_height ps_paper_height canvas_vertical_margin 2 mul sub idiv
+	canvas_height ps_paper_height canvas_vertical_margin 2 mul sub mod
+	ps_paper_height canvas_vertical_margin 2 mul sub div 0 gt{1 add}if
+	end
+}def	
+%------------------------------------------------------------------------------
+% PROCEDURE:	ps_set_page_boundaries
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This function sets the drawing boundaries of each page
+%		in the canvas according to the horizontal and vertical
+%		margins set in the top of the header file.
+%
+% COMMAND LINE:
+%	ps_set_page_boundaries
+%------------------------------------------------------------------------------
+/ps_set_page_boundaries{
+	ps_draw_dict begin
+	newpath
+		canvas_horizontal_margin canvas_vertical_margin moveto
+		ps_paper_width canvas_horizontal_margin sub canvas_vertical_margin lineto
+		ps_paper_width canvas_horizontal_margin sub
+		ps_paper_height canvas_vertical_margin sub lineto
+		canvas_horizontal_margin ps_paper_height canvas_vertical_margin sub lineto
+		closepath
+	clip
+        newpath
+	end
+}def
+%------------------------------------------------------------------------------
+% PROCEDURE:	ps_canvas_redraw
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure redraws the postscript canvas defined by
+%		the user.  It determines from the xpixels and ypixels inputs
+%		the number of pages required to print the entire canvas
+%		and then proceeds to fill the pages with the correct portions
+%		of the canvas for output to the laser printer.
+%
+% COMMAND LINE:
+%	canvas xpixels ypixels ps_canvas_redraw
+%
+% NOTE: When calling this function it is important that the graphics state
+%	be set for the default initial values of the printer. (ie: scaling,
+%	translated origins etc.)  Therefore, it is important that the canvas
+%	procedure call a gsave initially and a grestore at the end to ensure
+%	that this is the case.
+%------------------------------------------------------------------------------
+/ps_canvas_redraw{
+	ps_draw_dict begin
+	/canvas_height exch def
+	/canvas_width exch def
+	canvas_width canvas_height ps_convert_canvas_to_pages
+	/rows exch def
+	/columns exch def
+	/bigpictureproc exch def
+	ps_set_page_boundaries
+	canvas_horizontal_margin canvas_vertical_margin translate
+        /canvas_horizontal {ps_paper_width canvas_horizontal_margin 2 mul sub 1 add} bind def
+        /canvas_vertical {ps_paper_height canvas_vertical_margin 2 mul sub 1 add} bind def
+	0 1 rows 1 sub{
+		/rowcount exch def
+		0 1 columns 1 sub{
+			/colcount exch def
+			gsave
+                                canvas_horizontal colcount mul neg
+				canvas_vertical rowcount mul neg
+				translate
+                                canvas_horizontal columns mul
+                                canvas_width sub 2 idiv
+                                canvas_vertical rows mul
+                                canvas_height sub 2 idiv
+                                translate
+				bigpictureproc
+				gsave showpage grestore
+			grestore
+		}for
+	}for
+	end
+}def
+/redraw {ps_canvas_redraw} bind def
+%------------------------------------------------------------------------------
+% PROCEDURE:    ps_set_canvas_background
+%------------------------------------------------------------------------------
+% DESCRIPTION:  This procedure sets the background colour for the canvas.
+%
+% COMMAND LINE:
+%       [red green blue] ps_set_canvas_background
+%
+%       Arguments in brackets are optional.
+%       Optional arguments which are not specified will be replaced by default
+%       values.
+%
+% NOTES: If colour is specified all three of red, green, and blue MUST be
+%       specified.  This function should only be called at the beginning of
+%       a postscript file unless the user intends to clear the entire canvas.
+% THIS FUNCTION NEEDS TO BE CHANGED TO ALLOW FOR MULTIPLE PAGE CANVASSES
+%------------------------------------------------------------------------------
+/ps_set_canvas_background
+        {ps_draw_dict begin
+                /blue exch def
+                /green exch def
+                /red exch def
+                0 0 moveto
+                0 ps_paper_height lineto
+                ps_paper_width ps_paper_height lineto
+                ps_paper_width 0 lineto
+                0 0 lineto
+                red green blue setrgbcolor
+                fill
+                default_red default_green default_blue setrgbcolor
+                end
+        }def
+/blah{
+ps_draw_dict begin
+pop pop pop
+end
+}def
+/b {blah} bind def
+
+%------------------------------------------------------------------------------
+% PROCEDURE:	ps_canvas_unstroked_draw_to
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure draws a line from the current position on the
+%		canvas to a given (x,y) position.  Optional arguments are line
+%		width and colour.
+%
+% COMMAND LINE:
+%	x y [lwidth] [r g b] ps_canvas_unstroked_draw_to
+%
+%	Arguments in brackets are optional.
+%	Optional commands which are not specified will be replaced by default
+%	values.
+%
+% NOTE: This function must not be called immediately after a newpath statement
+%	(ie: there must be a current (x,y) position in memory.).  If necessary
+%	this can be remedied by a 0 0 moveto to indicate the origin as the 
+%	current (x,y) position.  As usual, if colour is specified, all three
+%	elements must be specified.  This function is used by:
+%               ps-canvas-draw-polygon
+%               ps-canvas-draw-filled-polygon
+%------------------------------------------------------------------------------
+/ps_canvas_unstroked_draw_to
+	{ps_draw_dict begin
+		/y exch def
+		/x exch def
+		currentpoint moveto
+		x y lineto
+		end
+	}def
+/u {ps_canvas_unstroked_draw_to} bind def
+

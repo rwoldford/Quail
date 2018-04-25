@@ -1,0 +1,869 @@
+Working data will be in /usr/people/dganglin/.Data
+> print.summary       
+function(x, ...)
+{
+	n <- length(x)
+	nn <- names(x)
+	for(i in seq(length = n)) {
+		xx <- x[[i]]
+		if(length(xx) > 1) {
+			cat(nn[i], ":\n", sep = "")
+			print(xx, ...)
+		}
+		else cat(nn[i], ": ", format(xx), "\n", sep = "")
+		if(i < n)
+			cat("\n")
+	}
+}
+> print.summary.gam   
+function(x, digits = NULL, quote = T, prefix = "")
+{
+	if(is.null(digits))
+		digits <- options()$digits
+	else options(digits = digits)
+	cat("\nCall: ")
+	dput(x$call)
+	dresid <- x$deviance.resid
+	n <- length(dresid)
+	rdf <- x$df[2]
+	if(rdf > 5) {
+		cat("Deviance Residuals:\n")
+		rq <- quantile(as.vector(dresid))
+		names(rq) <- c("Min", "1Q", "Median", "3Q", "Max")
+		print(rq, digits = digits)
+	}
+	else if(rdf > 0) {
+		cat("Deviance Residuals:\n")
+		print(dresid, digits = digits)
+	}
+	cat(paste("\n(Dispersion Parameter for", names(x$dispersion), 
+		"family taken to be", format(round(x$dispersion, digits)),
+		")\n"))
+	int <- attr(x$terms, "intercept")
+	cat("\n    Null Deviance:", format(round(x$null.deviance, digits)),
+		"on", n - int, "degrees of freedom\n")
+	cat("\nResidual Deviance:", format(round(x$deviance, digits)), "on",
+		format(round(rdf, digits)), "degrees of freedom\n")
+	cat("\nNumber of Local Scoring Iterations:", format(trunc(x$iter)),
+		"\n")
+	print(x$anova)
+}
+> print.summary.glm  
+function(x, digits = NULL, quote = T, prefix = "")
+{
+	nas <- x$nas
+	coef <- x$coef
+	correl <- x$correl
+	if(any(nas)) {
+		nc <- length(nas)
+		cnames <- names(nas)
+		coef1 <- array(NA, c(nc, 3), list(cnames, dimnames(coef)[[2]]))
+			
+		coef1[!nas,  ] <- coef
+		coef <- coef1
+		correl1 <- matrix(NA, nc, nc, dimnames = list(cnames, cnames))
+		correl1[!nas, !nas] <- correl
+		correl <- correl1
+	}
+	if(is.null(digits))
+		digits <- options()$digits
+	else options(digits = digits)
+	cat("\nCall: ")
+	dput(x$call)
+	dresid <- x$deviance.resid
+	n <- length(dresid)
+	rdf <- x$df[2]
+	if(rdf > 5) {
+		cat("Deviance Residuals:\n")
+		rq <- quantile(as.vector(dresid))
+		names(rq) <- c("Min", "1Q", "Median", "3Q", "Max")
+		print(rq, digits = digits)
+	}
+	else if(rdf > 0) {
+		cat("Deviance Residuals:\n")
+		print(dresid, digits = digits)
+	}
+	if(any(nas))
+		cat("\nCoefficients: (", sum(nas), 
+			" not defined because of singularities)\n", sep = "")
+		
+	else cat("\nCoefficients:\n")
+	print(coef, digits = digits)
+	cat(paste("\n(Dispersion Parameter for", names(x$dispersion), 
+		"family taken to be", format(round(x$dispersion, digits)),
+		")\n"))
+	int <- attr(x$terms, "intercept")
+	if(is.null(int))
+		int <- 1
+	cat("\n    Null Deviance:", format(round(x$null.deviance, digits)),
+		"on", n - int, "degrees of freedom\n")
+	cat("\nResidual Deviance:", format(round(x$deviance, digits)), "on",
+		round(rdf, digits), "degrees of freedom\n")
+	cat("\nNumber of Fisher Scoring Iterations:", format(trunc(x$iter)),
+		"\n")
+	p <- dim(correl)[2]
+	if(p > 1) {
+		cat("\nCorrelation of Coefficients:\n")
+		ll <- lower.tri(correl)
+		correl[ll] <- format(round(correl[ll], digits))
+		correl[!ll] <- ""
+		print(correl[-1,  - p, drop = F], quote = F, digits = digits)
+	}
+	invisible(NULL)
+}
+> print.summary.lm   
+function(x, digits = .Options$digits - 3, ...)
+{
+	cat("\nCall: ")
+	dput(x$call)
+	resid <- x$residuals
+	df <- x$df
+	rdf <- df[2]
+	if(rdf > 5) {
+		cat("Residuals:\n")
+		if(length(dim(resid)) == 2) {
+			rq <- apply(t(resid), 1, quantile)
+			dimnames(rq) <- list(c("Min", "1Q", "Median", "3Q",
+				"Max"), dimnames(resid)[[2]])
+		}
+		else {
+			rq <- quantile(resid)
+			names(rq) <- c("Min", "1Q", "Median", "3Q", "Max")
+		}
+		print(rq, digits = digits, ...)
+	}
+	else if(rdf > 0) {
+		cat("Residuals:\n")
+		print(resid, digits = digits, ...)
+	}
+	if(nsingular <- df[3] - df[1])
+		cat("\nCoefficients: (", nsingular, 
+			" not defined because of singularities)\n", sep = "")
+		
+	else cat("\nCoefficients:\n")
+	print(x$coef, digits = digits, ...)
+	cat("\nResidual standard error:", format(signif(x$sigma, digits)),
+		"on", rdf, "degrees of freedom\n")
+	cat("Multiple R-Squared:", format(signif(x$r.squared, digits)), "\n")
+	correl <- x$correlation
+	p <- dim(correl)[2]
+	if(p > 1) {
+		cat("\nCorrelation of Coefficients:\n")
+		ll <- lower.tri(correl)
+		correl[ll] <- format(round(correl[ll], digits), ...)
+		correl[!ll] <- ""
+		print(correl[-1,  - p, drop = F], quote = F, digits = digits,
+			...)
+	}
+	invisible(x)
+}
+> print.summary.loess 
+function(x, ...)
+{
+	c1 <- "Number of Observations:"
+	c2 <- x$num.observation
+	if(!is.null(x$num.level)) {
+		c1 <- c(c1, "Number per Level:")
+		c2 <- c(c2, x$num.level)
+	}
+	c1 <- c(c1, "Equivalent Number of Parameters:")
+	if(x$family == "gaussian")
+		c1 <- c(c1, "Residual Standard Error:")
+	else c1 <- c(c1, "Residual Scale Estimate:")
+	c2 <- c(c2, format(round(x$enp, 1)), format(signif(x$inf.s, 4)))
+	if(!is.null(x$covariance)) {
+		c1 <- c(c1, "Multiple R-squared:")
+		c2 <- c(c2, format(round(x$covariance, 2)))
+	}
+	sum <- cbind(c1, c2)
+	dimnames(sum) <- list(rep("", dim(sum)[1]), rep("", dim(sum)[2]))
+	res.quantile <- x$res.quantile
+	names(res.quantile) <- c("min", "1st Q", "median", "3rd Q", "max")
+	cat("Call:\n")
+	dput(x$call)
+	print(sum, quote = F)
+	cat(" Residuals:", "\n")
+	print(signif(res.quantile, 4))
+	invisible(x)
+}
+> print.summary.tree 
+function(x, digits = .Options$digits - 3, ...)
+{
+	cat(x$type)
+	dput(x$call)
+	if(!is.null(x$used)) {
+		cat("Variables actually used in tree construction:\n")
+		print(as.character(x$used))
+	}
+	cat(paste("Number of terminal nodes: ", x$size, "\n"))
+	if(!is.null(x$effect.size))
+		cat("Effective number of terminal nodes: ", format(signif(
+			x$effect.size, digits)), "\n")
+	cat(paste("Residual mean deviance: ", format(signif(x$dev/x$df, digits)
+		), "=", format(signif(x$dev, digits)), "/", format(signif(
+		x$df, digits)), "\n"))
+	if(!is.null(x$misclass))
+		cat("Misclassification error rate:", format(signif(x$misclass[
+			1]/x$misclass[2], digits)), "=", x$misclass[1], "/",
+			x$misclass[2], "\n")
+	else {
+		cat("Distribution of residuals:\n")
+		print(summary(x$residuals, digits = digits, ...))
+	}
+	invisible(x)
+}
+> summary             
+function(object, ...)
+UseMethod("summary")
+> summary.aov         
+function(object, alias = F, intercept = F)
+{
+	effects <- object$effects
+	asgn <- object$R.assign
+	if(is.null(asgn))
+		asgn <- object$assign
+	resid <- object$residuals
+	if(is.null(effects)) {
+		df <- nterms <- neff <- 0
+		ss <- ms <- alleff <- numeric(0)
+		rl <- character(0)
+	}
+	else {
+		nterms <- length(asgn)
+		nobs <- length(resid)
+		rl <- names(asgn)
+		alleff <- unlist(asgn)
+		neff <- length(alleff)
+		if(!intercept && neff && rl[1] == "(Intercept)") {
+			asgn <- asgn[-1]
+			rl <- rl[-1]
+			nterms <- nterms - 1
+			nobs <- nobs - 1
+		}
+		ss <- numeric(nterms)
+		df <- ss
+		for(i in seq(length = nterms)) {
+			ai <- asgn[[i]]
+			df[i] <- length(ai)
+			ss[i] <- sum(effects[ai]^2)
+		}
+	}
+	df.res <- object$df.resid
+	if(is.null(df.res))
+		df.res <- nobs - length(unlist(asgn))
+	if(df.res > 0) {
+		resid <- object$resid
+		nterms <- nterms + 1
+		df[nterms] <- df.res
+		ss[nterms] <- sum(resid^2)
+		rl[nterms] <- "Residuals"
+	}
+	ok <- df > 0
+	if(all(ok))
+		ms <- ss/df
+	else {
+		ms <- rep.int(NA, nterms)
+		ms[ok] <- ss[ok]/df[ok]
+	}
+	ems <- object$ems.coef
+	x <- list(Df = df, "Sum of Sq" = ss, "Mean Sq" = ms)
+	if(df.res > 0 && is.null(ems)) {
+		TT <- ms/ms[nterms]
+		TP <- 1 - pf(TT, df, df.res)
+		TT[nterms] <- TP[nterms] <- NA
+		x$"F Value" <- TT
+		x$"Pr(F)" <- TP
+	}
+	if(!is.null(ems)) {
+		if(df.res == 0)
+			ems <- ems[ - match("Residuals", dimnames(ems)[[1]],
+				nomatch = 0),  - match("Residuals", dimnames(
+				ems)[[2]], nomatch = 0)]
+		dd <- dim(ems)
+		if(dd[1] < nterms) {
+			evar <- rep(NA, nterms)
+			labs <- dimnames(ems)[[1]]
+			ll <- match(labs, rl)
+			evar[ll] <- solve(t(ems), ms[ll])
+		}
+		else evar <- solve(t(ems), ms)
+		x$"Est. Var." <- evar
+	}
+	cl <- c("anova", "data.frame")
+	if(object$rank > 0 && alias) {
+		attr(x, "alias") <- alias.lm(object, scale = F)
+		cl <- c("aliased", cl)
+	}
+	attr(x, "row.names") <- rl
+	class(x) <- cl
+	x
+}
+> summary.aovlist    
+function(object)
+{
+	strata <- names(object)
+	if(strata[1] == "(Intercept)") {
+		strata <- strata[-1]
+		object <- object[-1]
+	}
+	names(object) <- paste("Error:", strata)
+	for(i in seq(along = strata))
+		object[[i]] <- summary(object[[i]])
+	class(object) <- "listof"
+	object
+}
+> summary.data.frame  
+function(object, maxsum = 7, ...)
+{
+	nv <- length(object)
+	nm <- names(object)
+	z <- vector("list", nv)
+	nr <- numeric(nv)
+	nrow <- 0
+	labels <- NULL
+	for(i in 1:nv) {
+		ss <- summary(object[[i]], maxsum = maxsum, ...)
+		nn <- names(ss)
+		n <- length(ss)
+		if(n > nrow)
+			nrow <- n
+		z[[i]] <- ss
+	}
+	for(i in 1:nv) {
+		ss <- z[[i]]
+		sval <- format(ss)
+		nr[i] <- nchar(sval[1])
+		ss <- paste(format(names(ss)), ":", sval, "  ", sep = "")
+		length(ss) <- nrow
+		z[[i]] <- ss
+	}
+	z <- unlist(z)
+	dim(z) <- c(nrow, nv)
+	blanks <- paste(character(max(nr) + 2), collapse = " ")
+	pad <- ceiling(2 + pmax(0, nr - nchar(nm)/2))
+	nm <- paste(nm, substring(blanks, 1, pad), sep = "")
+	dimnames(z) <- list(rep("", nrow), nm)
+	attr(z, "class") <- c("table", "matrix")
+	z
+}
+> summary.default     
+function(object, ..., digits = options()$digits - 3)
+{
+	if(length(levels(object)))
+		return(summary.factor(object, ...))
+	value <- if(is.numeric(object)) {
+		nas <- is.na(object)
+		object <- object[!nas]
+		qq <- quantile(object)
+		qq <- signif(c(qq[1:3], mean(object), qq[4:5]), digits)
+		names(qq) <- c("Min.", "1st Qu.", "Median", "Mean", "3rd Qu.",
+			"Max.")
+		if(any(nas))
+			c(qq, "NA's" = sum(nas))
+		else qq
+	}
+	else if(is.recursive(object) && !is.language(object) && (n <- length(
+		object))) {
+		sumry <- array("", c(n, 3), list(names(object), c("Length",
+			"Class", "Mode")))
+		ll <- numeric(n)
+		for(i in 1:n) {
+			ii <- object[[i]]
+			ll[i] <- length(ii)
+			sumry[i, 2] <- class(ii)
+			sumry[i, 3] <- mode(ii)
+		}
+		sumry[, 1] <- format(ll)
+		class(sumry) <- "table"
+		sumry
+	}
+	else c(Length = length(object), Class = class(object), Mode = mode(
+			object))
+	class(value) <- "table"
+	value
+}
+> summary.factor     
+function(object, maxsum = 100)
+{
+	nas <- is.na(object)
+	ll <- levels(object)
+	if(any(nas))
+		maxsum <- maxsum - 1
+	if(length(ll) > maxsum) {
+		ttt <- table(object)
+		nnn <- names(ttt)
+		o <- rev(order(ttt))
+		drop <- maxsum:length(ll)
+		ttt <- c(ttt[o[ - drop]], "(Other)" = sum(ttt[o[drop]]))
+	}
+	else ttt <- table(object)
+	if(any(nas))
+		c(ttt, "NA's" = sum(nas))
+	else ttt
+}
+> summary.gam         
+function(object, dispersion = NULL)
+{
+	fun <- function(assign, coeff)
+	sum(!is.na(coeff[assign]))
+	wt <- object$weights
+	coef <- object$coef
+	dresid <- residuals(object, "deviance")
+	resid <- object$residuals
+	n <- length(resid)
+	s <- object$s
+	nl.chisq <- object$nl.chisq
+	assg <- object$assign
+	if(is.null(assg))
+		assg <- attributes(object$terms)$assign
+	df <- sapply(assg, fun, object$coef)
+	names(df) <- names(assg)
+	nldf <- object$nl.df
+	n <- length(object$residuals)
+	if(is.null(rdf <- object$df.resid)) {
+		rdf <- n - sum(df)
+		if(!is.null(nldf))
+			rdf <- rdf - sum(nldf)
+	}
+	if(!is.null(wt)) {
+		wt <- wt^0.5
+		resid <- resid * wt
+		excl <- wt == 0
+		if(any(excl)) {
+			warning(paste(sum(excl), 
+				"rows with zero weights not counted"))
+			resid <- resid[!excl]
+			dresid <- dresid[!excl]
+			if(is.null(object$df.residual))
+				rdf <- rdf - sum(excl)
+		}
+	}
+	if(rdf > 0)
+		phihat <- sum(resid^2)/rdf
+	else phihat <- NA
+	famname <- object$family["name"]
+	if(is.null(famname))
+		famname <- "Gaussian"
+	chiorf <- T
+	if(!is.null(dispersion) && dispersion == 0)
+		dispersion <- phihat
+	if(is.null(dispersion))
+		dispersion <- switch(famname,
+			Poisson = 1,
+			Binomial = 1,
+			{
+				chiorf <- F
+				phihat
+			}
+			)
+	names(dispersion) <- famname
+	if(length(df)) {
+		aod <- as.matrix(round(df, 1))
+		dimnames(aod) <- list(names(df), "Df")
+		if(!is.null(nl.chisq)) {
+			aod <- cbind(aod, NA, NA, NA)
+			nl.chisq <- nl.chisq/dispersion
+			snames <- names(nldf)
+			aod[snames, 2] <- round(nldf, 1)
+			aod[snames, 3] <- nl.chisq
+			aod[snames, 4] <- if(chiorf) 1 - pchisq(nl.chisq, nldf)
+				 else 1 - pf(nl.chisq/nldf, nldf, rdf)
+			rnames <- c("Df", "Npar Df", "Npar Chisq", "P(Chi)")
+			if(!chiorf)
+				rnames[3:4] <- c("Npar F", "Pr(F)")
+			dimnames(aod) <- list(names(df), rnames)
+			heading <- if(chiorf) 
+					"\nDF for Terms and Chi-squares for Nonparametric Effects\n"
+				 else 
+					"\nDF for Terms and F-values for Nonparametric Effects\n"
+			
+		}
+		else heading <- "DF for Terms\n\n"
+		aod <- as.anova(data.frame(aod, check.names = F), heading)
+	}
+	else aod <- NULL
+	structure(list(call = object$call, terms = object$terms, anova = aod,
+		dispersion = dispersion, df = c(sum(df) + sum(nldf), rdf),
+		deviance.resid = dresid, deviance = deviance(object), 
+		null.deviance = object$null.deviance, iter = object$iter),
+		class = "summary.gam")
+}
+> summary.glm         
+function(object, dispersion = NULL)
+{
+	wt <- object$weights
+	coef <- object$coef
+	resid <- object$residuals
+	dresid <- residuals(object, "deviance")
+	n <- length(resid)
+	p <- object$rank
+	if(is.null(p))
+		p <- sum(!is.na(coef))
+	if(!p) {
+		warning("This model has zero rank --- no summary is provided")
+		return(object)
+	}
+	nsingular <- length(coef) - p
+	rdf <- object$df.resid
+	if(is.null(rdf))
+		rdf <- n - p
+	R <- object$R	#check for rank deficiencies
+	if(p < max(dim(R)))
+		R <- R[1:p, 	#coded by pivoting
+		1:p]
+	if(!is.null(wt)) {
+		wt <- wt^0.5
+		resid <- resid * wt
+		excl <- wt == 0
+		if(any(excl)) {
+			warning(paste(sum(excl), 
+				"rows with zero weights not counted"))
+			resid <- resid[!excl]
+			if(is.null(object$df.residual))
+				rdf <- rdf - sum(excl)
+		}
+	}
+	rinv <- diag(p)
+	if(n > p)
+		phihat <- sum(resid^2)/rdf
+	else phihat <- NA
+	famname <- object$family["name"]
+	if(is.null(famname))
+		famname <- "Gaussian"
+	if(!is.null(dispersion) && dispersion == 0)
+		dispersion <- phihat
+	if(is.null(dispersion))
+		dispersion <- switch(famname,
+			Poisson = 1,
+			Binomial = 1,
+			phihat)
+	names(dispersion) <- famname
+	rinv <- backsolve(R, rinv)
+	rowlen <- drop(((rinv^2) %*% rep(1, p))^0.5)
+	covun <- rinv %*% t(rinv)
+	correl <- covun * outer(1/rowlen, 1/rowlen)
+	nas <- is.na(coef)
+	cnames <- names(coef[!nas])
+	coef <- matrix(rep(coef[!nas], 3), ncol = 3)
+	dimnames(coef) <- list(cnames, c("Value", "Std. Error", "t value"))
+	coef[, 2] <- rowlen %o% sqrt(dispersion)
+	coef[, 3] <- coef[, 1]/coef[, 2]
+	dimnames(correl) <- list(cnames, cnames)
+	dimnames(covun) <- list(cnames, cnames)
+	ocall <- object$call
+	if(!is.null(form <- object$formula)) {
+		if(is.null(ocall$formula))
+			ocall <- match.call(get("glm"), ocall)
+		ocall$formula <- form
+	}
+	structure(list(call = ocall, terms = object$terms, coefficients = coef,
+		dispersion = dispersion, df = c(p, rdf), deviance.resid = 
+		dresid, cov.unscaled = covun, correlation = correl, deviance = 
+		deviance(object), null.deviance = object$null.deviance, iter = 
+		object$iter, nas = nas), class = "summary.glm")
+}
+> summary.lm         
+function(object)
+{
+#this method is designed on the assumption that the coef method
+# returns only the estimated coefficients.  It will (it's asserted)
+# also work, however, with fitting methods that don't follow this
+# style, but instead put NA's into the unestimated coefficients
+	wt <- object$weights
+	coef <- coefficients(object)
+	cnames <- labels(coef)
+	ctotal <- object$coef
+	ptotal <- length(ctotal)
+	resid <- residuals(object)
+	fv <- fitted(object)
+	n <- length(resid)
+	p <- object$rank
+	if(is.null(p))
+		p <- sum(!is.na(ctotal))
+	if(any(na <- is.na(coef))) {
+		coef <- coef[!na]
+		p <- length(coef)
+	}
+	rdf <- object$df.resid
+	if(is.null(rdf))
+		rdf <- n - p
+	if(!is.null(wt)) {
+		wt <- wt^0.5
+		resid <- resid * wt
+		fv <- fv * wt
+		excl <- wt == 0
+		if(any(excl)) {
+			warning(paste(sum(excl), 
+				"rows with zero weights not counted"))
+			resid <- resid[!excl]
+			fv <- fv[!excl]
+			if(is.null(object$df.residual))
+				rdf <- rdf - sum(excl)
+		}
+	}
+	rinv <- diag(p)
+	dimnames(rinv) <- list(cnames, cnames)
+	if(n > p)
+		stddev <- sqrt(sum(resid^2)/rdf)
+	else stddev <- NA
+	R <- object$R
+	if(p < ptotal)
+		R <- R[1:p, 1:p, drop = F]
+	rinv <- solve(R, rinv)
+	rowlen <- (rinv^2 %*% rep.int(1, p))^0.5
+	names(rowlen) <- cnames
+	correl <- rinv * array(1/rowlen, c(p, p))
+	correl <- correl %*% t(correl)
+	coef <- array(coef, c(p, 3))
+	dimnames(coef) <- list(cnames, c("Value", "Std. Error", "t value"))
+	coef[, 2] <- rowlen %o% stddev
+	coef[, 3] <- coef[, 1]/coef[, 2]
+	yy <- fv + resid
+	int <- attr(object$terms, "intercept")
+	if(is.null(int))
+		r2 <- NA
+	else if(int)
+		r2 <- sum((fv - mean(fv))^2)/sum((yy - mean(yy))^2)
+	else r2 <- sum((fv)^2)/sum((yy)^2)
+	object <- object[c("call", "terms")]
+	object$residuals <- resid
+	object$coefficients <- coef
+	object$sigma <- stddev
+	object$df <- c(p, rdf, ptotal)
+	object$r.squared <- r2
+	object$cov.unscaled <- rinv %*% t(rinv)
+	object$correlation <- correl
+	class(object) <- "summary.lm"
+	object
+}
+> summary.loess       
+function(x, ...)
+{
+	summary <- structure(list(call = x$call, num.observation = length(
+		x$residuals), enp = x$surface$enp, inf.s = x$inference$s, 
+		family = x$errors$family, res.quantile = quantile(x$residuals,
+		seq(0, 1, 0.25))), class = "summary.loess")
+	if(!is.null(attr(x$terms, "lvlall")))
+		summary$num.level <- paste(attr(x$terms, "lvlall"), collapse = 
+			" ")
+	if(summary$family == "gaussian")
+		summary$covariance <- cor(x$fitted.values * sqrt(x$errors$
+			weights), (x$fitted.values + x$residuals) * sqrt(x$
+			errors$weights))^2
+	summary
+}
+> summary.mlm         
+function(object)
+{
+	coef <- coefficients(object)
+	ny <- dim(coef)[2]
+	if(is.null(ny))
+		return(NextMethod("summary"))
+	else NULL
+	yseq <- 1:ny
+	effects <- object$effects
+	resid <- object$residuals
+	fitted <- object$fitted.values
+	ynames <- dimnames(coef)[[2]]
+	if(length(ynames) != ny)
+		ynames <- paste("Y", yseq, sep = "")
+	value <- vector("list", ny)
+	names(value) <- paste("Response:", ynames)	
+	# the following shift of the class of the object is only needed
+# when summary.mlm is called directly (should it be even then?)
+	cl <- class(object)
+	class(object) <- cl[match("mlm", cl):length(cl)][-1]
+	for(i in yseq) {
+		object$coefficients <- coef[, i]
+		object$residuals <- resid[, i]
+		object$fitted.values <- fitted[, i]
+		object$effects <- effects[, i]
+		value[[i]] <- NextMethod("summary")
+	}
+	class(value) <- "listof"
+	value
+}
+> summary.ms         
+function(object, inf.matrix = T)
+{
+	z <- list()
+	x <- object$parameters
+	xname <- names(x)
+	np <- length(x)
+	g <- object$gradient
+	h <- object$hessian
+	flags <- object$flags
+	z$"Final value" <- object$value
+	pgh <- data.frame(Par. = x, row.names = make.names(xname, T))
+	if(length(g))
+		pgh[["Grad."]] <- g
+	if(length(h)) {
+		dimnames(h) <- list(xname, abbreviate(xname, 4))
+		pgh[["Hessian"]] <- h
+	}
+	z$Solution <- pgh
+	if(length(h))
+		z$Information <- solve(h)
+	z$Convergence <- min.cvg.msg(flags[1])
+	ii <- flags[c(31, 6, 30)]
+	names(ii) <- c("Iterations", "Function", "Gradient")
+	z$"Computations done" <- ii
+	attr(z, "class") <- c("summary.ms", "summary")
+	z
+}
+> summary.nls         
+function(object)
+{
+	wt <- object$weights
+	resid <- object$residuals
+	n <- length(resid)
+	param <- object$param
+	pnames <- names(param)
+	p <- length(param)
+	R <- object$R
+	df <- n - p
+	if(!is.null(wt)) {
+		wt <- wt^0.5
+		resid <- resid * wt
+		fv <- fv * wt
+		excl <- wt == 0
+		if(any(excl)) {
+			warning(paste(sum(excl), 
+				"rows with zero weights not counted"))
+			resid <- resid[!excl]
+			fv <- fv[!excl]
+			df <- df - sum(excl)
+		}
+	}
+	rinv <- diag(p)
+	dimnames(rinv) <- list(pnames, pnames)
+	if(n > p)
+		stddev <- sqrt(sum(resid^2)/df)
+	else stddev <- error.est
+	rinv <- backsolve(R, rinv)
+	rowlen <- (rinv^2 %*% rep.int(1, p))^0.5
+	names(rowlen) <- pnames
+	correl <- rinv * array(1/rowlen, c(p, p))
+	correl <- correl %*% t(correl)
+	param <- array(param, c(p, 3))
+	dimnames(param) <- list(pnames, c("Value", "Std. Error", "t value"))
+	param[, 2] <- rowlen %o% stddev
+	param[, 3] <- param[, 1]/param[, 2]
+	sumy <- list(parameters = param, sigma = stddev, df = c(p, n - p),
+		cov.unscaled = rinv %*% t(rinv), correlation = correl, formula
+		 = object$formula)
+	attr(sumy, "class") <- "nls.summary"
+	sumy
+}
+> summary.ordered     
+function(object, maxsum = 100, ...)
+{
+	nas <- is.na(object)
+	ll <- levels(object)
+	if(any(nas))
+		maxsum <- maxsum - 1
+	if(length(ll) > maxsum) {
+		old <- length(ll)
+		new <- floor((maxsum * seq(from = 0, length = old))/old)
+		d.at <- diff(new) > 0
+		object <- category(new[object], label = paste(c(1, d.at + 1),
+			"-", c(d.at, old)))
+	}
+	ttt <- table(object)
+	if(any(nas))
+		c(ttt, "NA's" = sum(nas))
+	else ttt
+}
+> summary.tree       
+function(object)
+{
+	obj <- list(call = object$call)
+	frame <- object$frame
+	obj$type <- if(is.reg <- is.null(attr(object, "ylevels"))) 
+			"\nRegression tree:\n" else "\nClassification tree:\n"
+	leaves <- frame$var == "<leaf>"
+	variables <- names(attr(object, "xlevels"))
+	used <- unique(frame$var[!leaves])
+	if(length(used) < length(variables))
+		obj$used <- used
+	obj$size <- sum(leaves)
+	obj$df <- frame$n[1] - obj$size
+	if(is.bonzai <- inherits(object, "bonzai")) {
+		obj$effect.size <- round(sum(1/frame$n[object$where]), 1)
+		obj$df <- frame$n[1] - obj$effect.size
+	}
+	obj$dev <- deviance.tree(object)
+	if(!is.reg)
+		obj$e <- c(misclass.tree(object), frame$n[1])
+	else obj$residuals <- residuals(object)
+	class(obj) <- "summary.tree"
+	obj
+}
+> residuals         
+function(object, ...)
+UseMethod("residuals")
+> residuals.lm      
+function(object, type = c("pearson", "working", "deviance"))
+{
+	if(missing(type))
+		type <- "pearson"
+	else type <- match.arg(type)
+	switch(type,
+		working = object$residuals,
+		pearson = if(is.null(object$weights)) object$residuals else 
+				residuals.glm(object, "pearson"),
+		deviance = if(is.null(object$weights)) object$residuals else 
+				residuals.glm(object, "pearson"))
+}
+> residuals.glm
+function(object, type = c("deviance", "pearson", "working", "response"))
+{
+	type <- match.arg(type)
+	switch(type,
+		working = object$residuals,
+		pearson = sqrt(object$weights) * object$residuals,
+		deviance = {
+			y <- object$y
+			mu <- object$fitted
+			family <- as.family(object)
+			w <- object$prior.w
+			if(is.null(w))
+				w <- rep(1, length(mu))
+			family$deviance(mu, y, w, residuals = T)
+		}
+		,
+		response = object$y - fitted(object))
+}
+> residuals.default
+function(object, type)
+object$residuals
+> residuals.tree   
+function(object, type = NULL)
+{
+	if(!inherits(object, "tree"))
+		stop("Not legitimate tree")
+	if(is.null(y <- object$y))
+		y <- model.extract(model.frame(object), "response")
+	frame <- object$frame
+	if(is.null(ylevels <- attr(object, "ylevels")))
+		return(y - frame$yval[object$where])	#	y <- unclass(y)
+	if(missing(type))
+		type <- "usual"
+	else if(is.na(match(type, c("usual", "pearson", "deviance"))))
+		stop("Don't know about this type of residual")
+	if(type == "usual")
+		yhat <- frame$yval[object$where]
+	else yhat <- frame$yprob[object$where,  ][cbind(seq(y), unclass(y))]
+	r <- switch(type,
+		usual = as.integer(y != yhat),
+# misclassification
+		pearson = (1 - yhat)/yhat,
+# sum((obs-fitted)/fitted)
+		deviance = -2 * log(yhat))
+	names(r) <- names(y)
+	r
+}
+> resid
+function(object, ...)
+UseMethod("residuals")
+> 

@@ -1,0 +1,78 @@
+From barrow.uwaterloo.ca!dganglin Mon Dec  5 15:00:15 1994
+Received: from barrow.uwaterloo.ca ([129.97.140.32]) by versicolor.uwaterloo.ca with SMTP id <37855>; Mon, 5 Dec 1994 15:00:09 -0500
+Received: by barrow.uwaterloo.ca id <106197>; Mon, 5 Dec 1994 14:59:51 -0500
+From: Greg Anglin <dganglin@barrow.uwaterloo.ca>
+To: rwoldfor@versicolor.uwaterloo.ca
+Subject: Re:  Re-compiling Quail.
+Cc: dganglin@barrow.uwaterloo.ca
+Message-Id: <94Dec5.145951est.106197@barrow.uwaterloo.ca>
+Date: Mon, 5 Dec 1994 14:59:44 -0500
+Status: RO
+
+>I would like to recompile the foreign code without the FPU stuff.
+>Could you remind me how I start this going?
+>I.e. What is the top-level command(s)?
+>
+>I know I need to edit quail-path and comment out all the references to
+>either fpu or 6881.
+>That done (and the file re-evaled), do I look into
+>Quaff:ffenv-libs-mcl.lisp and eval the fun definition (after removing
+>6881 piece) of fenvs-create-compile on a list of filenames
+>(not pathnames, but string of the whole pathname?)
+>that are the source files to be compiled.
+>
+>Then the output of that op is to be snarfed into an MPW and executed?
+>
+>If so, where is the quail-path info used?
+>Do I need to make use of the other stuff in ffenv-libs-mcl.lisp?
+
+Hi Wayne --
+
+I think this is how it will go.  Things are a little bit strange because of an
+inconsistency about where files live, but we can manage for the moment.
+
+In ffenv-libs-mcl.lisp,  remove all of the "-mc68881" strings wherever
+they appear, and reload the file.  Also eval the ffenvs-create-compile 
+function.
+
+In quail-path.lisp, *change* (not comment out !) occurrences
+of "FPU" and "881" to null string in the *standard-libraries-table*, 
+and evaluate the relevant stuff.  (Might want to make a copy of these
+lines and comment them out, first, though.)
+
+Copy the files q:source;quaff;c programs;types.c and types-mcl.c to
+the directory q:foreign;quaff.
+
+Then, I guess, do the following:
+
+(qk::ffenvs-create-compile (directory "q:foreign;quaff;*.c")
+                           :c
+                           "q:foreign;quaff;fundamental-compile.mpw")
+
+(qk::ffenvs-create-compile (directory "q:foreign;linpack;*.f")
+                           :fortran
+                           "q:foreign;linpack;linpack-compile.mpw")
+
+(qk::standardize-foreign-environments NIL NIL NIL T)
+
+Boot up MPW, open q:foreign;quaff;fundamental-compile.mpw and eval its
+contents.  Then do q:foreign;linpack;linpack-compile.mpw.
+
+After these two, open q:foreign;ffenv-libs;standard-quail-ffenvs.make,
+and eval its contents.
+
+It's probably best, at this point, to reboot Quail and see if everything
+goes OK.  Not sure that a problem would be detectable, though.  Might want
+to ask Arthur if he knows of an FPU-less '040 hooked up to MacJanet that
+we might test this on.
+
+Might want to stash this doc file in the Foreign directory somewhere.
+                                      
+It's a bit of a trick for me to get at MPW, so this is untested.  If you
+have trouble, let me know, though, 'cuz I *could* do it at this end if
+need be.
+
+Please let me know how it turns out ...
+
+Greg
+

@@ -1,0 +1,259 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;                               window-basics.qmk                              
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;
+;;; Copyright (c) 1991 Statistical Computing Laboratory, University of Waterloo
+;;;
+;;;
+;;;  Authors:
+;;;     R.W. Oldford 1991 - 1992.
+;;;
+;;;
+;;;--------------------------------------------------------------------------------
+
+(in-package :make)
+
+(eval-when (compile load eval)
+  (load-pathnames "window-basics"))
+
+;;;  The following hack lets us support different window systems for
+;;;  different CLs
+;;;  ... rwo
+
+(defun wb-add-system-extension (file-name-string)
+  #+:ccl-2 (add-system-extension file-name-string)
+  #+:clx (concatenate 'string file-name-string "-clx")
+  #+:aclpc (concatenate 'string file-name-string "-pc"))
+
+
+(defsystem window-basics
+  :source-pathname (identity (append-directories
+                                (path-source)
+                                (path-window-basics)))
+  :binary-pathname (identity (append-directories
+                                (path-binary)
+                                (bin (path-window-basics))))
+  :components
+  ((:file "window-basics-package")
+   (:module startup
+            :source-pathname (path-window-basics-startup)
+            :binary-pathname (bin (path-window-basics-startup))
+            :components
+            ((:file "restore")
+             ;;(:file (wb-add-system-extension "restore"))
+             ;;<-- use quail's restore fns instead
+             (:file "debug")))
+   (:module macros
+            :source-pathname (path-window-basics-macros)
+            :binary-pathname (bin (path-window-basics-macros))
+            :components
+            ((:file (wb-add-system-extension "macros"))
+             (:file (wb-add-system-extension "operations"))
+             (:file "operations")
+             (:file "positions")
+             (:file "display-mode")))
+   
+   (:module host
+            :source-pathname (path-window-basics-host)
+            :binary-pathname (bin (path-window-basics-host))
+            :components
+            ((:file "host-draw-package")
+             (:file (wb-add-system-extension "host-system"))
+             (:file (wb-add-system-extension "host-draw"))
+             (:file (wb-add-system-extension "scrolling-window"))
+             (:file (wb-add-system-extension "host-menu-canvas"))
+             (:file (wb-add-system-extension "host-window"))
+             (:file (wb-add-system-extension "host-fonts"))
+             ))
+   (:module region
+            :source-pathname (path-window-basics-region)
+            :binary-pathname (bin (path-window-basics-region))
+            :components
+            ((:file "region")))
+   (:module transforms
+            :source-pathname (path-window-basics-transforms)
+            :binary-pathname (bin (path-window-basics-transforms))
+            :components
+            ((:file "list-transforms")
+             ;;(:file integer-affine-transforms)
+             ))
+   (:module color
+            :source-pathname (path-window-basics-color)
+            :binary-pathname (bin (path-window-basics-color))
+            :components
+            ((:file (wb-add-system-extension "color"))
+             (:file "color")
+             (:file "color-table")
+             (:file (wb-add-system-extension "color-mixin"))
+             )
+            :depends-on ("macros"))
+   (:module fonts
+            :source-pathname (path-window-basics-fonts)
+            :binary-pathname (bin (path-window-basics-fonts))
+            :components
+            ((:file "font")
+             (:file (wb-add-system-extension "default-fonts"))
+             (:file (wb-add-system-extension "font-mixin")))
+            :depends-on ("macros"))
+   (:module pen
+            :source-pathname (path-window-basics-pen)
+            :binary-pathname (bin (path-window-basics-pen))
+            :components
+            ((:file "pen")
+             ;; Following contains only a list of legal pen-ops ... never used.
+             ;; (:file (wb-add-system-extension "pen"))
+             (:file "pen-mixin")))
+   (:module bitmap
+            :source-pathname (path-window-basics-bitmap)
+            :binary-pathname (bin (path-window-basics-bitmap))
+            :components
+            ((:file (wb-add-system-extension "bitmap"))
+             (:file "bitmap")
+             (:file (wb-add-system-extension "cursor"))
+             (:file "shades")
+             (:file (wb-add-system-extension "shades"))
+             (:file "cursor")
+             (:file "patterns"))
+            :depends-on ("pen" "macros"))
+   (:module monitor
+            :source-pathname (path-window-basics-monitor)
+            :binary-pathname (bin (path-window-basics-monitor))
+            :components
+            ((:file (wb-add-system-extension "screen"))
+             (:file "screen")
+             (:file (wb-add-system-extension "device"))
+             (:file "device")))
+   (:module mouse
+            :source-pathname (path-window-basics-mouse)
+            :binary-pathname (bin (path-window-basics-mouse))
+            :components
+            ((:file (wb-add-system-extension "mouse"))
+             (:file "button-default")
+             (:file "canvas-button")
+             (:file "mouse")
+             (:file (wb-add-system-extension "canvas-button"))
+             ))
+   (:module menus
+            :source-pathname (path-window-basics-menus)
+            :binary-pathname (bin (path-window-basics-menus))
+            :components
+            ((:file "menu-canvas")
+             (:file (wb-add-system-extension "menu-canvas"))
+             (:file "menu")
+             (:file (wb-add-system-extension "menu"))))
+   (:module prompt
+            :source-pathname (path-window-basics-prompt)
+            :binary-pathname (bin (path-window-basics-prompt))
+            :components
+            ((:file (wb-add-system-extension "dialog-items"))
+             (:file (wb-add-system-extension "dialog"))
+             (:file (wb-add-system-extension "prompt"))
+             (:file (wb-add-system-extension "pick-one"))
+             (:file (wb-add-system-extension "check-items"))
+             (:file (wb-add-system-extension "collect-input"))))
+   (:module redisplay
+            :source-pathname (path-window-basics-redisplay)
+            :binary-pathname (bin (path-window-basics-redisplay))
+            :components
+            ((:file (wb-add-system-extension "canvas-ops"))
+             (:file "canvas-redisplay")
+             (:file (wb-add-system-extension "canvas-redisplay"))))
+   (:module postscript
+            :source-pathname (path-window-basics-postscript)
+            :binary-pathname (bin (path-window-basics-postscript))
+            :components
+            ((:file "postscript-canvas")
+             (:file (wb-add-system-extension "ps-font"))
+             (:file "ps-file")
+             (:file "ps-draw")
+             (:file "ps-strings")
+             (:file "ps-prompt")
+             (:file "canvas-to-ps"))
+            :depends-on ("macros"))
+   (:module canvas
+            :source-pathname (path-window-basics-canvas)
+            :binary-pathname (bin (path-window-basics-canvas))
+            :components
+            ((:file "canvas")
+             (:file (wb-add-system-extension "bw-canvas"))
+             (:file (wb-add-system-extension "color-canvas"))
+             (:file "make-canvas")
+             (:file "key-event")
+             (:file (wb-add-system-extension "key-event"))
+           ))
+   (:module draw
+            :source-pathname (path-window-basics-draw)
+            :binary-pathname (bin (path-window-basics-draw))
+            :components
+            ((:file "draw")
+             (:file (wb-add-system-extension "draw"))
+             (:file (wb-add-system-extension "strings"))
+             (:file "strings")
+             (:file "erase"))
+            :depends-on ("macros" "pen" "fonts" "host"))
+   (:module canvas-regions
+            :source-pathname (path-window-basics-canvas-regions)
+            :binary-pathname (bin (path-window-basics-canvas-regions))
+            :components
+            (;;(:file (wb-add-system-extension "canvas-regions"))
+             (:file "canvas-regions")
+             (:file (wb-add-system-extension "clip"))
+             (:file "clip")
+             (:file (wb-add-system-extension "drag")))
+            :depends-on ("macros" "pen"))
+   (:module hardcopy
+            :source-pathname (path-window-basics-hardcopy)
+            :binary-pathname (bin (path-window-basics-hardcopy))
+            :components
+            ((:file (wb-add-system-extension "canvas-export"))
+             (:file (wb-add-system-extension "hardcopy"))))
+   (:module fast-graphics
+            :source-pathname (path-window-basics-fast-graphics)
+            :binary-pathname (bin (path-window-basics-fast-graphics))
+            :components
+            ((:file (wb-add-system-extension "point-defs"))
+             (:file (wb-add-system-extension "points")
+                    :depends-on (#+:ccl "point-defs-mcl"))
+             (:file (wb-add-system-extension "symbols" )
+                    :depends-on (#+:ccl "point-defs-mcl"))
+             (:file (wb-add-system-extension "lines" ) 
+                    :depends-on (#+:ccl "point-defs-mcl"))
+             (:file "rotate"))
+            :depends-on ("macros" "pen"))
+   (:module surface
+            :source-pathname (path-window-basics-surface)
+            :binary-pathname (bin (path-window-basics-surface))
+            :components
+            ((:file "surface-rotate")
+             (:file "surface-update")
+             (:file "show-lines")
+             (:file "hide-lines")
+             (:file "surface-fill")
+             ))
+   (:module start-windows
+            :source-pathname (path-window-basics-start-windows)
+            :binary-pathname (bin (path-window-basics-start-windows))
+            :components
+            ((:file (add-system-extension "start-windows"))
+             ))))
+
+(defun compile-window-basics (&rest op-on-sys-keyword-pairs
+                              &key (verbose T)
+                              &allow-other-keys)
+  "Compiles the window-basics system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'window-basics 'compile
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))
+
+(defun load-window-basics (&rest op-on-sys-keyword-pairs
+                           &key (verbose T)
+                           &allow-other-keys)
+  "Loads the window-basics system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'window-basics 'load
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))

@@ -1,0 +1,114 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;                               statistics.qmk                              
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;
+;;; Copyright (c) 1992 Statistical Computing Laboratory, University of Waterloo
+;;;
+;;;
+;;;  Authors:
+;;;     D.G. Anglin 1992.
+;;;     R.W. Oldford 1992.
+;;;
+;;;
+;;;--------------------------------------------------------------------------------
+
+(in-package :make)
+
+(eval-when (compile load eval)
+  (load-pathnames "statistics")
+  )
+        
+
+(defsystem statistics
+   :source-pathname (identity (append-directories
+                                 (path-source)
+                                 (path-statistics)))
+   :binary-pathname (identity (append-directories
+                                 (path-binary)
+                                 (bin (path-statistics))))
+   :components
+   ((:module basic-statistics
+             :source-pathname (path-basic-statistics)
+             :binary-pathname (bin (path-basic-statistics))
+             :components
+             ((:file "summary-statistics")
+              (:file "sweep")))
+    
+    (:module stat-graphics
+             :source-pathname (path-stat-graphics)
+             :binary-pathname (bin (path-stat-graphics))
+             :components
+             ((:file "projection-trace")
+              (:file "qq-plot")
+              ;; --> split between Views and Stat-Sessions (:file "display")
+              (:file "display-probability")
+              (:file "stem")
+              (:file "hue-light-view")
+              (:file "imagel")
+              (:file "image")
+              )
+             )
+    
+    (:module models
+             :source-pathname (path-models)
+             :binary-pathname (bin (path-models))
+             :components ((:file "parse")
+                          (:file "formula-reduce")
+                          (:file "additive-formula-semantics")
+                          (:file "formula-object")
+                          (:file "factor")
+                          (:file "contrasts")
+                          (:file "response-matrix")
+                          (:file "data-object")
+                          (:file "data-frame")
+                          ;;(:file "fn")   ---> gone to Mathematics directory
+                          (:file "link")
+                          (:file "family")
+                          (:file "weight-fn")
+                          (:file "model-object")
+                          (:file "model-frame")
+                          (:file "fit")
+                          (:file "deviance")
+                          (:file "residuals")
+                          (:file "model-matrix")
+                          (:file "gam")
+                          (:file "gamfit-1") ;; temporary name, probably
+                          (:file "glm")
+                          (:file "least-squares-mixin")
+                          (:file "linear-model")
+                          (:file "lsfit")
+                          ;; (:file "models-topic-doc")
+                          (:file "new-terms")
+                          (:file "display")
+                          )
+             )
+    (:module stat-sessions
+             :source-pathname (path-stat-sessions)
+             :binary-pathname (bin (path-stat-sessions))
+             :components
+             ((:file "response-session"))
+             )
+    ))
+
+
+(defun compile-statistics (&rest op-on-sys-keyword-pairs
+                        &key (verbose T)
+                        &allow-other-keys)
+  "Compiles the statistics system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'statistics 'compile
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))
+
+(defun load-statistics (&rest op-on-sys-keyword-pairs
+                           &key (verbose T)
+                           &allow-other-keys)
+  "Loads the statistics system using make's~
+   operate-on-system's keywords."
+  (apply #'operate-on-system 'statistics 'load
+         :verbose verbose
+         :allow-other-keys T op-on-sys-keyword-pairs))
+

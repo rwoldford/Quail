@@ -1,0 +1,17 @@
+(in-package :q)
+
+(defun dgels-hook (a lda n ipvt b m job)
+  (declare (type fixnum job))
+  (declare (type fixnum m))
+  ;;(declare (type (simple-array single-float (* *)) b))
+  ;;(declare (type (simple-array fixnum (*)) ipvt))
+  (declare (type fixnum n))
+  (declare (type fixnum lda))
+  ;;(declare (type (simple-array single-float (* *)) a))
+  (prog ((j 0))
+        (declare (type fixnum j))
+        (fdo (j 1 (+ j 1))
+             ((> j m) nil)
+             (tagbody (dgesl-hook a lda n ipvt (vec-ref b 1 j) job)))
+        (return (values a lda n ipvt b m job))))
+

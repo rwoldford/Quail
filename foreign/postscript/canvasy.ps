@@ -1,0 +1,17 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:    ps_set_canvas_y
+%------------------------------------------------------------------------------
+% DESCRIPTION:  This procedure sets the y coordinate of the pen on the canvas
+%               while keeping the current pen x coordinate.
+%
+% COMMAND LINE:
+%       new_y_coordinate ps_set_canvas_y
+%------------------------------------------------------------------------------
+/ps_set_canvas_y
+        {ps_draw_dict begin
+                /new_y exch def
+                currentpoint pop new_y moveto
+                end
+        }def
+/y {ps_set_canvas_y} bind def
+

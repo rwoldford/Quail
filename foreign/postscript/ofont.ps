@@ -1,0 +1,82 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:	MakeOutlineBoldFont
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure generates an outline font from a base font
+%		given in the command line and creates a new font using the
+%		name also given in the command line.  This particular procedure
+%		generates a boldface font.
+%
+% COMMAND LINE:
+%	base_font_name new_font_name MakeOutlineBoldFont
+%------------------------------------------------------------------------------
+/MakeOutlineBoldFont{
+		ps_draw_dict begin
+		/newfontname exch def
+		/basefontname exch def
+		basefontname newfontname 1000 36 div
+		basefontname findfont dup /UniqueID known
+			{/UniqueID get newfontname length add}
+			{pop newfontname length}
+		ifelse 
+		MakeOutlineFont
+		end
+	}def
+%------------------------------------------------------------------------------
+% PROCEDURE:	MakeOutlinePlainFont
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure generates an outline font from a base font
+%		given in the command line and creates a new font using the
+%		name also given in the command line.  This particular procedure
+%		generates a plain style font.
+%
+% COMMAND LINE:
+%	base_font_name new_font_name MakeOutlinePlainFont
+%------------------------------------------------------------------------------
+/MakeOutlinePlainFont{
+		ps_draw_dict begin
+		/newfontname exch def
+		/basefontname exch def
+		basefontname newfontname 1000 54 div
+		basefontname findfont dup /UniqueID known
+			{/UniqueID get newfontname length add}
+			{pop newfontname length}
+		ifelse
+		MakeOutlineFont
+		end
+	}def
+%------------------------------------------------------------------------------
+% PROCEDURE:	MakeOutlineFont
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure generates an outline font from a base font
+%		given in the command line and creates a new font using the
+%		name also given in the command line.  This particular procedure
+%		is called by MakeOutlineBoldFont and MakeOutlinePlainFont and
+%		should never need to be called at any other time.
+%
+% COMMAND LINE:
+%	base_font_name new_font_name strokewidth uniqueid MakeOutlineFont
+%------------------------------------------------------------------------------
+/MakeOutlineFont{
+		ps_draw_dict begin
+		/uniqueid exch def
+		/strokewidth exch def
+		/newfontname exch def
+		/basefontname exch def
+		/basefontdict basefontname findfont def
+		/numentries basefontdict maxlength 1 add def
+		basefontdict /UniqueID known not
+		{/numentries numentries 1 add def} if
+		/outfontdict numentries dict def
+		basefontdict
+		{exch dup /FID ne
+			{exch outfontdict 3 1 roll put}
+			{pop pop}
+			ifelse
+		}forall
+		outfontdict /FontName newfontname put
+		outfontdict /PaintType 2 put
+		outfontdict /StrokeWidth strokewidth put
+		outfontdict /UniqueID uniqueid put
+		newfontname outfontdict definefont pop
+		end
+	}def

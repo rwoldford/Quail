@@ -1,0 +1,82 @@
+
+               WHAT YOU SHOULD KNOW ABOUT Z
+
+* To compile Z : - run ALLEGRO COMMON LISP
+                 - load compile-browser.mac
+                 - load compile-Z.mac
+
+* To load Z :    - run ALLEGRO COMMON LISP
+                 - compile Z then
+                 - load load-browser.mac
+                 - load load-Z.mac
+                 - execute (in-package 'Z)
+                 - execute (init-list-of-icons)
+
+* To save a clean Z environment :
+                 - load Z
+                 - execute (dumplisp "name"). This will create a file
+                   name.image containing your environment. By default,
+                   this file is compressed. If you want an uncompressed
+                   file (faster to load) execute instead
+                   (dumplisp "name" :compress nil)
+
+
+* How to add new functions to Z :
+     There are two parts in defining a new function : 
+     - the first one is the technical part consisting defining the operation 
+       of the function. This is a classical lisp function or method or ...
+       definition.
+     - The second part is an administrative part : If you want your new method
+       to be callable by a menu, you must execute the function add-function-in-menu
+       this function requires 4 arguments :
+         * the method name
+         * the label to appear in the menu
+         * the classification of the method
+         * the list of compulsory arguments of the method
+       for example, if you want a function foo to be called when the label bar is
+       selected from the submenu class1, this function having 2 arguments A and 
+       B, you will have to execute the command
+         (add-function-in-menu 'foo "bar" 'class1 '(A B))
+       when bar is selected in submenu class1, A will be identified with the
+       selected node on the map and the user will be prompted for B.
+       in the function definition, the arguments don't have to be called A and B
+
+* How to create a new analysis-map or a toolbox
+      
+       execute (browse (make-instance 'analysis-map))
+        or     (browse (make-instance 'toolbox))
+
+* How to create a vector given a list
+      for example I want to create a floatvector of 4 data : 1 2 3 and 4
+      to do this I just use the function by executing
+          (C '(1 2 3 4))
+      which return the floatvector object as a result.
+      I can add this object in a map by applying this function after selecting
+      "add result of a form evaluation" in menu "widen" of an analysis-map
+
+* Use of menus : 
+      There are several types of menu.
+      First, there is the menubar which applies the selected function to the
+      selected graph
+      There are also menus available to each node on the map. To apply a function
+      to a node of the map you must first select a node by clicking the mouse on
+      it. The selected node becomes highlighted on the map. When a node is 
+      selected, 2 menus are then availables :
+         The first one is obtained by clicking the mouse inside the window while
+         the option key is pressed. the functions availables by this menu are
+         the same for every type of node selected in a given type of map
+         The second one is obtained by clicking the mouse inside the window
+         while the command key is pressed. the functions availables by this
+         menu depend on the class of the selected node and can be customized
+         by the user using the function add-function-in-menu described above.
+
+      finally, by pressing both shift key and mouse button, the user can unread
+      a node
+
+
+* To shrink a window (browser), click in its zoom-box
+
+* to unshrink an icon double-click in it
+
+* to move the icon, click the mouse inside the icon and release the button at
+the desired position 

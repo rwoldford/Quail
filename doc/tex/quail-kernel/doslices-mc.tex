@@ -1,0 +1,28 @@
+\headerbox{DOSLICES}{}{QUAIL-KERNEL::MACRO}
+ 
+{\bf Description}
+
+Provides straightforward iteration over selected slices of a refable object. Syntax: ( doslices ( slice-var object slices \{[return-form] \| [order]\} ) \{form\}* ) First doslices evaluates the form object, which should produce a refable object. It then executes the body once for each slice in the object as determined by slices. The order of iteration is determined by the optional argument order: either :row ( the default ) for row major order, or :col for column major order. The variable slice-var is bound to the slice. Then, return-form is evaluated and the result is the value of the doslices form. ( When the return-form is evaluated, the control variable slice-var is still bound and has the value NIL. ) If return-form is omitted, the result is NIL. If slices is omitted, looping is over each element of the object.
+
+ 
+{\bf Lambda List}
+
+((SLICE-VAR OBJECT SLICES \&OPTIONAL RETURN-FORM (ORDER ROW)) \&BODY BODY)
+
+ 
+{\bf Arguments}
+
+
+\beginhang
+{\bf Required}\hspace{2em}
+ 
+{\bf (SLICE-VAR OBJECT SLICES \&OPTIONAL RETURN-FORM (ORDER ROW))}
+
+
+ 
+\endhang
+ 
+{\bf Home Package}
+
+QUAIL-KERNEL
+

@@ -1,0 +1,7 @@
+
+Aside from that, there are some small mods in the functions for
+dragging rectangles, new function for reshaping a rectangle,
+a fix for canvas set pen (ypu may have caught this by now)
+Also, I have added functions for drawing arcs. This I needed
+for the new view type "pie" as in piecharts. These may be used
+as multi-color glyphs in place of symbols in a pointcloud.

@@ -1,0 +1,53 @@
+; *************************************
+;  TEST DATA FOR THE GAMMA DISTRIBUTION
+; *************************************
+
+? (setf C (make-instance 'gamma :alpha 2))
+#<GAMMA #x10E1AA9>
+? (pdf-at C -1)
+0
+? (pdf-at C 0)
+0.0
+? (pdf-at C .25)
+0.19470019578307446
+? (pdf-at C  20)
+4.122307245199431E-8
+? (cdf-at C -1)
+0
+? (cdf-at C 0)
+0
+? (cdf-at C .25)
+0.026499021155388203
+? (cdf-at C 20)
+0.9999999567157739
+? (quantile-at C .026499)
+0.2499997044245319
+? (quantile-at C .8)
+2.9943085585027127
+? (let ((tot 0) (C))
+     (setf C (make-instance 'gamma :alpha 25))
+        (loop for i from 1 to 100 by 1
+             do (setf tot (+ tot (random-value C))))
+             (/ tot 100))
+24.94404678767354
+? (let ((tot 0) (C))
+     (setf C (make-instance 'gamma :alpha 4))
+        (loop for i from 1 to 100 by 1
+             do (setf tot (+ tot (random-value C))))
+             (/ tot 100))
+3.8724706889978453
+? (let ((tot 0) (C))
+     (setf C (make-instance 'gamma :alpha .5))
+        (loop for i from 1 to 100 by 1
+             do (setf tot (+ tot (random-value C))))
+             (/ tot 100))
+0.4392422239898341
+? (let ((tot 0) (C))
+     (setf C (make-instance 'gamma :alpha 25
+                                   :scale 2
+                                   :location 10))
+        (loop for i from 1 to 100 by 1
+             do (setf tot (+ tot (random-value C))))
+             (/ tot 100))
+58.30369373350564
+? 

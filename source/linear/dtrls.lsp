@@ -1,0 +1,17 @@
+(in-package :q)
+
+(defun dtrls-hook (t_ ldt n b m job info)
+  ;;(declare (type fixnum info))
+  ;;(declare (type fixnum job))
+  (declare (type fixnum m))
+  ;;(declare (type (simple-array single-float (* *)) b))
+  (declare (type fixnum n))
+  (declare (type fixnum ldt))
+  ;;(declare (type (simple-array single-float (* *)) t_))
+  (prog ((j 0))
+        (declare (type fixnum j))
+        (fdo (j 1 (+ j 1))
+             ((> j m) nil)
+             (tagbody (dtrsl-hook t_ ldt n (vec-ref b 1 j) job info)))
+        (return (values t_ ldt n b m job info))))
+

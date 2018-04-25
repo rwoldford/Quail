@@ -1,0 +1,71 @@
+;;test file for normal distribution
+
+(setf norm (make-instance 'normal))
+;standard normal
+
+(setf n (make-instance 'normal
+                       :location 5
+                       :scale 2))
+;normal (5,4)
+
+;so if x is from n, (x-5)/2 is a standard normal variate 
+
+;therefore, (pdf-at n x) should equal (1/2)*(pdf-at n ((x-5)/2))
+
+(pdf-at n most-negative-fixnum)
+(* (/ 1 2) (pdf-at norm (/ (- most-negative-fixnum 5) 2)))
+
+(pdf-at n -10)
+(* (/ 1 2) (pdf-at norm (/ (- -10 5) 2)))
+
+(pdf-at n 0)
+(* (/ 1 2) (pdf-at norm (/ (- 0 5) 2)))
+
+(pdf-at n 5)
+(* (/ 1 2) (pdf-at norm (/ (- 5 5) 2)))
+
+(pdf-at n 7)
+(* (/ 1 2) (pdf-at norm (/ (- 7 5) 2)))
+
+(pdf-at n most-positive-fixnum)
+(* (/ 1 2) (pdf-at norm (/ (- most-positive-fixnum 5) 2)))
+
+;(cdf-at n x) should equal (cdf-at norm ((x-5)/2))
+
+(cdf-at n -5)
+(cdf-at norm (/ (- -5 5) 2))
+
+(cdf-at n 1.71)
+(cdf-at norm (/ (- 1.71 5) 2))
+
+(cdf-at n 8.92)
+(cdf-at norm (/ (- 8.92 5) 2))
+
+(cdf-at n -11.5)
+(cdf-at norm (/ (- -11.5 5) 2))
+
+(cdf-at n -12)
+(cdf-at norm (/ (- -12 5) 2))
+
+;(quantile-at n p) should equal ((quantile-at norm p)*2)+5
+
+(quantile-at n .5)
+(setf x (quantile-at norm .5))
+(+  (* x 2) 5)
+
+(quantile-at n .6)
+(setf x (quantile-at norm .6))
+(+ (* x 2) 5)
+
+(quantile-at n .1)
+(setf x (quantile-at norm .1))
+(+ (* x 2) 5)
+
+;random values:
+
+(loop for i from 1 to 20 do
+      (print (random-value n)))
+
+(loop for i from 1 to 20 do
+      (print (random-value norm)))
+      

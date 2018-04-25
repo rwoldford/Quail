@@ -1,0 +1,23 @@
+#|Problems
+   1. labels outside of window area are not redrawn when scrolled
+   2. visible region is a little too short in shape-to-hold
+   3. reshaping window seems to change coordinate system without redisplaying
+   4. browser insists on adding points above the origin rather than below.
+|#
+
+
+;;;  Canvas region information:
+
+(wb::canvas-height self)
+(wb::canvas-width self)
+(wb::canvas-region self)
+(wb::clipping-region-of self)
+(get-active-region self)
+(wb::canvas-content-region-of self)
+(wb::extent-region-of self)
+(wb::mouse-position self)
+(wb::canvas-x-offset self)
+wb::*default-canvas-region*
+(wb::set-up-default-canvas-region)
+(wb::canvas-screen-region self)
+wb::*screen-region*

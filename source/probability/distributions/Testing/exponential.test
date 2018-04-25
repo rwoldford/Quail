@@ -1,0 +1,55 @@
+; ****************************************
+;   TEST DATA FOR THE EXPONENTIAL DISTRIBUTION
+; ****************************************
+
+7 > (setf C (make-instance 'Exponential :mean 2))
+#<EXPONENTIAL #x1100211>
+7 > (pdf-at C -1)
+0
+7 > (pdf-at C 0)
+0.5
+7 > (pdf-at C .5)
+0.38940039153570244
+7 > (pdf-at C .9)
+0.31881407581088667
+7 > (pdf-at C 100)
+9.643749239819589E-23
+7 > (cdf-at C -1)
+0
+7 > (cdf-at C 0)
+0.0
+7 > (cdf-at C .5)
+0.22119921692859512
+7 > (cdf-at C 1)
+0.3934693402873666
+7 > (cdf-at C 100)
+1.0
+8 > (quantile-at  C .221199)
+0.4999994429164182
+8 > (quantile-at C .393469)  
+0.9999988779222762
+8 > (quantile-at C -1)
+> Error: p must be between 0 and 1 
+> While executing: #<STANDARD-METHOD QUANTILE-AT (EXPONENTIAL T)>
+> Type Command-. to abort.
+See the RestartsÉ menu item for further choices.
+9 > 
+(quantile-at C 1)
+> Error: p must be between 0 and 1 
+> While executing: #<STANDARD-METHOD QUANTILE-AT (EXPONENTIAL T)>
+> Type Command-. to abort.
+See the RestartsÉ menu item for further choices.
+11 > (let ((tot 0) (C))
+     (setf C (make-instance 'exponential :mean 2))
+        (loop for i from 1 to 100 by 1
+             do (setf tot (+ tot (random-value C))))
+             (/ tot 100))
+
+1.8852338212031738
+11 > (let ((tot 0) (C))
+     (setf C (make-instance 'exponential :mean 10))
+        (loop for i from 1 to 100 by 1
+             do (setf tot (+ tot (random-value C))))
+             (/ tot 100))
+
+9.313751690058966

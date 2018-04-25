@@ -1,0 +1,177 @@
+Script started on Wed Jul 17 15:49:23 1991
+[r S statistics
+> print.default(gaussian())
+$family:
+       name           link      variance 
+ "Gaussian" "Identity: mu" "Constant: 1"
+
+$names:
+[1] "Identity: mu"
+
+$link:
+function(mu)
+mu
+
+$inverse:
+function(eta)
+eta
+
+$deriv:
+function(mu)
+1
+
+$initialize:
+expression(mu <- y, maxit <- 1)
+
+$variance:
+function(mu)
+1
+
+$deviance:
+function(mu, y, w, residuals = F)
+if(residuals) (y - mu) else sum(w * (y - mu)^2)
+
+$weight:
+expression(w)
+
+attr(, "class"):
+[1] "family"
+> print.default(binomial())
+$family:
+       name                      link             variance 
+ "Binomial" "Logit: log(mu/(1 - mu))" "Binomial: mu(1-mu)"
+
+$names:
+[1] "Logit: log(mu/(1 - mu))"
+
+$link:
+function(mu)
+log(mu/(1 - mu))
+
+$inverse:
+function(eta)
+{
+        junk <- care.exp(eta)
+        junk/(1 + junk)
+}
+
+$deriv:
+function(mu)
+{
+        d <- 1/(mu * (1 - mu))
+        if(any(huge <- is.na(d))) {
+                warning("Model unstable; fitted probabilities of 0 or 1")
+                d[huge] <- 1/.Machine$double.eps
+        }
+        d
+}
+
+$initialize:
+expression({
+        if(is.matrix(y)) {
+                if(dim(y)[2] > 2)
+                        stop("only binomial response matrices (2 columns)")
+                n <- drop(y %*% c(1, 1))
+                y <- y[, 1]
+        }
+        else {
+                if(is.category(y))
+                        y <- as.numeric(y) - 1
+                else y <- as.vector(y)
+                n <- rep(1, length(y))
+        }
+        y <- y/n
+        w <- w * n
+        mu <- y + (0.5 - y)/n
+}
+)
+
+$variance:
+function(mu)
+mu * (1 - mu)
+
+$deviance:
+function(mu, y, w, residuals = F)
+{
+        devy <- y
+        nz <- y != 0
+        devy[nz] <- y[nz] * log(y[nz])
+        nz <- (1 - y) != 0
+        devy[nz] <- devy[nz] + (1 - y[nz]) * log(1 - y[nz])
+        devmu <- y * log(mu) + (1 - y) * log(1 - mu)
+        if(any(small <- is.na(devmu))) {
+                warning("fitted values close to 0 or 1")
+                smu <- mu[small]
+                sy <- y[small]
+                smu <- ifelse(smu < .Machine$double.eps, .Machine$double.eps,
+                        smu)
+                onemsmu <- ifelse((1 - smu) < .Machine$double.eps, .Machine$
+                        double.eps, 1 - smu)
+                devmu[small] <- sy * log(smu) + (1 - sy) * log(onemsmu)
+        }
+        devi <- 2 * (devy - devmu)
+        if(residuals)
+                sign(y - mu) * sqrt(devi * w)
+        else sum(w * devi)
+}
+
+$weight:
+expression(w * mu * (1 - mu))
+
+attr(, "class"):
+[1] "family"
+> print.default(poisson())
+$family:
+      name           link       variance 
+ "Poisson" "Log: log(mu)" "Identity: mu"
+
+$names:
+[1] "Log: log(mu)"
+
+$link:
+function(mu)
+log(mu)
+
+$inverse:
+function(eta)
+care.exp(eta)
+
+$deriv:
+function(mu)
+1/mu
+
+$initialize:
+expression({
+        if(!is.null(dimy <- dim(y))) {
+                if(dimy[2] > 1)
+                        stop("multiple responses not allowed")
+                else y <- drop(y)
+        }
+        mu <- y + 0.167 * (y == 0)
+}
+)
+
+$variance:
+function(mu)
+mu
+
+$deviance:
+function(mu, y, w, residuals = F)
+{
+        nz <- y > 0
+        devi <-  - (y - mu)
+        devi[nz] <- devi[nz] + y[nz] * log(y[nz]/mu[nz])
+        if(residuals)
+                sign(y - mu) * sqrt(2 * devi * w)
+        else 2 * sum(w * devi)
+}
+
+$weight:
+expression(w * mu)
+
+attr(, "class"):
+[1] "family"
+> q()
+% exit
+% 
+script done on Wed Jul 17 15:50:20 1991

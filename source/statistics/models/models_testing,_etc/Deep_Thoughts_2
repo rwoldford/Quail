@@ -1,0 +1,96 @@
+******** DEEP THOUGHTS
+
+*** CLASSES
+
+ModelObject
+
+ImplicitModel
+  ??
+
+ResponseModel
+  [response] {Term or maybe list of Terms}
+  [predictor] {list of Terms}
+  [predictor-fn] {identifies form of predictor function}
+
+subclasses of Model
+  GAM
+    {enforce additivity in systematic part}
+    [link]  {Link}
+    [family]  {Family ... something that can represent
+                          variance functions, etc.  Maybe
+                          this could even be Distribution with
+                          a generalization for Quasilikelihood.
+                          How does this depend on stochastic slot ??}
+    [weight-fn] {Fn ... this depends on variance function
+                        and on deriv of link, so may be derivable}
+  GeneralizedLinearModel
+  LinearModel
+             {here link = identity, etc}
+
+--  Should different types of GLMs, say, have different subclasses
+    for specific values of link and family?  eg. an actual LogisticGLM
+    class when link = Logit, family = Binomial? etc ???
+    Maybe this could lead to some sort of "model-maker" generic function
+    or macro which does the appropriate mixins, etc and returns a class.
+
+--  The way we normally think of things, GeneralizedLinearModel will
+    above LinearModel on the hierarchy, which has the side effect of
+    leaving excess slots around with things like link = identity.
+    I guess this isn't too bad a problem, but for a user it makes
+    inspecting a simple object like an instance of LinearModel more
+    confusing, since some understanding of everything above on the
+    hierarchy is required.  From a philosophical point of view, it
+    has certainly been the case that the development of statistical
+    technology has been *up* the hierarchy (eg. inserting GAMs between
+    ModelObject and its subclass GLM), so everything below suddenly has new
+    slots.  Maybe a hierarchy that can grow in two directions, in two
+    different ways ? [ Probably too confusing to program with ]
+
+Link
+  [name] {string}
+  [link-fn] {Fn}  ;; can deriv of link (needed for fitting) from fn
+  [inverse-link-fn] {Fn}
+  
+Fn
+  [name]
+  [arglist]
+  [body]
+  [deriv]
+  [compiled-fn]
+
+Family
+  [name] {string}
+  [variance function] {Fn}
+  [deviance-fn] {Fn}  ;; is this the right place for this ??
+
+Term
+  {some structure which can represent in the abstract things
+   like 1-d predictor, poly(x,3), etc}
+
+DataFrame1
+  [data] {list of numerical 1-d or many-d, categorical, etc}
+  [names] {list of names for above}
+
+DataFrame2
+  [data] {alist of (names . {numerical 1-d or many-d, categorical, etc}) }
+
+-- Think about ref for DataFrames
+
+-- model-matrix is obtained by munging together a DataFrame
+   with a Model formula (use things here like contr.helmert, etc).
+
+FitObject
+  [model] {Model}
+  [dataframe] {DataFrame}
+  [model-matrix] {num-array containing data expanded to numbers
+                  according to the formula from model}
+
+subclasses of FitObject (eg. LeastSquaresFit)
+  things like [coef] {num-array}
+              [pred] {num-array}
+              [qrd]  {num-array}
+              [weights] {num-array}  ;; initial weighting
+  and so on.
+
+*** PROCEDURES
+

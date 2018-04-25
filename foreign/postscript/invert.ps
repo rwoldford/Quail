@@ -1,0 +1,27 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:	ps_canvas_invert
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure does a rudimentary job of indicating inverted
+%		areas in the postscript canvas.  This procedure draws a light
+%		grey rectangle around the inverted area bounded on the lower
+%		left by (x1,y1) and on the upper right by (x2,y2).
+%
+% COMMAND LINE:
+%	x1 y1 x2 y2 ps_canvas_invert
+%------------------------------------------------------------------------------
+/ps_canvas_invert
+	{ps_draw_dict begin
+		/upper_right_y exch def
+		/upper_right_x exch def
+		/lower_left_y exch def
+		/lower_left_x exch def
+		.75 .75 .75 setrgbcolor
+		lower_left_x lower_left_y moveto
+		lower_left_x upper_right_y lineto
+		upper_right_x upper_right_y lineto
+		upper_right_x lower_left_y lineto
+		closepath
+		stroke
+		end
+	}def
+/i {ps_canvas_invert} bind def

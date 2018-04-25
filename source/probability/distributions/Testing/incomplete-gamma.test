@@ -1,0 +1,22 @@
+********************************
+TESTING FOR INCOMPLETE-GAMMA FUNCTION
+*********************************
+
+
+? (incomplete-gamma 1 1)
+0.6321205580579482
+? (incomplete-gamma 1 3)
+0.9502129316304365
+? (incomplete-gamma 1 8)
+0.999664537372086
+? (incomplete-gamma 8 1)
+1.0249196376664226E-5
+? (incomplete-gamma 8 7)
+0.401286136021329
+? (incomplete-gamma 8 15)
+0.9819978068761992
+? (incomplete-gamma 8 -1)
+0.0
+? (incomplete-gamma 1 0)
+0.0
+? 

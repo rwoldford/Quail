@@ -1,0 +1,5 @@
+(in-package :wb)
+(load "software:Common Lisp:Hugh's stuff:make-data.lisp")
+(load "software:Common Lisp:Hugh's stuff:integer-affine-trans.lisp")
+(load "software:Common Lisp:Hugh's stuff:Spin-with-bitmap&at:plot-directly-on-bitmap")
+(load "software:Common Lisp:Hugh's stuff:Spin-with-bitmap&at:spin-at&bm")

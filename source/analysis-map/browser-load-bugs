@@ -1,0 +1,49 @@
+(mk::compile-browser)
+
+;  - Compiling system "browser"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:cl-extensions.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser bin:hacks.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:grapher-package.fasl"
+;    - Compiling source file
+;      "q;Source:Analysis-map:browser:browser-package.lisp"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:browser-package.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:grapher-var.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:grapher.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:grapher-mcl.fasl"
+;Warning:  FUNCTION APPLY-TO-SELECTED-NODE previously defined in: q;Source:Analysis-map:browser:grapher.lisp
+;                  is now being redefined in: q;Source:Analysis-map:browser:grapher-mcl.lisp
+;         
+; While executing: RECORD-SOURCE-FILE
+
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:graph-window.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:graph-window-mcl.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:browser-mcl.fasl"
+;    - Compiling source file "q;Source:Analysis-map:browser:browser.lisp"
+;Compiler warnings for "Devel:Quail:Source:Analysis-map:browser:browser.lisp" :
+;   Unused lexical variable PAIR, in GET-NODE-LIST.
+;Compiler warnings for "Devel:Quail:Source:Analysis-map:browser:browser.lisp" :
+;   Undefined function BROWSER::GET-METHOD, in BROWSER::UNDERSTANDS.
+;   Undefined function BROWSER::PRECEDENCE-LIST, in BROWSER::UNDERSTANDS.
+;   Undefined function BROWSER::TITLE-MIDDLE-SHIFT-SELECT, in BROWSER::TITLE-MIDDLE-CHOICE.
+;   Undefined function BROWSER::THE-SHIFT-KEY-P, in BROWSER::TITLE-MIDDLE-CHOICE.
+;   Undefined function BROWSER::THE-SHIFT-KEY-P, in BROWSER::TITLE-LEFT-CHOICE.
+;   Undefined function SCROLLING-WINDOW, in BROWSER::SCROLL-WINDOW.
+;   Undefined function BROWSER::THE-SHIFT-KEY-P, in BROWSER::MIDDLE-CHOICE.
+;   Undefined function BROWSER::THE-SHIFT-KEY-P, in BROWSER::LEFT-CHOICE.
+;   Undefined function BROWSER::DIRECT-SUBCLASSES, in BROWSER::GET-LINKS.
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:browser.fasl"
+;    - Loading binary file "q;Binary (2.0):Analysis-map:browser
+;      bin:browser-menu.fasl"
+;  - Providing system browser
+NIL
+? 

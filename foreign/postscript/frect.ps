@@ -1,0 +1,58 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:    ps_canvas_draw_filled_rectangle
+%------------------------------------------------------------------------------
+% DESCRIPTION:  This procedure is exactly the same as ps_canvas_draw_rectangle
+%               except that it fills the enclosed space rather than outlining
+%               it.
+%
+% COMMAND LINE:
+%               see ps_canvas_draw_rectangle
+%------------------------------------------------------------------------------
+/ps_canvas_draw_filled_rectangle
+        {ps_draw_dict begin
+                /upper_right_y exch def
+                /upper_right_x exch def
+                /lower_left_y exch def
+                /lower_left_x exch def
+                newpath
+                lower_left_x lower_left_y moveto
+                upper_right_x lower_left_y lineto
+                upper_right_x upper_right_y lineto
+                lower_left_x upper_right_y lineto
+                lower_left_x lower_left_y lineto
+                fill
+                newpath
+                end
+        }def
+/fr {ps_canvas_draw_filled_rectangle} bind def
+
+%------------------------------------------------------------------------------
+% PROCEDURE:	ps_canvas_clear
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure clears a rectangle of the canvas specified by
+%		the lower left (x1,y1) and upper right (x2,y2) corners of the
+%		rectangle.  This function clears the bounded area to white.
+%
+% COMMAND LINE:
+%	x1 y1 x2 y2 ps_canvas_clear
+%------------------------------------------------------------------------------
+/ps_canvas_clear
+	{ps_draw_dict begin
+                /blue exch def
+                /green exch def
+                /red exch def
+		/upper_right_y exch def
+		/upper_right_x exch def
+		/lower_left_y exch def
+		/lower_left_x exch def
+		gsave
+                            lower_left_x lower_left_y
+                            upper_right_x upper_right_y
+                            red green blue setrgbcolor
+                            ps_canvas_draw_filled_rectangle
+ 		grestore
+		end
+	}def
+/c {ps_canvas_clear} bind def
+
+

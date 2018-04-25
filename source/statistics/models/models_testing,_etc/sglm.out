@@ -1,0 +1,731 @@
+Working data will be in /usr/people/dganglin/.Data
+> anova.glm         
+function(object, ..., test = c("none", "Chisq", "F", "Cp"))
+{
+	test <- match.arg(test)
+	margs <- function(...)
+	nargs()
+	if(margs(...))
+		return(anova.glmlist(list(object, ...), test = test))
+	Terms <- object$terms
+	term.labels <- attr(Terms, "term.labels")
+	nt <- length(term.labels)
+	x <- object$x
+	m <- model.frame(object)
+	if(is.null(x))
+		x <- model.matrix(Terms, m)
+	ass <- attr(x, "assign")
+	control <- glm.control()
+	family <- as.family(object)
+	a <- attributes(m)
+	y <- model.extract(m, "response")
+	w <- model.extract(m, "weights")
+	if(!length(w))
+		w <- rep(1, nrow(m))
+	offset <- attr(Terms, "offset")
+	if(is.null(offset))
+		offset <- 0
+	else offset <- m[[offset]]
+	dev.res <- double(nt)
+	df.res <- dev.res
+	nulld <- object$null.deviance
+	if(is.null(nulld))
+		nulld <- sum(w * (y - weighted.mean(y, w))^2)
+	dev.res[1] <- nulld
+	df.res[1] <- nrow(x) - attr(Terms, "intercept")
+	if(nt > 1)
+		for(iterm in seq(nt, 2)) {
+			x <- x[,  - (ass[[(term.labels[iterm])]])]
+			fit <- glm.fit(x, y, w, offset = offset, family = 
+				family)
+			dev.res[iterm] <- deviance(fit)
+			df.res[iterm] <- fit$df.resid
+		}
+	dev.res <- c(dev.res, deviance(object))
+	df.res <- c(df.res, object$df.resid)
+	dev <- c(NA,  - diff(dev.res))
+	df <- c(NA,  - diff(df.res))
+	heading <- c("Analysis of Deviance Table\n", paste(family$family[1],
+		"model\n"), paste("Response: ", as.character(formula(object))[
+		2], "\n", sep = ""), "Terms added sequentially (first to last)"
+		)
+	aod <- data.frame(Df = df, Deviance = dev, "Resid. Df" = df.res, 
+		"Resid. Dev" = dev.res, row.names = c("NULL", term.labels),
+		check.names = F)
+	attr(aod, "heading") <- heading
+	attr(aod, "class") <- c("anova", "data.frame")
+	if(test == "none")
+		aod
+	else stat.anova(aod, test, deviance.lm(object)/object$df.resid, object$
+			df.resid, nrow(x))
+}
+> anova.glmlist     
+function(object, ..., test = c("none", "Chisq", "F", "Cp"))
+{
+	diff.term <- function(term.labels, i)
+	{
+		t1 <- term.labels[[1]]
+		t2 <- term.labels[[2]]
+		m1 <- match(t1, t2, F)
+		m2 <- match(t2, t1, F)
+		if(all(m1)) {
+			if(all(m2))
+				return("=")
+			else return(paste(c("", t2[ - m1]), collapse = "+"))
+		}
+		else {
+			if(all(m2))
+				return(paste(c("", t1[ - m2]), collapse = "-"))
+				
+			else return(paste(i - 1, i, sep = " vs. "))
+		}
+	}
+	test <- match.arg(test)
+	rt <- length(object)
+	if(rt == 1) {
+		object <- object[[1]]
+		UseMethod("anova")
+	}
+	forms <- sapply(object, function(x)
+	as.character(formula(x)))
+	subs <- as.logical(match(forms[2,  ], forms[2, 1], F))
+	if(!all(subs))
+		warning(
+			"Some fit objects deleted because response differs from the first model"
+			)
+	if(sum(subs) == 1)
+		stop("The first model has a different response from the rest")
+	forms <- forms[, subs]
+	object <- object[subs]
+	dfres <- sapply(object, "[[", "df.resid")
+	dev <- sapply(object, "[[", "deviance")
+	tl <- lapply(object, labels)
+	rt <- length(dev)
+	effects <- character(rt)
+	for(i in 2:rt)
+		effects[i] <- diff.term(tl[c(i - 1, i)], i)
+	ddev <-  - diff(dev)
+	ddf <-  - diff(dfres)
+	heading <- c("Analysis of Deviance Table", paste("\nResponse: ", forms[
+		2, 1], "\n", sep = ""))
+	aod <- data.frame(Terms = forms[3,  ], "Resid. Df" = dfres, 
+		"Resid. Dev" = dev, Test = effects, Df = c(NA, ddf), Deviance
+		 = c(NA, ddev), check.names = F)
+	aod <- as.anova(aod, heading)
+	if(test != "none") {
+		n <- length(object[[1]]$residuals)
+		o <- order(dfres)
+		stat.anova(aod, test, dev[o[1]]/dfres[o[1]], dfres[o[1]], n)
+	}
+	else aod
+}
+> deviance.glm     
+function(object, ...)
+object$deviance
+> family.glm        
+function(object)
+family(object$call$family)
+> glm               
+function(formula = formula(data), family = gaussian, data = sys.parent(), 
+	weights, subset, na.action, start = eta, control = glm.control(...),
+	method = "glm.fit", model = F, x = F, y = T, ...)
+{
+	call <- match.call()
+	m <- match.call(expand = F)
+	m$family <- m$method <- m$model <- m$x <- m$y <- m$control <- m$... <-
+		NULL
+	m[[1]] <- as.name("model.frame")
+	m <- eval(m, sys.parent())
+	Terms <- attr(m, "terms")
+	if(method == "model.frame")
+		return(m)
+	a <- attributes(m)
+	Y <- model.extract(m, response)
+	X <- model.matrix(Terms, m)
+	w <- model.extract(m, weights)
+	if(!length(w))
+		w <- rep(1, nrow(m))
+	start <- model.extract(m, start)
+	offset <- attr(Terms, "offset")
+	if(is.null(offset))
+		offset <- 0
+	else offset <- m[[offset]]
+	family <- as.family(family)
+	if(missing(method))
+		method <- attr(family, "method")
+	if(!is.null(method)) {
+		if(!exists(method, mode = "function"))
+			stop(paste("unimplemented method:", method))
+	}
+	else method <- "glm.fit"
+	glm.fitter <- get(method)
+	fit <- glm.fitter(x = X, y = Y, w = w, start = start, offset = offset,
+		family = family, maxit = control$maxit, epsilon = control$
+		epsilon, trace = control$trace, null.dev = T, ...)
+	attr(fit, "class") <- c("glm", "lm")
+	fit$terms <- Terms
+	fit$formula <- as.vector(attr(Terms, "formula"))
+	fit$call <- call
+	if(model)
+		fit$model <- m
+	if(x)
+		fit$x <- X
+	if(!y)
+		fit$y <- NULL
+	fit
+}
+> glm.control      
+function(epsilon = 0.0001, maxit = 10, trace = F, ...)
+{
+	if(epsilon <= 0) {
+		warning(
+			"the value of epsilon supplied is zero or negative; the default value of 0.0001 was used instead"
+			)
+		epsilon <- 0.0001
+	}
+	if(maxit < 1) {
+		warning(
+			"the value of maxit supplied is zero or negative; the default value of 10 was used instead"
+			)
+		maxit <- 10
+	}
+	list(epsilon = epsilon, maxit = maxit, trace = as.logical(trace)[1])
+}
+> glm.fit           
+function(x, y, w = rep(1, length(x[, 1])), start = NULL, offset = 0, family = 
+	gaussian(), maxit = 10, epsilon = 0.001, trace = F, null.dev = NULL,
+	qr = F, ...)
+{
+#for backchat with fortran
+	new.s.call <- expression({
+		if(c.list$one.more) {
+			eta <- c.list$fit + offset
+			mu <- family$inverse(eta)
+			old.dev <- new.dev
+			new.dev <- family$deviance(mu, y, w)
+			if(trace)
+				cat("GLM    linear loop ", iter, 
+					": deviance = ", format(round(new.dev,
+					4)), " \n", sep = "")
+			if(is.na(new.dev)) {
+				one.more <- FALSE
+				warning(
+					"iterations terminated prematurely because of singularities"
+					)
+			}
+			else one.more <- abs((old.dev - new.dev)/(old.dev +
+					epsilon)) > epsilon && iter < maxit
+			if(one.more) {
+				iter <- iter + 1
+				deriv.mu <- family$deriv(mu)
+				z <- eta + (y - mu) * deriv.mu - offset
+				c.list$z <- z
+				wz <- eval(family$weight)
+				c.list$wz <- wz
+			}
+			c.list$one.more <- one.more
+		}
+		c.list
+	}
+	)
+	family <- as.family(family)
+	eval(family$initialize)
+	if(length(start)) {
+		eta <- start
+		mu <- family$inverse(eta)
+	}
+	else eta <- family$link(mu)
+	new.dev <- family$deviance(mu, y, w)
+	if(!is.null(null.dev)) {
+		null.dev <- glm.null(x, y, w, offset, family)
+		if(length(null.dev) > 1)
+			return(null.dev)
+	}
+	dn <- dimnames(x)
+	xn <- dn[[2]]
+	yn <- dn[[1]]
+	iter <- 1
+	old.dev <- 10 * new.dev + 10
+	deriv.mu <- family$deriv(mu)
+	storage.mode(y) <- "double"
+	z <- eta + (y - mu) * deriv.mu - offset
+	wz <- eval(family$weight)
+	names(z) <- names(wz) <- yn
+	c.list <- list(wz = wz, z = z, fit = eta, one.more = T)	
+	### for Fortran backchat##############################
+	nframe <- sys.nframe()
+	.C("init_call",
+		as.integer(nframe),
+		new.s.call)	
+	######################################################
+	dx <- as.integer(dim(x))
+	n <- dx[[1]]
+	p <- dx[[2]]
+	tfit <- .Fortran("glmfit",
+		x,
+		n,
+		p,
+		backchat = T,
+		z,
+		weights = wz,
+		coefficients = double(p),
+		linear.predictors = z,
+		effects = z,
+		qr = x,
+		qraux = double(p),
+		rank = as.integer(0),
+		pivot = as.integer(seq(p)),
+		double(3 * n))
+	if(maxit > 1 && iter == maxit)
+		cat("Linear convergence not obtained in ", maxit, 
+			" iterations.\n")
+	coefs <- tfit$coeff
+	asgn <- attr(x, "assign")
+	names(coefs) <- xn
+	rank <- tfit$rank
+	cnames <- xn
+	if(rank < p) {
+		pivot <- tfit$pivot
+		coefs[pivot[ - seq(rank)]] <- NA
+		pasgn <- asgn
+		newpos <- match(1:p, pivot)
+		names(newpos) <- xn
+		for(j in names(asgn)) {
+			aj <- asgn[[j]]
+			aj <- aj[ok <- (nj <- newpos[aj]) <= rank]
+			if(length(aj)) {
+				asgn[[j]] <- aj
+				pasgn[[j]] <- nj[ok]
+			}
+			else asgn[[j]] <- pasgn[[j]] <- NULL
+		}
+		cnames <- xn[pivot]
+	}
+	R <- tfit$qr[1:p, 1:p]
+	R[lower.tri(R)] <- 0
+	attributes(R) <- list(dim = c(p, p), dimnames = list(cnames, cnames),
+		rank = rank, class = "upper")
+	effects <- tfit$effects
+	neff <- rep("", n)
+	neff[seq(p)] <- cnames
+	names(effects) <- neff
+	residuals <- z - tfit$linear
+	names(mu) <- names(residuals)
+	df.residual <- n - rank - sum(tfit$weights == 0)
+	fit <- list(coefficients = coefs, residuals = residuals, fitted.values
+		 = mu, effects = effects, R = R, rank = rank, assign = asgn,
+		df.residual = df.residual)
+	if(rank < p) {
+		if(df.residual > 0)
+			fit$assign.residual <- (rank + 1):n
+		fit$R.assign <- pasgn
+	}
+	if(qr)
+		fit$qr <- tfit[c("qr", "rank", "pivot", "qraux")]
+	fit$weights <- tfit$weights
+	if(length(attributes(w)) | any(w != w[1]))
+		fit$prior.weights <- w
+	this.call <- match.call()
+	c(fit, list(family = family$family, linear.predictors = tfit$linear,
+		deviance = new.dev, null.deviance = null.dev, call = this.call,
+		iter = iter, y = y))
+}
+> glm.links         
+               identity                   logit 
+     names Identity: mu Logit: log(mu/(1 - mu))
+      link function, 2  function, 2            
+   inverse function, 2  function, 2            
+     deriv function, 2  function, 2            
+initialize                                     
+
+                                          cloglog            probit 
+     names Complimentary Log: log( - log(1 - mu)) Probit: qnorm(mu)
+      link function, 2                            function, 2      
+   inverse function, 2                            function, 2      
+     deriv function, 2                            function, 2      
+initialize                                                         
+
+                    log       inverse                 1/mu^2 
+     names Log: log(mu) Inverse: 1/mu Inverse Square: 1/mu^2
+      link function, 2  function, 2   function, 2           
+   inverse function, 2  function, 2   function, 2           
+     deriv function, 2  function, 2   function, 2           
+initialize                                                  
+
+                            sqrt 
+     names Square Root: sqrt(mu)
+      link function, 2          
+   inverse function, 2          
+     deriv function, 2          
+initialize                      
+attr(, "names"):
+ [1] ""           "link"       "inverse"    "deriv"      "initialize"
+ [6] ""           "link"       "inverse"    "deriv"      "initialize"
+[11] ""           "link"       "inverse"    "deriv"      "initialize"
+[16] ""           "link"       "inverse"    "deriv"      "initialize"
+[21] ""           "link"       "inverse"    "deriv"      "initialize"
+[26] ""           "link"       "inverse"    "deriv"      "initialize"
+[31] ""           "link"       "inverse"    "deriv"      "initialize"
+[36] ""           "link"       "inverse"    "deriv"      "initialize"
+> glm.null         
+function(x, y, w, offset, family)
+{
+	n <- length(y)
+	intl <- attr(x, "term.labels")
+	int <- if(is.null(intl)) F else as.logical(match(intl[1], c("(Int.)",
+			"(Intercept)"), F))
+	mu <- if(int) weighted.mean(y, w) else family$inverse(0)
+	mu <- rep(mu, n)
+	deviance <- family$deviance(mu, y, w)
+	order <- attr(x, "order")
+	if(!any(order) && !(any(offset) & int)) {
+		residuals <- family$deriv(mu) * (y - mu)
+		if(int) {
+			coefficients <- family$link(mu[1])
+			names(coefficients) <- intl[1]
+			R <- matrix( - sqrt(n), dimnames = list(intl[1], intl[
+				1]))
+		}
+		else {
+			coefficients <- NULL
+			R <- matrix(0)
+		}
+		class(R) <- "upper"
+		rank <- as.numeric(int)
+		attribute(R, "rank") <- rank
+		wz <- eval(family$weight)
+		null.deviance <- deviance
+		if(any(offset)) {
+			mu <- family$inverse(offset)
+			deviance <- family$deviance(mu, y, w)
+		}
+		list(coefficients = coefficients, residuals = residuals, 
+			fitted.values = mu, rank = rank, df.residual = n - int,
+			weights = wz, y = y, iter = 0, linear.predictors = 
+			family$link(mu), deviance = deviance, null.deviance = 
+			null.deviance, R = R)
+	}
+	else deviance
+}
+> glm.variances     
+            constant           mu(1-mu)           mu         mu^2        mu^3 
+    name Constant: 1 Binomial: mu(1-mu) Identity: mu Square: mu^2 Cube: mu^3 
+variance function, 2 function, 2        function, 2  function, 2  function, 2
+deviance function, 5 function, 5        function, 5  function, 5  function, 5
+attr(, "names"):
+ [1] ""         "variance" "constant" ""         "variance" "mu(1-mu)"
+ [7] ""         "variance" "mu"       ""         "variance" "mu^2"    
+[13] ""         "variance" "mu^3"    
+> glm.weight        
+function(link, variance)
+{
+	default <- expression(w/((sqrt(family$variance(mu)) * family$deriv(
+		mu))^2))
+	dnames <- dimnames(glm.weights)
+	if(!match(link, dnames[[1]], F))
+		return(default)
+	if(!match(variance, dnames[[2]], F))
+		return(default)
+	ww <- glm.weights[link, variance]
+	if(as.character(ww) == "NULL")
+		default
+	else ww
+}
+> glm.weights      
+                                       Constant: 1 Binomial: mu(1-mu) 
+                          Identity: mu                               
+               Logit: log(mu/(1 - mu))             call, 3           
+Complimentary Log: log( - log(1 - mu))                               
+                     Probit: qnorm(mu)                               
+                          Log: log(mu) call, 3                       
+                         Inverse: 1/mu                               
+                Inverse Square: 1/mu^2                               
+                 Square Root: sqrt(mu)                               
+
+                                       Identity: mu Square: mu^2 Cube: mu^3 
+                          Identity: mu                                     
+               Logit: log(mu/(1 - mu))                                     
+Complimentary Log: log( - log(1 - mu))                                     
+                     Probit: qnorm(mu)                                     
+                          Log: log(mu) call, 3                             
+                         Inverse: 1/mu              call, 3                
+                Inverse Square: 1/mu^2                                     
+                 Square Root: sqrt(mu)                                     
+> glmlist           
+function(...)
+{
+	gl <- list(...)
+	class(gl) <- "glmlist"
+	gl
+}
+> plot.glm          
+function(x, y, ...)
+{
+	form <- formula(x)
+	p <- predict(x)
+	r <- residuals(x)
+	f <- fitted(x)
+	if(missing(y)) {
+		y <- x$y
+		yname <- deparse(form[[2]])
+	}
+	else yname <- deparse(substitute(y))
+	xylims <- range(f, y)
+	plot(f, y, xlab = deparse(substitute(fitted(x))), ..., ylab = yname,
+		ylim = xylims, xlim = xylims)
+	abline(0, 1, lty = 2)
+	plot(p, abs(r), ..., xlab = deparse(substitute(predict(x))), ylab = 
+		deparse(substitute(abs(resid(x)))))
+}
+> predict.glm      
+function(object, newdata, type = c("link", "response", "terms"), se.fit = F,
+	terms = labels(object), ...)
+{
+	type <- match.arg(type)
+	if(!se.fit) {
+#No standard errors
+		if(missing(newdata)) switch(type,
+				link = object$linear.predictors,
+				response = object$fitted,
+				terms = NextMethod("predict")) else switch(
+				type,
+				response = family(object)$inverse(NextMethod(
+					"predict")),
+				NextMethod("predict"))
+	}
+	else {
+		if(type == "response") {
+			pred <- NextMethod("predict")
+			famob <- family(object)
+			pred$fit <- famob$inverse(pred$fit)
+			pred$se.fit <- pred$se.fit/abs(famob$deriv(pred$fit))
+			pred
+		}
+		else NextMethod("predict")
+	}
+}
+> print.glm         
+function(x, ...)
+{
+	if(!is.null(cl <- x$call)) {
+		cat("Call:\n")
+		dput(cl)
+	}
+	coef <- x$coef
+	if(any(nas <- is.na(coef))) {
+		if(is.null(names(coef))) names(coef) <- paste("b", 1:length(
+				coef), sep = "")	#		coef <- coef[!nas]
+		cat("\nCoefficients: (", sum(nas), 
+			" not defined because of singularities)\n", sep = "")
+	}
+	else cat("\nCoefficients:\n")
+	print(coef, ...)
+	rank <- x$rank
+	if(is.null(rank))
+		rank <- sum(!nas)
+	nobs <- length(x$residuals)
+	rdf <- x$df.resid
+	if(is.null(rdf))
+		rdf <- nobs - rank
+	cat("\nDegrees of Freedom:", nobs, "Total;", rdf, "Residual\n")
+	cat("Residual Deviance:", format(x$deviance), "\n")
+	invisible(x)
+}
+> step.glm          
+function(object, scope, scale, direction = c("both", "backward", "forward"),
+	trace = T, keep = NULL, steps = 1000, ...)
+{
+	if(missing(direction))
+		direction <- "both"
+	else direction <- match.arg(direction)
+	sub.assign <- function(terms, assign)
+	{
+		a <- attributes(terms)
+		tl <- a$term.labels
+		if(a$intercept)
+			tl <- c(names(assign)[1], tl)
+		asgn <- assign[tl]
+		poi <- 0
+		for(i in tl) {
+			la <- length(asgn[[i]])
+			asgn[[i]] <- seq(poi + 1, poi + la)
+			poi <- poi + la
+		}
+		asgn
+	}
+	re.arrange <- function(keep)
+	{
+		namr <- names(k1 <- keep[[1]])
+		namc <- names(keep)
+		nc <- length(keep)
+		nr <- length(k1)
+		array(unlist(keep, recursive = F), c(nr, nc), list(namr, namc))
+		
+	}
+	make.step <- function(models, fit, scale, object)
+	{
+		change <- sapply(models, "[[", "change")
+		rd <- sapply(models, "[[", "deviance")
+		dd <- c(NA, diff(rd))
+		rdf <- sapply(models, "[[", "df.resid")
+		ddf <- c(NA, diff(rdf))
+		AIC <- sapply(models, "[[", "AIC")
+		heading <- c("Stepwise Model Path \nAnalysis of Deviance Table",
+			"\nInitial Model:", deparse(as.vector(formula(object))),
+			"\nFinal Model:", deparse(as.vector(formula(fit))),
+			"\n")
+		aod <- data.frame(Step = change, Df = ddf, Deviance = dd, 
+			"Resid. Df" = rdf, "Resid. Dev" = rd, AIC = AIC, 
+			check.names = F)
+		attr(aod, "heading") <- heading
+		attr(aod, "class") <- c("anova", "data.frame")
+		fit$anova <- aod
+		fit
+	}
+	backward <- direction == "both" | direction == "backward"
+	forward <- direction == "both" | direction == "forward"
+	if(missing(scope)) {
+		fdrop <- numeric(0)
+		fadd <- NULL
+	}
+	else {
+		if(is.list(scope)) {
+			fdrop <- if(!is.null(fdrop <- scope$lower)) attr(terms(
+					update.formula(object, fdrop)), 
+					"factor") else numeric(0)
+			fadd <- if(!is.null(fadd <- scope$upper)) attr(terms(
+					update.formula(object, fadd)), "factor"
+					)
+		}
+		else {
+			fadd <- if(!is.null(fadd <- scope)) attr(terms(
+					update.formula(object, scope)), 
+					"factor")
+			fdrop <- numeric(0)
+		}
+	}
+	if(is.null(fadd)) {
+		backward <- T
+		forward <- F
+	}
+	m <- model.frame(object)
+	objectcall <- object$call	#build the big model matrix
+	if(forward) {
+		add.rhs <- paste(dimnames(fadd)[[2]], collapse = "+")
+		add.rhs <- eval(parse(text = paste("~ . +", add.rhs)))
+		new.form <- update.formula(object, add.rhs, evaluate = F)
+		fc <- objectcall
+		Terms <- terms(new.form)
+		fc$formula <- Terms
+		fobject <- list(call = fc)
+		class(fobject) <- class(object)
+		M <- model.frame(fobject)
+		x <- model.matrix(Terms, M)
+	}
+	else {
+		Terms <- object$terms
+		x <- model.matrix(Terms, m)
+	}
+	Asgn <- attr(x, "assign")	#from glm.fit
+	a <- attributes(m)
+	y <- model.extract(m, "response")
+	w <- model.extract(m, "weights")
+	if(is.null(w))
+		w <- rep(1, nrow(m))
+	offset <- attr(Terms, "offset")
+	if(is.null(offset))
+		offset <- 0
+	else offset <- m[, offset]
+	family <- family(object)
+	control <- object$call$control
+	control <- if(is.null(control)) glm.control() else eval(control)
+	models <- vector("list", steps)
+	if(!is.null(keep)) {
+		keep.list <- vector("list", steps)
+		nv <- 1
+	}
+	n <- length(object$fitted)
+	if(missing(scale)) {
+		famname <- family$family["name"]
+		scale <- switch(famname,
+			Poisson = 1,
+			Binomial = 1,
+			deviance(object)/object$df.resid)
+	}
+	fit <- object
+	bAIC <- deviance(fit) + 2 * (n - fit$df.resid) * scale
+	nm <- 1
+	Terms <- fit$terms
+	if(trace)
+		cat("Start:  AIC=", format(round(bAIC, 4)), "\n", deparse(
+			as.vector(formula(fit))), "\n\n")
+	models[[nm]] <- list(deviance = deviance(fit), df.resid = fit$df.resid,
+		change = "", AIC = bAIC)
+	if(!is.null(keep))
+		keep.list[[nm]] <- keep(fit, bAIC)
+	AIC <- bAIC + 1
+	while(bAIC < AIC & steps > 0) {
+		steps <- steps - 1
+		AIC <- bAIC
+		bfit <- fit
+		ffac <- attr(Terms, "factor")
+		scope <- factor.scope(ffac, list(add = fadd, drop = fdrop))
+		aod <- NULL
+		change <- NULL
+		if(backward && (ndrop <- length(scope$drop))) {
+			aod <- drop1.lm(fit, scope$drop, scale)
+			if(trace)
+				print(aod)
+			change <- rep("-", ndrop + 1)
+		}
+		if(forward && (nadd <- length(scope$add))) {
+			aodf <- add1.lm(fit, scope$add, scale, x = x)
+			if(trace)
+				print(aodf)
+			change <- c(change, rep("+", nadd + 1))
+			if(is.null(aod))
+				aod <- aodf
+			else {
+				ncaod <- dim(aod)[1]
+				aod[seq(ncaod + 1, ncaod + nadd + 1),  ] <- 
+					aodf
+			}
+		}
+		if(is.null(aod))
+			break
+		o <- order(aod[, "Cp"])[1]
+		if(o[1] == 1)
+			break
+		change <- paste(change[o], dimnames(aod)[[1]][o])
+		Terms <- terms(update(formula(fit), eval(parse(text = paste(
+			"~ .", change)))))
+		attr(Terms, "formula") <- rebld.formula(Terms)
+		asgn <- sub.assign(Terms, Asgn)
+		tx <- x[, unlist(Asgn[names(asgn)]), drop = F]
+		attr(tx, "assign") <- asgn
+		newfit <- glm.fit(tx, y, w, NULL, offset, family, control$
+			maxit, control$epsilon)
+		bAIC <- deviance(newfit) + 2 * (n - newfit$df.resid) * scale
+		if(trace)
+			cat("\nStep:  AIC=", format(round(bAIC, 4)), "\n",
+				deparse(as.vector(formula(Terms))), "\n\n")
+		if(bAIC >= AIC)
+			break
+		nm <- nm + 1
+		models[[nm]] <- list(deviance = deviance(newfit), df.resid = 
+			newfit$df.resid, change = change, AIC = bAIC)
+		fit <- c(newfit, list(x = tx, terms = Terms, formula = attr(
+			Terms, "formula")))
+		oc <- objectcall
+		oc$formula <- as.vector(fit$formula)
+		fit$call <- oc
+		fit$family <- object$family
+		class(fit) <- class(object)
+		if(!is.null(keep))
+			keep.list[[nm]] <- keep(fit, bAIC)
+	}
+	if(!is.null(keep))
+		fit$keep <- re.arrange(keep.list[seq(nm)])
+	make.step(models = models[seq(nm)], fit, scale, object)
+}
+> 

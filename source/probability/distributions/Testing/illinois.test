@@ -1,0 +1,42 @@
+;*************************************************************
+
+;    The following are test cases for the illinois method.  
+;    I have used a standard function but have shown all the cases
+;    that will arise.
+
+;*************************************************************
+
+(defun s1 (x)
+  (+ (expt x 3) 4))
+
+(illinois #'s1 -3 0)
+
+-1.5873982206072585
+
+;************************************************************
+(defun s2 (x)
+  (+ (expt x 3) 4))
+
+(illinois #'s2 -3 -2)
+
+"you have given an unacceptable set of points"
+
+;***********************************************************
+(defun s3 (x)
+  (+ (expt x 3) 4))
+
+(illinois #'s3 -3 0 :tol .00000000000000001)
+
+-1.5874010519681991     
+;                    -notice the increased accuracy
+
+;**********************************************************
+(defun s4 (x)
+  (+ (expt x 3) 4))
+
+(illinois #'s4 -3 0 :tol .000000000000000001 :max-it 5)
+
+NIL     
+;   -since it did not reach an answer with in 5 iterations
+
+;********************************************************* 

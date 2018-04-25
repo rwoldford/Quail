@@ -1,0 +1,47 @@
+;; Continuous general method testing
+;; by: Ward.
+
+(defclass gen (continuous)
+  ((lower-bound :accessor lower-bound-of
+                :initform 0)
+   (upper-bound  :accessor upper-bound-of
+                 :initform (expt 3 (/ 1 3))))
+)
+
+(defmethod pdf-at ((distribution gen) x)
+  (cond
+   ((< x (lower-bound-of distribution)) 0)
+   ((> x (upper-bound-of distribution)) 0)
+   (T (* x x)))
+)
+
+(defmethod cdf-at ((distribution gen) x)
+  (cond
+   ((< x (lower-bound-of distribution)) 0)
+   ((> x (upper-bound-of distribution)) 1)
+   (T (* (/ 1 3) x x x)))
+)
+
+(setf test-gen (make-instance 'gen))
+
+(pdf-at test-gen 0)
+(pdf-at test-gen 1)
+(pdf-at test-gen 0.5)
+(pdf-at test-gen -3)
+
+(cdf-at test-gen 0)
+(cdf-at test-gen 0.5)
+(cdf-at test-gen 1)
+(cdf-at test-gen 1.44)
+(cdf-at test-gen -3)
+
+(quantile-at test-gen -3)
+(quantile-at test-gen 0)
+(quantile-at test-gen 0.4)
+(quantile-at test-gen 1)
+(quantile-at test-gen 5)
+
+(random-value test-gen)
+(random-value test-gen)
+(random-value test-gen)
+

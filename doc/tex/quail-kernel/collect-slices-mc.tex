@@ -1,0 +1,28 @@
+\headerbox{COLLECT-SLICES}{}{QUAIL-KERNEL::MACRO}
+ 
+{\bf Description}
+
+Provides straightforward iterations over selected slices of a refable object. Syntax: ( collect-slices ( slice-var object slices [order] ) \{form\}* ) First collect-slices evaluates the form object, which should produce a refable object. It then executes the body once for each slice in the object as determined by slices. The order of iteration is determined by the optional argument order: either :row ( the default ) for row major order, or :col for column major order. The result of each iteration is collected into a list and returned as the value of the collect-slices form. If slices is omitted, looping is over each element of the object.
+
+ 
+{\bf Lambda List}
+
+((SLICE-VAR OBJECT SLICES \&OPTIONAL (ORDER ROW)) \&BODY BODY)
+
+ 
+{\bf Arguments}
+
+
+\beginhang
+{\bf Required}\hspace{2em}
+ 
+{\bf (SLICE-VAR OBJECT SLICES \&OPTIONAL (ORDER ROW))}
+
+
+ 
+\endhang
+ 
+{\bf Home Package}
+
+QUAIL-KERNEL
+

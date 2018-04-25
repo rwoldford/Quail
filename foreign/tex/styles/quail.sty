@@ -1,0 +1,28 @@
+% October 16,  11:12 am, by D.L. Chapman
+
+% use: \headerbox{word}{another}{last words}
+
+\def\headerbox#1#2#3{\par\vspace*{3mm}
+\noindent
+\begin{picture}(469,54)(0,0)
+\thicklines
+\put(0,0){\framebox(468,45){~#1 \hspace*{\fill} #2 \hspace*{\fill} #3~} }
+\end{picture}
+\par \vspace*{3mm}}
+
+%use: \beginhang{yourheading}
+%      many lines of text, each item separated by a 1.5 line
+%
+%      more silly drivel, based on code from: anita@brahms.udel.edu (Anita
+%           Marie Hoover) 
+%     \endhang
+
+\def\heading#1{\vspace*{3mm} \noindent { #1} \par}
+\def\beginhang#1{ \heading{#1}
+\begingroup
+                \clubpenalty=10000
+                \widowpenalty=10000
+                \normalbaselines\parindent 0pt 
+                \parskip.5\baselineskip
+                \everypar{\hangindent3em}}
+\def\endhang{\par\endgroup}

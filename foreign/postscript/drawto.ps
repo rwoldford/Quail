@@ -1,0 +1,31 @@
+%------------------------------------------------------------------------------
+% PROCEDURE:	ps_canvas_draw_to
+%------------------------------------------------------------------------------
+% DESCRIPTION:	This procedure draws a line from the current position on the
+%		canvas to a given (x,y) position.  Optional arguments are line
+%		width and colour.
+%
+% COMMAND LINE:
+%	x y [lwidth] [r g b] ps_canvas_draw_to
+%
+%	Arguments in brackets are optional.
+%	Optional commands which are not specified will be replaced by default
+%	values.
+%
+% NOTE: This function must not be called immediately after a newpath statement
+%	(ie: there must be a current (x,y) position in memory.).  If necessary
+%	this can be remedied by a 0 0 moveto to indicate the origin as the 
+%	current (x,y) position.  As usual, if colour is specified, all three
+%	elements must be specified.
+%------------------------------------------------------------------------------
+/ps_canvas_draw_to
+	{ps_draw_dict begin
+		/y exch def
+		/x exch def
+		currentpoint moveto
+		x y lineto
+		stroke
+                x y moveto
+		end
+	}def
+/t {ps_canvas_draw_to} bind def

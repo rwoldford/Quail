@@ -1,0 +1,171 @@
+
+RCS file: RCS/function-info-excl.lsp,v
+Working file: function-info-excl.lsp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+initial check in.
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/08/13 13:59:03;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/function-info-mcl.lsp,v
+Working file: function-info-mcl.lsp
+head: 1.1
+branch:
+locks: strict
+	rwoldford: 1.1
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+initial check in.
+----------------------------
+revision 1.1	locked by: rwoldford;
+date: 1994/08/13 13:59:03;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/function-info-pc.lsp,v
+Working file: function-info-pc.lsp
+head: 1.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+Version for ACL inder W95
+----------------------------
+revision 1.1
+date: 1998/08/31 14:51:40;  author: gwbennet;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/mixin-to-quail.lsp,v
+Working file: mixin-to-quail.lsp
+head: 1.2
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Seems that this is the initial check in!
+----------------------------
+revision 1.2
+date: 1998/01/09 19:06:26;  author: rwoldfor;  state: Exp;  lines: +2 -2
+direct-superclasses --> class-direct-super-classes
+----------------------------
+revision 1.1
+date: 1994/06/20 14:48:36;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/mop-excl.lsp,v
+Working file: mop-excl.lsp
+head: 1.6
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 6;	selected revisions: 6
+description:
+Seems that this is the initial check in!
+----------------------------
+revision 1.6
+date: 1994/10/27 18:21:54;  author: rwoldford;  state: Exp;  lines: +2 -2
+Replaced (find-class 'foo) by (class-of thing). 2 places.
+----------------------------
+revision 1.5
+date: 1994/08/26 21:01:24;  author: rwoldford;  state: Exp;  lines: +172 -108
+Added something from Catherine.
+----------------------------
+revision 1.4
+date: 1994/06/24 14:56:28;  author: rwoldford;  state: Exp;  lines: +40 -0
+Added methods for self T for methods dealing with slots etc. to prevetn
+breakage.
+----------------------------
+revision 1.3
+date: 1994/06/22 19:23:45;  author: rwoldford;  state: Exp;  lines: +4 -1
+Collect-methods will accept a symbol or a function as its arg.
+----------------------------
+revision 1.2
+date: 1994/06/20 14:52:03;  author: rwoldford;  state: Exp;  lines: +22 -2
+Added collect-methods
+----------------------------
+revision 1.1
+date: 1994/06/20 14:48:07;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/mop-mcl.lsp,v
+Working file: mop-mcl.lsp
+head: 1.6
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 6;	selected revisions: 6
+description:
+Seems that this is the initial check in!
+----------------------------
+revision 1.6
+date: 1994/10/27 18:21:54;  author: rwoldford;  state: Exp;  lines: +3 -3
+Replaced (find-class 'foo) by (class-of thing). 2 places.
+----------------------------
+revision 1.5
+date: 1994/08/26 21:01:24;  author: rwoldford;  state: Exp;  lines: +292 -137
+Added something from Catherine.
+----------------------------
+revision 1.4
+date: 1994/06/24 14:56:28;  author: rwoldford;  state: Exp;  lines: +37 -0
+Added methods for self T for methods dealing with slots etc. to prevetn
+breakage.
+----------------------------
+revision 1.3
+date: 1994/06/22 19:23:45;  author: rwoldford;  state: Exp;  lines: +4 -1
+Collect-methods will accept a symbol or a function as its arg.
+----------------------------
+revision 1.2
+date: 1994/06/20 14:52:37;  author: rwoldford;  state: Exp;  lines: +21 -0
+Added collect-methods
+----------------------------
+revision 1.1
+date: 1994/06/20 14:47:21;  author: rwoldford;  state: Exp;
+Initial revision
+=============================================================================
+
+RCS file: RCS/mop-pc.lsp,v
+Working file: mop-pc.lsp
+head: 1.2
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+Version of mop-pc May 26 1998 (gwb)
+----------------------------
+revision 1.2
+date: 1999/02/10 16:09:08;  author: gwbennet;  state: Exp;  lines: +153 -123
+replaced the entire file
+----------------------------
+revision 1.1
+date: 1998/05/26 17:50:55;  author: gwbennet;  state: Exp;
+Initial revision
+=============================================================================

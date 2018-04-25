@@ -1,0 +1,25 @@
+%-------------------------------------------------------------------------------
+% PROCEDURE:    ps_canvas_draw_filled_ellipse
+%------------------------------------------------------------------------------
+% DESCRIPTION:  This function is identical to ps_canvas_draw_ellipse save that
+%               it fills the drawn ellipse with the specified colour instead of
+%               merely outlining it.
+%
+% COMMAND LINE:
+%               see ps_canvas_draw_ellipse
+%------------------------------------------------------------------------------
+/ps_canvas_draw_filled_ellipse
+        {ps_draw_dict begin
+                /y_radius exch def
+                /x_radius exch def
+                /y_translate exch def
+                /x_translate exch def
+                /savematrix mtrx currentmatrix def
+                x_translate y_translate translate
+                x_radius y_radius scale
+                0 0 1 0 360 arc
+                fill
+                savematrix setmatrix
+                end
+        }def
+/fe {ps_canvas_draw_filled_ellipse} bind def

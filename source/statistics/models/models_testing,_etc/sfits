@@ -1,0 +1,984 @@
+Working data will be in /usr/people/dganglin/.Data
+> names(lmxy)
+ [1] "coefficients"  "residuals"     "fitted.values" "effects"      
+ [5] "R"             "rank"          "assign"        "df.residual"  
+ [9] "terms"         "call"         
+> print.default(lmxy)
+$coefficients:
+ (Intercept)         x 
+   -2.126187 0.2045795
+
+$residuals:
+          1         2         3          4          5         6 
+ 0.08039196 -0.169983 0.1933807 -0.0569943 -0.3073693 0.2605739
+
+$fitted.values:
+           1        2        3        4        5        6 
+ -0.08039196 2.169983 3.806619 6.056994 8.307369 9.739426
+
+$effects:
+ (Intercept)        x                                           
+   -12.24745 8.352342 0.1645129 -0.1306603 -0.4258335 0.1136017
+
+$R:
+  (Intercept)         x 
+1    -2.44949 -85.32389
+2     0.00000  40.82687
+
+$rank:
+[1] 2
+
+$assign:
+$assign$"(Intercept)":
+[1] 1
+
+$assign$x:
+[1] 2
+
+
+$df.residual:
+[1] 4
+
+$terms:
+expression(x)
+attr($terms, "formula"):
+y ~ x
+attr($terms, "factors"):
+  x 
+y 0
+x 1
+attr($terms, "order"):
+[1] 1
+attr($terms, "variables"):
+expression(y, x)
+attr($terms, "term.labels"):
+[1] "x"
+attr($terms, "intercept"):
+[1] 1
+attr($terms, "response"):
+[1] 1
+attr($terms, "class"):
+[1] "terms"
+
+$call:
+lm(formula = y ~ x)
+
+attr(, "class"):
+[1] "lm"
+> lm
+function(formula, data = list(), weights, subset, na.action, offset, method = 
+	"qr", model = F, x = F, y = F, ...)
+{
+	x.ret <- x
+	y.ret <- y
+	if(missing(model) || is.atomic(model)) {
+		if(missing(data))
+			abb <- dict.attr("abbreviations")
+		else if(is.recursive(data))
+			abb <- attr(data, "abbreviations")
+		Terms <- if(missing(data)) terms(formula, abb = abb) else terms(
+				formula, abb = abb, data = data)
+		if(!is.numeric(data))
+			data <- new.frame(data)
+		if(missing(na.action))
+			na.action <- dict.attr("na.action")
+		if(is.null(na.action))
+			na.action <- na.fail
+		extras <- expression()
+		if(!missing(weights))
+			extras$weights <- substitute(weights)
+		if(!missing(offset))
+			extras$offset <- substitute(offset)
+		subset <- if(missing(subset)) NULL else substitute(subset)
+		m <- model.frame(Terms, data, subset, na.action, extras, x = 
+			x.ret)
+	}
+	else {
+		if(!(missing(formula) && missing(data) && missing(weights) &&
+			missing(subset) && missing(na.action)))
+			stop(
+				"formula, data, etc. must not be given with model argument"
+				)
+		if(data.class(model) != "data.frame")
+			stop("supplied model not a model frame")
+		m <- model
+		Terms <- attr(m, "terms")
+		model <- T
+	}
+	if(method == "model.frame")
+		return(m)
+	a <- attributes(m)
+	weights <- a$extras[["weights"]]
+	y <- model.response(m)
+	x <- model.matrix(Terms, m)
+	offset <- a$extras[["offset"]]
+	if(is.na(offset))
+		fit <- if(is.na(weights)) lm.fit(x, y, method, ...) else 
+				lm.wfit(x, y, m[[weights]], method, ...)
+	else {
+		offset <- m[[offset]]
+		yy <- y - offset
+		fit <- if(is.na(weights)) lm.fit(x, yy, method, ...) else 
+				lm.wfit(x, yy, m[[weights]], method, ...)
+		fit$fitted <- fit$fitted + offset
+	}
+	fit$terms <- Terms
+	TT <- sys.call()
+	call <- match.call(lm, TT)
+	call$formula <- as.vector(attr(Terms, "formula"))
+	fit$call <- call
+	if(model)
+		fit$model <- m
+	if(x.ret)
+		fit$x <- x
+	if(y.ret)
+		fit$y <- y
+	fit
+}
+> lm.fit
+function(x, y, method = "qr", ...)
+{
+	if(!length(x))
+		method <- "null"
+	switch(method,
+		qr = lm.fit.qr(x, y, ...),
+		{
+			what <- paste("lm.fit.", method, sep = "")
+			if(exists(what, mode = "function"))
+				(get(what, mode = "function"))(x, y, ...)
+			else stop(paste("unimplemented least-squares method:",
+					method))
+		}
+		)
+}
+> lm.wfit
+function(x, y, w, method, ...)
+{
+	if(any(w < 0))
+		stop("negative weights not allowed")
+	zero <- w == 0
+	multiy <- length(dim(y)) == 2
+	if(any(zero)) {
+		pos <- !zero
+		r <- f <- y
+		ww <- w
+		x0 <- x[zero,  , drop = F]
+		y0 <- if(multiy) y[zero,  , drop = F] else y[zero]
+		x <- x[pos,  , drop = F]
+		y <- if(multiy) y[pos,  , drop = F] else y[pos]
+		w <- w[pos]
+	}
+	w.factor <- w^0.5
+	x <- x * w.factor
+	y <- y * w.factor
+	fit <- lm.fit(x, y, method, ...)
+	fit$residuals <- fit$residuals/w.factor
+	fit$fitted.values <- fit$fitted.values/w.factor
+	if(any(zero) && method != "null") {
+		nas <- is.na(fit$coef)
+		if(any(nas))
+			f0 <- x0[, !nas] %*% fit$coef[!nas]
+		else f0 <- x0 %*% fit$coef
+		if(multiy) {
+			r[pos,  ] <- fit$resid
+			f[pos,  ] <- fit$fitted
+			r[zero,  ] <- y0 - f0
+			f[zero,  ] <- f0
+		}
+		else {
+			r[pos] <- fit$resid
+			f[pos] <- fit$fitted
+			r[zero] <- y0 - f0
+			f[zero] <- f0
+		}
+		fit$residuals <- r
+		fit$fitted.values <- f
+		w <- ww
+	}
+	fit$weights <- w
+	fit
+}
+> lm.fit.qr
+function(x, y, singular.ok = F, tolerance = 1e-07, qr = F)
+{
+	class(x) <- class(y) <- NULL
+	storage.mode(x) <- storage.mode(y) <- "double"
+	dx <- dim(x)
+	dn <- dimnames(x)
+	dy <- dim(y)
+	qty <- y
+	n <- dx[1]
+	xn <- dn[[2]]
+	p <- dx[2]
+	qtyn <- xn
+	if(is.character(qtyn))
+		length(qtyn) <- n
+	if(multiy <- length(dy) == 2) {
+		cl <- c("mlm", "lm")
+		dny <- dimnames(y)
+		b <- array(double(1), c(dx[2], dy[2]), list(dn[[2]], dny[[2]]))
+			
+		if(length(dn[[1]]) > length(dny[[1]]))
+			dimnames(y) <- list(dn[[1]], dny[[2]])
+		dimnames(qty) <- list(qtyn, dny[[2]])
+	}
+	else {
+		dy <- c(length(y), 1)
+		cl <- "lm"
+		b <- x[1,  ]	#inherit the column names
+		if(length(dn[[1]]) > length(names(y)))
+			names(y) <- dn[[1]]
+		names(qty) <- qtyn
+	}
+	if(n != dy[1])
+		stop("Number of observations in x and y not equal")
+	asgn <- attr(x, "assign")
+	z <- .Fortran("dqrls",
+		qr = x,
+		as.integer(dx),
+		pivot = as.integer(1:p),
+		qraux = double(p),
+		y,
+		as.integer(dy),
+		coef = b,
+		residuals = y,
+		qt = qty,
+		tol = as.double(tolerance),
+		double(p),
+		rank = as.integer(p))
+	b <- z$coef
+	qt <- z$qt
+	if((singular <- (r <- z$rank) < p)) {
+		if(!singular.ok)
+			stop(paste("computed fit is singular, rank", z$rank))
+		pivot <- z$pivot
+		qtyn[pivot] <- qtyn[1:p]
+		if(multiy) {
+			b[(r + 1):p,  ] <- NA
+			b[pivot,  ] <- b
+			if(n >= p)
+				qt[pivot,  ] <- qt[1:p,  , drop = F]
+			else {
+				tmp <- array(0, c(length(pivot), dim(qt)[2]))
+				tmp[pivot[1:n],  ] <- qt
+				qt <- tmp
+				length(qtyn) <- n
+			}
+			dimnames(qt)[[1]] <- qtyn
+		}
+		else {
+			b[(r + 1):p] <- NA
+			b[pivot] <- b
+			if(n >= p)
+				qt[pivot] <- qt[1:p]
+			else {
+				qt <- qt[pivot[1:n]]
+				length(qtyn) <- n
+			}
+			names(qt) <- qtyn
+		}
+		if(length(xn))
+			dimnames(z$qr)[[2]] <- xn[pivot]
+		psr <- pivot[seq(length = r)]
+		for(j in names(asgn)) {
+			aj <- asgn[[j]]
+			aj <- aj[!is.na(match(aj, psr))]
+			asgn[[j]] <- if(length(aj)) aj else NULL
+		}
+	}
+	fitted <- y - z$residuals
+	m <- min(n, p)
+	R <- (z$qr)[1:m,  , drop = F]
+	R[lower.tri(R)] <- 0
+	fit <- list(coefficients = b, residuals = z$residuals, fitted.values = 
+		fitted, effects = qt, R = R, rank = z$rank, assign = asgn,
+		df.residual = max(n - r, 0))
+	if(singular && fit$df.residual > 0) {
+		if(n > p)
+			fit$assign.residual <- c(pivot[(r + 1):p], (p + 1):
+				n)
+		else fit$assign.residual <- pivot[(r + 1):n]
+	}
+	if(qr)
+		fit$qr <- z[c("qr", "qraux", "rank", "pivot", "tol")]
+	class(fit) <- cl
+	fit
+}
+> names(aovxy)
+ [1] "coefficients"  "residuals"     "fitted.values" "effects"      
+ [5] "R"             "rank"          "assign"        "df.residual"  
+ [9] "terms"         "call"         
+> print.default(aovxy)
+$coefficients:
+ (Intercept)         x 
+   -2.126187 0.2045795
+
+$residuals:
+          1         2         3          4          5         6 
+ 0.08039196 -0.169983 0.1933807 -0.0569943 -0.3073693 0.2605739
+
+$fitted.values:
+           1        2        3        4        5        6 
+ -0.08039196 2.169983 3.806619 6.056994 8.307369 9.739426
+
+$effects:
+ (Intercept)        x                                           
+   -12.24745 8.352342 0.1645129 -0.1306603 -0.4258335 0.1136017
+
+$R:
+  (Intercept)         x 
+1    -2.44949 -85.32389
+2     0.00000  40.82687
+
+$rank:
+[1] 2
+
+$assign:
+$assign$"(Intercept)":
+[1] 1
+
+$assign$x:
+[1] 2
+
+
+$df.residual:
+[1] 4
+
+$terms:
+expression(x)
+attr($terms, "formula"):
+y ~ x
+attr($terms, "factors"):
+  x 
+y 0
+x 1
+attr($terms, "order"):
+[1] 1
+attr($terms, "variables"):
+expression(y, x)
+attr($terms, "term.labels"):
+[1] "x"
+attr($terms, "intercept"):
+[1] 1
+attr($terms, "response"):
+[1] 1
+attr($terms, "class"):
+[1] "terms"
+
+$call:
+aov(formula = y ~ x)
+
+attr(, "class"):
+[1] "aov" "lm" 
+> aov
+function(formula, data = sys.parent(), qr = F, ...)
+{
+	colnorms <- function(x, nrow, ncol)
+	.Fortran("dmatpt",
+		x^2,
+		as.integer(dim(x)),
+		as.double(rep(1, nrow)),
+		as.integer(c(nrow, 1)),
+		z = double(ncol))$z
+	abb <- if(missing(data)) dict.attr("abbreviations") else attr(data,
+			"abbreviations")
+	if(is.null(abb))
+		abb <- abbr(data)
+	Terms <- if(missing(data)) terms(formula, "Error", abb = abb) else 
+			terms(formula, "Error", abb = abb, data = data)
+	i <- attr(Terms, "specials")$Error
+	lmcall <- call <- match.call(aov, sys.call())
+	lmcall[[1]] <- as.name("lm")
+	lmcall$singular.ok <- T
+	lmcall$method <- "qr"
+	if(is.null(i)) {
+		lmcall$formula <- as.name("Terms")
+		result <- eval(lmcall, T)
+		class(result) <- if(inherits(result, "mlm")) c("maov", "mlm",
+				"aov", "lm") else c("aov", "lm")
+		call$formula <- as.vector(attr(result$terms, "formula"))	
+	#supposedly may be simplified version
+		result$call <- call
+		return(result)
+	}
+	t <- Terms[[i]]
+	error <- formula
+	error[[3]] <- t[[2]]
+	ecall <- lmcall
+	ecall$formula <- error
+	ecall$qr <- TRUE
+	er.fit <- eval(ecall, T)
+	qr.e <- er.fit$qr
+	rank.e <- er.fit$rank
+	asgn.e <- er.fit$assign
+	qty <- er.fit$resid
+	dy <- dim(qty)
+	multiy <- length(dy) == 2 && dy[2] > 1
+	nobs <- if(multiy) dy[1] else length(qty)
+	if(nobs > rank.e) {
+		result <- vector("list", length(asgn.e) + 1)
+		if(!is.null(er.fit$assign.residual))
+			asgn.e$Within <- er.fit$assign.residual
+		else asgn.e$Within <- (1:nobs)[ - unlist(asgn.e)]
+		attr(qr.e$qr, "assign.residual") <- asgn.e$Within
+	}
+	else {
+		result <- vector("list", length(asgn.e))
+	}
+	names(result) <- names(asgn.e)
+	lmcall[c("method", "x", "y")] <- c("null", T, T)
+	null.model <- eval(lmcall, T)
+	qty <- qr.qty(qr.e, null.model$y)
+	qtx <- null.model$x
+	aa <- attr(qtx, "assign")
+	aseq <- seq(along = aa)
+	qtx <- qr.qty(qr.e, qtx)
+	dx <- dim(qtx)
+	class(qtx) <- NULL	# kill the model matrix-ness for efficiency
+	qtx2 <- qtx^2
+	p <- dx[2]
+	epsx <- (.Machine$double.eps * sum(qtx2))/p
+	wt <- null.model$weights	# tolerance for zero columns
+	xseq <- 1:p
+	cl <- all.classes(null.model)
+	cl <- c(if(multiy) "maov" else "aov", cl)
+	lmcall <- if(multiy) expression(lm.fit(x = xi, qty[select,  , drop = F],
+			singular.ok = T, qr = qr, method = "qr"))[[1]] else 
+			expression(lm.fit(x = xi, qty[select], singular.ok = T,
+			qr = qr, method = "qr"))[[1]]
+	if(length(wt)) {
+		lmcall$weights <- expression(wt[select])[[1]]
+		lmcall[[1]] <- as.name("lm.wfit")
+	}
+	for(i in names(result)) {
+		select <- asgn.e[[i]]
+		ni <- length(select)
+		if(!ni)
+			next
+		xi <- qtx[select,  , drop = F]
+		cols <- colnorms(xi, ni, p) > epsx
+		if(any(cols)) {
+			xi <- xi[, cols, drop = F]
+			attr(xi, "assign") <- assign.sub(aa, cols)
+		}
+		else xi <- numeric()
+		fiti <- eval(lmcall, T)
+		class(fiti) <- cl
+		result[[i]] <- fiti
+	}
+	if(qr)
+		attr(result, "error.qr") <- qr.e
+	class(result) <- c("aovlist", "listof")
+	call$formula <- as.vector(attr(null.model$terms, "formula"))
+	attr(result, "call") <- call
+	result
+}
+> names(glmxy)
+ [1] "coefficients"  "residuals"     "fitted.values" "effects"      
+ [5] "R"             "rank"          "assign"        "df.residual"  
+ [9] "weights"       "lin.predictor" "deviance"      "null.deviance"
+[13] "call"          "nit"           "y"             "terms"        
+[17] "family"        "formula"      
+> print.default(glmxy)
+$coefficients:
+ (Intercept)         x 
+   -2.126187 0.2045795
+
+$residuals:
+          1         2         3          4          5         6 
+ 0.08039196 -0.169983 0.1933807 -0.0569943 -0.3073693 0.2605739
+
+$fitted.values:
+           1        2        3        4        5        6 
+ -0.08039196 2.169983 3.806619 6.056994 8.307369 9.739426
+
+$effects:
+ (Intercept)        x                                           
+   -12.24745 8.352342 0.1645129 -0.1306603 -0.4258335 0.1136017
+
+$R:
+  (Intercept)         x 
+1    -2.44949 -85.32389
+2     0.00000  40.82687
+
+$rank:
+[1] 2
+
+$assign:
+$assign$"(Intercept)":
+[1] 1
+
+$assign$x:
+[1] 2
+
+
+$df.residual:
+[1] 4
+
+$weights:
+[1] 1 1 1 1 1 1
+
+$lin.predictor:
+           1        2        3        4        5        6 
+ -0.08039196 2.169983 3.806619 6.056994 8.307369 9.739426
+
+$deviance:
+[1] 0.2383762
+
+$null.deviance:
+[1] 70
+
+$call:
+glm(formula = y ~ x)
+
+$nit:
+[1] 1
+
+$y:
+ 1 2 3 4 5  6 
+ 0 2 4 6 8 10
+
+$terms:
+expression(x)
+attr($terms, "formula"):
+y ~ x
+attr($terms, "factors"):
+  x 
+y 0
+x 1
+attr($terms, "order"):
+[1] 1
+attr($terms, "variables"):
+expression(y, x)
+attr($terms, "term.labels"):
+[1] "x"
+attr($terms, "intercept"):
+[1] 1
+attr($terms, "response"):
+[1] 1
+attr($terms, "class"):
+[1] "terms"
+
+$family:
+       name           link      variance 
+ "Gaussian" "Identity: mu" "Constant: 1"
+
+$formula:
+y ~ x
+
+attr(, "class"):
+[1] "glm" "lm" 
+> glm.fit
+function(x, y, w = rep(1, len(x[, 1])), method = "qr", start = NA, offset = 0,
+	family = gaussian(), maxit = 10, epsilon = 0.001, trace = F, null.dev
+	 = NULL, ...)
+{
+	family <- as.family(family)
+	eval(family$initialize)
+	if(is.na(start[1]))
+		eta <- family$link(mu)
+	else {
+		eta <- start
+		mu <- family$inverse(eta)
+	}
+	new.dev <- family$deviance(mu, y, w)
+	if(!is.null(null.dev)) {
+		null.dev <- glm.null(x, y, w, offset, family)
+		if(len(null.dev) > 1)
+			return(null.dev)
+	}
+	nit <- 0
+	if(method == "null")
+		trace <- F
+	old.dev <- 10 * new.dev + 10
+	while(nit < maxit && abs((old.dev - new.dev)/(old.dev + epsilon)) >
+		epsilon) {
+		nit <- nit + 1
+		deriv.mu <- family$deriv(mu)
+		z <- eta + (y - mu) * deriv.mu - offset
+		wz <- eval(family$weight)
+		fit <- lm.wfit(x, z, wz, method, singular.ok = T, ...)
+		eta <- z - fit$residuals + offset
+		mu <- family$inverse(eta)
+		old.dev <- new.dev
+		new.dev <- family$deviance(mu, y, w)
+		if(trace)
+			cat("GLM    linear loop ", nit, ": deviance = ", round(
+				new.dev, 4), " \n", sep = "")
+	}
+	if(maxit > 1 && nit == maxit)
+		cat("Linear convergence not obtained in ", maxit, 
+			" iterations.\n")
+	fit$lin.predictor <- fit$fitted.values
+	fit$fitted.values <- mu
+	fit$deviance <- new.dev
+	fit$null.deviance <- null.dev
+	fit$call <- sys.call()
+	c(fit, list(nit = nit, y = y))
+}
+> names(gamxy)
+ [1] "coefficients"  "residuals"     "fitted.values" "R"            
+ [5] "rank"          "s"             "nl.df"         "df.residual"  
+ [9] "var"           "assign"        "terms"         "call"         
+[13] "formula"       "family"        "nl.chisq"      "y"            
+[17] "weights"       "add.predictor" "deviance"      "null.deviance"
+> print.default(gamxy)
+$coefficients:
+ (Intercept)      s(x) 
+   -2.126187 0.2045795
+
+$residuals:
+         1           2          3          4           5         6 
+ 0.0214368 -0.08153895 0.08073038 0.01537688 -0.08999862 0.0539935
+
+$fitted.values:
+          1        2       3        4        5        6 
+ -0.0214368 2.081539 3.91927 5.984623 8.089999 9.946006
+
+$R:
+  (Intercept)      s(x) 
+1    -2.44949 -85.32389
+2     0.00000  40.82687
+attr($R, "assign"):
+attr($R, "assign")$"(Intercept)":
+[1] 1
+
+attr($R, "assign")$"s(x)":
+[1] 2
+
+attr($R, "term.labels"):
+[1] "(Intercept)" "s(x)"       
+attr($R, "class"):
+[1] "model.matrix"
+
+$rank:
+[1] 2
+
+$s:
+         s(x) 
+1  0.05895516
+2 -0.08844405
+3  0.11265028
+4 -0.07237119
+5 -0.21737064
+6  0.20658044
+
+$nl.df:
+     s(x) 
+ 2.999812
+
+$df.residual:
+[1] 1.000188
+
+$var:
+       s(x) 
+1 0.4336927
+2 0.5025029
+3 0.5591883
+4 0.6253899
+5 0.4407229
+6 0.4383156
+
+$assign:
+$assign$"(Intercept)":
+[1] 1
+
+$assign$"s(x)":
+[1] 2
+
+
+$terms:
+expression(s(x))
+attr($terms, "formula"):
+y ~ s(x)
+attr($terms, "factors"):
+     s(x) 
+   y    0
+s(x)    1
+attr($terms, "order"):
+[1] 1
+attr($terms, "variables"):
+expression(y, s(x))
+attr($terms, "term.labels"):
+[1] "s(x)"
+attr($terms, "intercept"):
+[1] 1
+attr($terms, "response"):
+[1] 1
+attr($terms, "specials"):
+attr($terms, "specials")$s:
+[1] 1
+
+attr($terms, "specials")$lo:
+numeric(0)
+
+attr($terms, "specials")$random:
+numeric(0)
+
+attr($terms, "class"):
+[1] "terms"
+
+$call:
+gam(formula = y ~ s(x))
+
+$formula:
+y ~ s(x)
+
+$family:
+       name           link      variance 
+ "Gaussian" "Identity: mu" "Constant: 1"
+
+$nl.chisq:
+      s(x) 
+ 0.2134991
+
+$y:
+ 1 2 3 4 5  6 
+ 0 2 4 6 8 10
+
+$weights:
+[1] 1 1 1 1 1 1
+
+$add.predictor:
+[1] -0.0214368  2.0815390  3.9192696  5.9846231  8.0899986  9.9460065
+
+$deviance:
+[1] 0.02487703
+
+$null.deviance:
+[1] 70
+
+attr(, "class"):
+[1] "gam" "glm" "lm" 
+> gam
+function(formula = formula(data), family = gaussian, data = sys.parent(), 
+	weights, subset, na.action, start = eta, control = control.gam(), trace
+	 = F, model = F, x = F, y = T, qr = F, method = "qr", ...)
+{
+	x.ret <- x
+	y.ret <- y
+	if(missing(data) && inherits(formula, "data.frame"))
+		data <- formula
+	trace <- trace | control$trace
+	if(missing(model) || is.atomic(model)) {
+		Terms <- terms(formula, gam.slist, data = data)
+		if(missing(na.action))
+			na.action <- (if(missing(data)) NULL else attr(data,
+					"na.action"))
+		if(is.null(na.action))
+			na.action <- na.fail
+		extras <- expression()
+		if(!missing(weights))
+			extras$.weights <- substitute(weights)
+		if(!missing(start))
+			extras$.start <- substitute(start)
+		subset <- if(missing(subset)) NULL else substitute(subset)
+		m <- model.frame(Terms, data, subset, na.action, extras, x = 
+			model)
+	}
+	else {
+		if(!(missing(formula) && missing(data) && missing(weights) &&
+			missing(start) && missing(subset) && missing(na.action)
+			))
+			stop(
+				"formula, data, etc. must not be given with model argument"
+				)
+		if(data.class(model) != "data.frame")
+			stop("supplied model not a model frame")
+		m <- model
+		Terms <- attr(m, "terms")
+		model <- T
+	}
+	if(method == "model.frame")
+		return(m)
+	a <- attributes(m)
+	y <- model.response(m)
+	x <- model.matrix(Terms, m)
+	w <- a$extras[".weights"]
+	if(is.na(w))
+		w <- rep(1, nrow(m))
+	else w <- m[, w]
+	start <- a$extras[".start"]
+	if(!is.na(start))
+		start <- m[, start]
+	offset <- attr(Terms, "offset")
+	if(is.null(offset))
+		offset <- 0
+	else offset <- m[, offset]
+	family <- as.family(family)
+	maxit <- control$maxit
+	bf.maxit <- control$bf.maxit
+	epsilon <- control$epsilon
+	bf.epsilon <- control$bf.epsilon
+	ndig <-  - log10(epsilon) + 1
+	eval(family$initialize)
+	null.dev <- glm.null(x, y, w, offset, family)
+	if(len(null.dev) > 1) {
+		fit <- null.dev
+		class(fit) <- c("gam", "glm", "lm")
+		fit$terms <- Terms
+		fit$formula <- as.vector(attr(Terms, "formula"))
+		fit$family <- family$family
+		fit$call <- sys.call()
+		if(model)
+			fit$model <- m
+		if(x.ret)
+			fit$x <- x
+		if(y.ret)
+			fit$y <- y
+		fit$add.predictor <- fit$lin.predictor
+		fit$lin.predictor <- NULL
+		return(fit)
+	}
+	if(is.na(start[1]))
+		eta <- family$link(mu)
+	else {
+		eta <- start
+		mu <- family$inverse(eta)
+	}
+	new.dev <- family$deviance(mu, y, w)
+	a <- attributes(Terms)
+	smoothers <- a$specials
+	if(len(smoothers) > 0) {
+#some backfitting terms	
+		smoothers <- smoothers[sapply(smoothers, length) > 0]
+		smooth.labels <- a$term.labels[unlist(smoothers)]
+		smooth.frame <- m
+		assignx <- attr(x, "assign")
+		which <- assignx[smooth.labels]	
+	#now figure out which backfitter to use
+		if(len(smoothers) > 1)
+			bf <- "all.wam"
+		else {
+			sbf <- match(names(smoothers), gam.wlist, F)
+			bf <- if(sbf) paste(gam.wlist[sbf], "wam", sep = ".")
+				 else "all.wam"
+		}
+		bf.call <- parse(text = paste(bf, 
+			"(x, z, wz, fit$s, which, fit$smooth.frame,bf.maxit,bf.epsilon, trace, ...)",
+			sep = ""))[[1]]
+		s <- matrix(0, len(y), len(which))
+		dimnames(s) <- list(names(y), names(which))
+		fit <- list(s = s, smooth.frame = smooth.frame)
+	}
+	else {
+		bf.call <- expression(lm.wfit(x, z, wz, method = "qr", 
+			singular.ok = T, qr = T))
+		bf <- "lm.wfit"
+	}
+	new.s.call <- expression({
+		if(c.list$one.more) {
+			eta <- c.list$fit + offset
+			mu <- family$inverse(eta)
+			old.dev <- new.dev
+			new.dev <- family$deviance(mu, y, w)
+			if(trace)
+				cat("GAM ", bf, " loop ", nit, ": deviance = ",
+					format(round(new.dev, ndig)), " \n",
+					sep = "")
+			one.more <- abs((old.dev - new.dev)/(old.dev + epsilon)
+				) > epsilon && nit < maxit
+			if(one.more) {
+				nit <- nit + 1
+				deriv.mu <- family$deriv(mu)
+				z <- eta + (y - mu) * deriv.mu - offset
+				c.list$z <- z
+				wz <- eval(family$weight)
+				c.list$wz <- wz
+			}
+			c.list$one.more <- one.more
+		}
+		c.list
+	}
+	)
+	old.dev <- 10 * new.dev + 10
+	nit <- 1
+	deriv.mu <- family$deriv(mu)
+	z <- eta + (y - mu) * deriv.mu - offset
+	wz <- eval(family$weight)
+	c.list <- list(wz = wz, z = z, fit = eta, one.more = T)	
+	### for Fortran backchat##############################
+	nframe <- sys.nframe()
+	.C("init_call",
+		as.integer(nframe),
+		new.s.call)	
+	######################################################
+	while(c.list$one.more) {
+		fit <- eval(bf.call)
+		c.list$fit <- fit$fitted.values
+		c.list <- eval(new.s.call)
+	}
+	if(len(smoothers) > 0) fit <- fit[-1]	#strip off smooth.frame
+	class(fit) <- c("gam", "glm", "lm")
+	asgn <- attr(x, "assign")
+	rank <- fit$rank
+	if(rank < ncol(x)) {
+		coefs <- fit$coef
+		pivot <- fit$qr$pivot
+		coefs[pivot[ - seq(fit$rank)]] <- NA
+		for(tn in names(asgn)) {
+			TT <- asgn[[tn]]
+			asgn[[tn]] <- TT[!is.na(coefs[TT])]
+		}
+		fit$coefficients <- coefs
+	}
+	fit$assign <- asgn
+	fit$terms <- Terms
+	TT <- sys.call()
+	fit$call <- match.call(gam, TT)
+	fit$formula <- as.vector(attr(Terms, "formula"))
+	fit$family <- family$family
+	if(!is.null(fit$s))
+		fit$nl.chisq <- gam.nlchisq(fit$qr, fit$resid, wz, fit$s)
+	if(!qr)
+		fit$qr <- NULL
+	if(model)
+		fit$model <- m
+	if(x.ret)
+		fit$x <- x
+	if(y.ret)
+		fit$y <- y
+	fit$weights <- wz
+	fit$add.predictor <- fit$fitted.values
+	attr(mu, "x") <- NULL
+	fit$fitted.values <- mu
+	fit$deviance <- new.dev
+	fit$null.deviance <- null.dev
+	fit
+}
+> gam.nlchisq
+function(qr, resid, w, s)
+{
+	wt <- sqrt(w)
+	s <- wt * s
+	resid <- wt * resid
+	Rsw <- qr.resid(qr, s)
+	apply(Rsw^2 + 2 * s * resid, 2, sum)
+}
+> qr.resid
+function(qr, y, end = qr$rank)
+{
+	qrqr <- qr$qr
+	if(is.null(qrqr))
+		stop("First argument should be a qr object")
+	qra <- qr$qraux
+	dq <- dim(qrqr)
+	if(is.matrix(y))
+		dy <- dim(y)
+	else dy <- c(length(y), 1)
+	if(dy[1] != dq[1])
+		stop("y and qr$qr should have same number of rows")
+	storage.mode(y) <- "double"
+	.Fortran("dqrsl1",
+		qrqr,
+		as.integer(dq),
+		qra,
+		as.integer(end),
+		y,
+		as.integer(dy[2]),
+		qy = y,
+		resid = y,
+		as.integer(10),
+		as.integer(1))$resid
+}
+> q()

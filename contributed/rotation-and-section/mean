@@ -1,0 +1,10 @@
+ (defun q:mean (ref-array &rest cols)
+    (let* ((x (if cols
+               (apply #'ref ref-array cols)
+               ref-array))
+           (n (z-array-total-size x))
+           (total (sel x 0)))
+      (do ((i 0 (+ i 1)))
+           (= i n)
+        (setf total (+ total (ref x i))))
+      (/ total n)))

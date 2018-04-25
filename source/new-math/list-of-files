@@ -1,0 +1,5 @@
+./init-new-math.lsp
+./new-math-package.lsp
+./num-array-math.lsp
+./new-math.lsp
+./new-math-old.lsp

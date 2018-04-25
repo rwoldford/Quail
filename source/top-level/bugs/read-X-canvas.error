@@ -1,0 +1,26 @@
+(defclass foo ()
+  ((a :accessor a-of :initarg :a)))
+
+(defun check-read ()
+  (quail-print (make-instance 'foo :a 3)))
+
+(setf c (wb:make-canvas ))
+
+;; the following works fine ... touch the canvas a few times.
+
+(wb:set-left-button-fn c #'(lambda (canvas mouse-pos)
+                           (declare (ignore mouse-pos))
+                           (wb:select-rectangle  :canvas canvas)))
+;;;
+;;;  As does the following when sent from this fred-mixin window
+;;;
+
+(setf a (make-instance 'foo :a 3))
+(princ a)
+
+;;;  but try this:
+
+(wb:set-left-button-fn c #'(lambda (canvas mouse-pos)
+                             (declare (ignore canvas mouse-pos)
+                                      (special a))
+                             (princ a)))

@@ -1,0 +1,52 @@
+;;;
+;;; Compiler for Z. To compile, just load file compile-Z
+;;;
+
+(let ((old-path-name *default-pathname-defaults*))
+
+   (setf *default-pathname-defaults*
+         *Z-directory*)
+
+   (load 'Z-functions.mac)
+   (compile-file 'Z-functions.mac)
+   (load 'Z-utility.lisp)
+   (compile-file 'Z-utility.lisp)
+   (load 'Z-icon.mac)
+   (compile-file 'Z-icon.mac)
+   (load 'Z-mixins.lisp)
+   (compile-file 'Z-mixins.lisp)
+   (load 'Z.lisp) ;----------------
+   (compile-file 'Z.lisp)
+   (load 'Z-arrays.lisp)
+   (compile-file 'Z-arrays.lisp)
+   (load 'Z-browser.lisp)
+   (compile-file 'Z-browser.lisp)
+   (load 'network-view.lisp)
+   (compile-file 'network-view.lisp)
+   (load 'micro-view.lisp)
+   (compile-file 'micro-view.lisp)
+   (load 'analysis-network.lisp)
+   (compile-file 'analysis-network.lisp)
+   (load 'toolbox-network.lisp)
+   (compile-file 'toolbox-network.lisp)
+   (load 'analysis-path.lisp)
+   (compile-file 'analysis-path.lisp)
+   (load 'extended-ops.lisp)
+   (compile-file 'extended-ops.lisp)
+   (load 'Z-binops.lisp)
+   (compile-file 'Z-binops.lisp)
+   (load 'Z-reexps.lisp)
+   (compile-file 'Z-reexps.lisp)
+   (load 'junk-extract.lisp)
+   (compile-file 'junk-extract.lisp)
+   (load 'Z-methods.mac)
+   (compile-file 'Z-methods.mac)
+ 
+   ;; This line should be useless, but it seems there is a problem with pcl, and
+   ;; without it, the after method of initialize-instance defined in pcl is lost
+   ;; when another after method of initialize-instance is defined in Zmixins
+   
+   (load 'menu.fasl)
+
+   (setf *default-pathname-defaults* old-path-name))
+

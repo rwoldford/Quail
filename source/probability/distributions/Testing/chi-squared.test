@@ -1,0 +1,116 @@
+;*********************************
+;  TEST DATA FOR THE CHI-SQUARE DISTRIBUTION
+;*********************************
+
+? (setf C (make-instance 'chi-squared :degrees 2))
+#<CHI-SQUARED #x5A5719>
+
+*************************
+? (pdf-at C -1)
+0
+? (pdf-at C 0) 
+0.5000000000170681
+? (pdf-at C .1)
+0.4756147122665927
+? (pdf-at C .3)
+0.4303539882272196
+? (pdf-at C .5)
+0.3894003915489951
+? (pdf-at C .9)
+0.3188140758217698
+? (pdf-at C 1.0)
+0.30326532986666904
+? (pdf-at C 3.0)
+0.11156508007802332
+? (pdf-at C 10.0)
+0.0033689734996577374
+? (pdf-at C 20.0)
+2.269996488201732E-5
+? (pdf-at C 100.0)
+9.643749240148791E-23
+? (pdf-at C 1000)
+3.562288203492246E-218
+**************************
+
+? (cdf-at C -1)
+0
+? (cdf-at C 0)
+0
+? (cdf-at C .01003)
+0.0050024458829324705
+? (cdf-at C .02010)
+0.00999966750491407
+? (cdf-at C .05064)
+0.02500213721458262
+? (cdf-at C .1026)
+0.05000637029019658
+? (cdf-at C .2107)
+0.09999053584013418
+? (cdf-at C 1.386)
+0.4999264041142506
+? (cdf-at C 4.605)
+0.8999914903351304
+? (cdf-at C 7.378)
+0.9750030134646642
+? (cdf-at C 10.60)
+0.9950084060929194
+? (cdf-at C 13.82)
+0.9990022422034817
+*****************************
+
+? (quantile-at C .005)
+0.010025214150896503
+? (quantile-at C .01)
+0.020100805870883826
+? (quantile-at C .05)
+0.10258673155187928
+? (quantile-at C .5)
+1.3862946975527755
+? (quantile-at C .95)
+5.991466883031891
+? (quantile-at C .99)
+9.210348643787569
+? (quantile-at C -1)
+> Error: p must be between 0 and 1 
+> While executing: #<STANDARD-METHOD QUANTILE-AT (CHI-SQUARED T)>
+> Type Command-. to abort.
+See the Restarts… menu item for further choices.
+1 > 
+Aborted
+
+2 > (quantile-at C 0)
+> Error: p must be between 0 and 1
+> While executing: #<STANDARD-METHOD QUANTILE-AT (CHI-SQUARED T)>
+> Type Command-. to abort.
+See the Restarts… menu item for further choices.
+
+3 > (quantile-at C 1)
+> Error: p must be between 0 and 1
+> While executing: #<STANDARD-METHOD QUANTILE-AT (CHI-SQUARED T)>
+> Type Command-. to abort.
+See the Restarts… menu item for further choices.
+****************************************************
+
+? (let ((tot 0) (C))
+     (setf C (make-instance 'chi-squared :degrees 25))
+        (loop for i from 1 to 100 by 1
+             do (setf tot (+ tot (random-value C))))
+             (/ tot 100))
+        
+24.713563427232017
+
+? (let ((tot 0) (C))    
+     (setf C (make-instance 'chi-squared :degrees 3))                         
+     (loop for i from 1 to 100 by 1
+             do (setf tot (+ tot (random-value C))))
+             (/ tot 100))
+
+3.006139825273477   
+
+? (let ((tot 0) (C))    
+     (setf C (make-instance 'chi-squared :degrees 2))                 
+     (loop for i from 1 to 100 by 1
+             do (setf tot (+ tot (random-value C))))
+             (/ tot 100))
+
+2.179422649392045
