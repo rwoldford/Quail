@@ -16,11 +16,6 @@
 ;;;
 ;;;
 ;;;----------------------------------------------------------------------------
-;(in-package :make)
-
-;(eval-when (compile load eval)
-; (load-pathnames "quail-kernel"))
-
 
 
 (asdf:defsystem "quail"
