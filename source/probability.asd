@@ -13,12 +13,6 @@
 ;;;
 ;;;
 ;;;--------------------------------------------------------------------------------
-
-;(in-package :make)
-
-;(eval-when (compile load eval)
-;  (load-pathnames "probability")
-;  )
         
 (asdf:defsystem "probability"
     :default-component-class cl-source-file.lsp
