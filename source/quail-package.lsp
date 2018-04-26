@@ -14,8 +14,6 @@
 ;;;
 ;;;----------------------------------------------------------------------------
 
-(in-package "MAKE")
-
 #+:cl-2
 (defpackage "QUAIL"
   (:use "NEW-MATH" "QUAIL-KERNEL" "COMMON-LISP")
