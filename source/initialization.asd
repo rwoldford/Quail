@@ -14,11 +14,6 @@
 ;;;
 ;;;----------------------------------------------------------------------------
 
-;(in-package :make)
-
-;(eval-when (compile load eval)
-;  (load-pathnames "initialization"))
-
 (asdf:defsystem "initialization"
     :default-component-class cl-source-file.lsp
   :components (;(:file "initialization/update-special-vars") ;; contains vw:
