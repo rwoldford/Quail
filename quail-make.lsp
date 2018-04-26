@@ -232,12 +232,7 @@
 
 ;;;  That done, "doc" now refers to the Quail Doc directory in Common Lisp.
 ;;;
-;;;;;;;;;;
-;;; All quail defpackages seem to be in MAKE
-;;; Possibly change this
-(defpackage "MAKE" (:nicknames "MK") (:use "COMMON-LISP"))
 
-;;; This should be able to go away
 ;;;;;;;;;;
 ;;;
 ;;;    Define the lookup for the Quail-init file.
@@ -256,15 +251,30 @@
   "Collection of Quail systems loaded into the current Quail image.~%~
    Defined in the file q:quail.qmk")
 
-;;;  Load quail.qmk
+;;;  Define the systems which make up Quail
 
-(load (merge-pathnames *quail-make-load-directory* "quail.qmk"))
+(setf *quail-systems* (list "quail-user"
+                            "initialization"
+                            ;; "analysis-map"
+                            ;;"browser" 15F2018
+                            "statistics"
+                            "probability"
+                            "mathematics"
+                            "linear"
+                            ;;"top-level"
+                            ;;"documentation"
+                            ;; systems above this line use Quail package.
+                            "quail"
+                            ;;"views"
+                            ;;"window-basics"
+                            "new-math"
+                            "quail-kernel"
+                            ))
 
-;;; Some package stuff needed for sbcl
 
 ;;;  Do the make
 (format t "~%Starting the make")
-(loop for system in (reverse mk::*quail-systems*)
+(loop for system in (reverse *quail-systems*)
   do (when (or (string-equal system "quail-kernel") (string-equal system "initialization")) 
   #+:sbcl(sb-ext:unlock-package :sb-mop)
   #+:sbcl(sb-ext:unlock-package :common-lisp))
