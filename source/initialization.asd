@@ -22,7 +22,7 @@
                ;; (:file (add-system-extension "ffenv-std"))
                (:file "initialization/load-quail-init")
                ;; a temporary way to deal with this ...
-               (:file "initialization/release-path")
+               ;(:file "initialization/release-path")
                ;(:file "initialization/release") << contains vw:
                (:file "initialization/restore-sblx")
                ;(:file "initialization/restored-lisp-functions") << some undefined functions invoked
