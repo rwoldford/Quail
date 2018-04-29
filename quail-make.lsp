@@ -91,7 +91,7 @@
 ;;; Setup logical pathname for quail
 
 (defun set-up-quail (&key (base *quail-make-load-directory*))
-  (let* ((location (merge-pathnames  "quail.qmk"  base ))
+  (let* ((location (merge-pathnames  "quail-init.lsp"  base ))
         (dir-list (pathname-directory base))
          (string-qmld (concatenate 'string "/"
           (second dir-list) "/" (third dir-list) "/" (fourth dir-list) "/**/*.*")))
