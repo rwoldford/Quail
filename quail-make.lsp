@@ -93,16 +93,19 @@
 (defun set-up-quail (&key (base *quail-make-load-directory*))
   (let* ((location (merge-pathnames  "quail-init.lsp"  base ))
         (dir-list (pathname-directory base))
-         (string-qmld (concatenate 'string "/"
-          (second dir-list) "/" (third dir-list) "/" (fourth dir-list) "/**/*.*")))
+         (string-qmld "/"))
+    (loop for dir in (cdr dir-list)
+          do (setf string-qmld (concatenate 'string string-qmld dir "/")))
+    (setf string-qmld (concatenate 'string string-qmld "**/*.*"))
      (cond ((probe-file location)
-      #+(or :sbcl-linux :aclpc-linux :ccl)(setf location
+      #+(or :sbcl-linux :aclpc-linux :ccl)
+      (setf location
           (list (append (list "**;*.*.*")
                        (list string-qmld)                       
                          )))
       #+:aclpc-mswin(setf location
          (list (append (list "**;*.*")
-                        (list (concatenate 'string qmld "**\\*.*"))))))
+                        (list  string-qmld "**\\*.*")))))
      (t
       (warn  (format NIL "~%Prompt cancelled~%path to quail not set. ~
                                  ~%Edit or reload quail-make.lsp to try again."))
@@ -160,11 +163,11 @@
 ;;;  Examples  directory
 ;;;
 
-;#-:sbcl-linux
+
 (let (translation)
   ;;  The following should just work for everything.
   ;;  Do not change this.
-  (if (probe-file (lisp-ext "q:examples;welcome"))
+  (if (probe-file (translate-logical-pathname (lisp-ext "q:examples;welcome")))
     (setf translation "q:examples;**;*.*"))
   
   ;;  If that failed, then the Examples directory has been
@@ -189,11 +192,12 @@
 ;;;  Data
 ;;;
 
-;#-:sbcl-linux(
+
   (let ((translation
        ;;  The following should just work for everything.
        ;;  Do not change this.
-       (if (probe-file (lisp-ext "q:data;welcome")) "q:data;**;*.*")))
+       (if (probe-file (translate-logical-pathname (lisp-ext "q:data;welcome")))
+            "q:data;**;*.*")))
   
   ;;  If that failed, then the Data directory has been
   ;;  moved elsewhere and you better say where here.
@@ -214,11 +218,12 @@
 ;;;  Documentation
 ;;;
 
-;#-:sbcl-linux
+
 (let ((translation
        ;;  The following should just work for everything.
        ;;  Do not change this.
-       (if (probe-file (lisp-ext "q:doc;welcome")) "q:doc;**;*.*")))
+       (if (probe-file (translate-logical-pathname (lisp-ext "q:doc;welcome"))) 
+                       "q:doc;**;*.*")))
   
   ;;  If that failed, then the Doc directory has been
   ;;  moved elsewhere and you better say where here.
