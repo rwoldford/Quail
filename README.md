@@ -1,6 +1,9 @@
 # Quail
 Quantitative Analysis in Lisp
 
+# NOTE
+This is not ready for public use.  Stay tuned.
+
 # Requirements
 
 1. The ASDF system facility package must be installed (version >= 3.1.5)
