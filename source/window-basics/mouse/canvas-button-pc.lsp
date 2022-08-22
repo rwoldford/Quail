@@ -32,8 +32,10 @@
 
 ;;; Methods on mouse-left-down & co go here = see Wayne's email.
 (defmethod cg::mouse-left-down ((pane host-pane) (buttons T) (cursor-position T))
-  (mouse-left-button-event-fn (cg::owner pane) (make-position (h-draw:point-x cursor-position)
-                                                              (host-to-canvas-y (cg::owner pane) (h-draw:point-y cursor-position))))
+  (mouse-left-button-event-fn (cg::owner pane) 
+  (make-position (h-draw:point-x cursor-position)
+                 (host-to-canvas-y (cg::owner pane) 
+                                   (h-draw:point-y cursor-position))))
          )
 
 (defmethod cg::mouse-right-down ((pane host-window) (buttons T) (cursor-position T))
