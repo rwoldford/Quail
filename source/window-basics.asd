@@ -14,21 +14,6 @@
 ;;;
 ;;;--------------------------------------------------------------------------------
 
-;(in-package :make)
-
-;(eval-when (compile load eval)
-;  (load-pathnames "window-basics"))
-
-;;;  The following hack lets us support different window systems for
-;;;  different CLs
-;;;  ... rwo
-
-;(defun wb-add-system-extension (file-name-string)
-;  #+:ccl-2 (add-system-extension file-name-string)
-;  #+:clx (concatenate 'string file-name-string "-clx")
-;  #+:aclpc (concatenate 'string file-name-string "-pc"))
-
-
 (asdf:defsystem "window-basics"
     :default-component-class cl-source-file.lsp
   :components
@@ -204,23 +189,4 @@
             ((:file "start-windows-sblx")
              ))
    ))
-#|
-(defun compile-window-basics (&rest op-on-sys-keyword-pairs
-                              &key (verbose T)
-                              &allow-other-keys)
-  "Compiles the window-basics system using make's~
-   operate-on-system's keywords."
-  (apply #'operate-on-system 'window-basics 'compile
-         :verbose verbose
-         :allow-other-keys T op-on-sys-keyword-pairs))
-
-(defun load-window-basics (&rest op-on-sys-keyword-pairs
-                           &key (verbose T)
-                           &allow-other-keys)
-  "Loads the window-basics system using make's~
-   operate-on-system's keywords."
-  (apply #'operate-on-system 'window-basics 'load
-         :verbose verbose
-         :allow-other-keys T op-on-sys-keyword-pairs))
-|#
 |#

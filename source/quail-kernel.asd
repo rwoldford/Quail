@@ -16,12 +16,6 @@
 ;;;
 ;;;
 ;;;----------------------------------------------------------------------------
-;(in-package :make)
-
-;(eval-when (compile load eval)
-; (load-pathnames "quail-kernel"))
-
-
 
 (asdf:defsystem "quail-kernel"
     :default-component-class cl-source-file.lsp

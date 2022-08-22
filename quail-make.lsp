@@ -91,18 +91,21 @@
 ;;; Setup logical pathname for quail
 
 (defun set-up-quail (&key (base *quail-make-load-directory*))
-  (let* ((location (merge-pathnames  "quail.qmk"  base ))
+  (let* ((location (merge-pathnames  "quail-init.lsp"  base ))
         (dir-list (pathname-directory base))
-         (string-qmld (concatenate 'string "/"
-          (second dir-list) "/" (third dir-list) "/" (fourth dir-list) "/**/*.*")))
+         (string-qmld "/"))
+    (loop for dir in (cdr dir-list)
+          do (setf string-qmld (concatenate 'string string-qmld dir "/")))
+    (setf string-qmld (concatenate 'string string-qmld "**/*.*"))
      (cond ((probe-file location)
-      #+(or :sbcl-linux :aclpc-linux :ccl)(setf location
+      #+(or :sbcl-linux :aclpc-linux :ccl)
+      (setf location
           (list (append (list "**;*.*.*")
                        (list string-qmld)                       
                          )))
       #+:aclpc-mswin(setf location
          (list (append (list "**;*.*")
-                        (list (concatenate 'string qmld "**\\*.*"))))))
+                        (list  string-qmld "**\\*.*")))))
      (t
       (warn  (format NIL "~%Prompt cancelled~%path to quail not set. ~
                                  ~%Edit or reload quail-make.lsp to try again."))
@@ -160,11 +163,11 @@
 ;;;  Examples  directory
 ;;;
 
-;#-:sbcl-linux
+
 (let (translation)
   ;;  The following should just work for everything.
   ;;  Do not change this.
-  (if (probe-file (lisp-ext "q:examples;welcome"))
+  (if (probe-file (translate-logical-pathname (lisp-ext "q:examples;welcome")))
     (setf translation "q:examples;**;*.*"))
   
   ;;  If that failed, then the Examples directory has been
@@ -189,11 +192,12 @@
 ;;;  Data
 ;;;
 
-;#-:sbcl-linux(
+
   (let ((translation
        ;;  The following should just work for everything.
        ;;  Do not change this.
-       (if (probe-file (lisp-ext "q:data;welcome")) "q:data;**;*.*")))
+       (if (probe-file (translate-logical-pathname (lisp-ext "q:data;welcome")))
+            "q:data;**;*.*")))
   
   ;;  If that failed, then the Data directory has been
   ;;  moved elsewhere and you better say where here.
@@ -214,11 +218,12 @@
 ;;;  Documentation
 ;;;
 
-;#-:sbcl-linux
+
 (let ((translation
        ;;  The following should just work for everything.
        ;;  Do not change this.
-       (if (probe-file (lisp-ext "q:doc;welcome")) "q:doc;**;*.*")))
+       (if (probe-file (translate-logical-pathname (lisp-ext "q:doc;welcome"))) 
+                       "q:doc;**;*.*")))
   
   ;;  If that failed, then the Doc directory has been
   ;;  moved elsewhere and you better say where here.
@@ -232,12 +237,7 @@
 
 ;;;  That done, "doc" now refers to the Quail Doc directory in Common Lisp.
 ;;;
-;;;;;;;;;;
-;;; All quail defpackages seem to be in MAKE
-;;; Possibly change this
-(defpackage "MAKE" (:nicknames "MK") (:use "COMMON-LISP"))
 
-;;; This should be able to go away
 ;;;;;;;;;;
 ;;;
 ;;;    Define the lookup for the Quail-init file.
@@ -256,15 +256,30 @@
   "Collection of Quail systems loaded into the current Quail image.~%~
    Defined in the file q:quail.qmk")
 
-;;;  Load quail.qmk
+;;;  Define the systems which make up Quail
 
-(load (merge-pathnames *quail-make-load-directory* "quail.qmk"))
+(setf *quail-systems* (list "quail-user"
+                            "initialization"
+                            ;; "analysis-map"
+                            ;;"browser" 15F2018
+                            "statistics"
+                            "probability"
+                            "mathematics"
+                            "linear"
+                            ;;"top-level"
+                            ;;"documentation"
+                            ;; systems above this line use Quail package.
+                            "quail"
+                            ;;"views"
+                            ;;"window-basics"
+                            "new-math"
+                            "quail-kernel"
+                            ))
 
-;;; Some package stuff needed for sbcl
 
 ;;;  Do the make
 (format t "~%Starting the make")
-(loop for system in (reverse mk::*quail-systems*)
+(loop for system in (reverse *quail-systems*)
   do (when (or (string-equal system "quail-kernel") (string-equal system "initialization")) 
   #+:sbcl(sb-ext:unlock-package :sb-mop)
   #+:sbcl(sb-ext:unlock-package :common-lisp))

@@ -13,14 +13,6 @@
 ;;;     G.W.Bennett 2018
 ;;;
 ;;;--------------------------------------------------------------------------------
-
-
-
-;(in-package :make)
-
-;(eval-when (compile load eval)
-;  (load-pathnames "mathematics")
-;  )
         
 
 (asdf:defsystem "mathematics"
