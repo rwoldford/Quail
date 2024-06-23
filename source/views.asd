@@ -17,30 +17,17 @@
 ;;;
 ;;;--------------------------------------------------------------------------------
 
-PLACEHOLDER ONLY
-
-(defsystem views
-  :source-pathname (identity (append-directories
-                              (path-source)
-                              (path-views)))
-  :binary-pathname (identity (append-directories
-                              (path-binary)
-                              (bin (path-views-binary))))
+(asdf:defsystem "views"
+    :default-component-class cl-source-file.lsp
   :components
-  ((:file "views-package")
-   
-   
-   (:module views-macros
-            :source-pathname (path-views-macros)
-            :binary-pathname (bin (path-views-macros))
+  ((:file "views/views-package")
+   (:module "views/views-macros"
             :components
             ((:file "region")
              (:file "draw-macros")
              (:file "linkbounds-macros")))
    
-   (:module utilities
-            :source-pathname (path-views-utilities)
-            :binary-pathname (bin (path-views-utilities))
+   (:module "views/utilities"
             :components
             (
              ;;(:file "affinetrans")
@@ -50,11 +37,9 @@ PLACEHOLDER ONLY
              (:file "function-info")
              (:file "stats")
              )
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
    
-   (:module views-data
-            :source-pathname (path-views-data)
-            :binary-pathname (bin (path-views-data))
+   (:module "views/views-data"
             :components
             ((:file "data")
              (:file "simple-case-object")
@@ -67,10 +52,8 @@ PLACEHOLDER ONLY
              (:file "data-subsets")
              (:file "prompt-data")
              ))
-   
-   (:module views-general
-            :source-pathname (path-views-general)
-            :binary-pathname (bin (path-views-general))
+
+   (:module "views/views-general"
             :components
             ((:file "special-vars")
              (:file "draw-styles")
@@ -85,12 +68,10 @@ PLACEHOLDER ONLY
              (:file "abstract-views" )
              (:file "make-views" )
              (:file "display"))
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
+ #|  
    
-   
-   (:module views-mixins
-            :source-pathname (path-views-mixins)
-            :binary-pathname (bin (path-views-mixins))
+   (:module "views/views-mixins"
             :components
             ( (:file "brush" )
              (:file "angled-brush" )
@@ -100,11 +81,9 @@ PLACEHOLDER ONLY
              (:file "link" )
               (:file "tic-mixin")
              (:file "bordered-view-mixin"))
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
    
-   (:module controls
-            :source-pathname (path-views-controls)
-            :binary-pathname (bin (path-views-controls))
+   (:module "views/controls"
             :components
             ((:file "button-control")
              (:file "control-button")
@@ -115,11 +94,9 @@ PLACEHOLDER ONLY
              (:file "slider")
              (:file "double-slider")
              (:file "range-slider"))
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
    
-   (:module simple-views
-            :source-pathname (path-views-simple-views)
-            :binary-pathname (bin (path-views-simple-views))
+   (:module "views/simple-views"
             :components
             ((:file "label")
              (:file "point-symbol")
@@ -133,11 +110,9 @@ PLACEHOLDER ONLY
              (:file "key-input")
              (:file "editable-text")
              )
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
    
-   (:module dview-def
-            :source-pathname (path-views-dview-def)
-            :binary-pathname (bin (path-views-dview-def))
+   (:module "views/dview-def"
             :components
             ((:file "d-view-mixins"  )
              (:file "d-view-defs"  )
@@ -146,11 +121,9 @@ PLACEHOLDER ONLY
              (:file "change-var" )
              (:file "change-cases" )
              (:file "text-link" ))
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
    
-   (:module d-views
-            :source-pathname (path-views-d-views)
-            :binary-pathname (bin (path-views-d-views))
+   (:module "views/d-views"
             :components
             ((:file "one-per-case")
              (:file "point-cloud")
@@ -170,11 +143,9 @@ PLACEHOLDER ONLY
              (:file "rotation")
              (:file "rotating-lines")
              )
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
    
-   (:module layout
-            :source-pathname (path-views-layout)
-            :binary-pathname (bin (path-views-layout))
+   (:module "views/layout"
             :components
             ((:file "view-layers")
              (:file "view-layout")
@@ -187,11 +158,9 @@ PLACEHOLDER ONLY
              (:file "barchart")
              (:file "table")
              )
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
    
-   (:module plots
-            :source-pathname (path-views-plots)
-            :binary-pathname (bin (path-views-plots))
+   (:module "views/plots"
             :components
             ((:file "plot-mixins")
              (:file "plot" )
@@ -201,22 +170,18 @@ PLACEHOLDER ONLY
              (:file "bar-plot")
              (:file "overlay-plots" )
              (:file "make-plots" ))
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
    
-   (:module scroll
-            :source-pathname (path-views-scroll)
-            :binary-pathname (bin (path-views-scroll))
+   (:module "views/scroll"
             :components
             ((:file "arrow")
              (:file "scroll-bar")
              (:file "scrollable-view-mixin" )
              (:file "display-list")
              (:file "scrolling-display"))
-            :depends-on ("views-macros"))
+            :depends-on ("views/views-macros"))
    
-   (:module prompt-plot
-            :source-pathname (path-views-prompt-plot)
-            :binary-pathname (bin (path-views-prompt-plot))
+   (:module "views/prompt-plot"
             :components
             ((:file "prompt-selections")
              (:file "single-plot")
@@ -224,25 +189,21 @@ PLACEHOLDER ONLY
              ;; (:file "prompt-projection-trace" )
              (:file "prompt-plot")
              (:file "prompt-plot-menu")))
-   (:module clone
-            :source-pathname (path-views-clone)
-            :binary-pathname (bin (path-views-clone))
+   (:module "views/clone"
             :components
             ((:file "clone")
              (:file "copy")
              (:file "combine-args")))
-   (:module display
-            :source-pathname (path-views-display)
-            :binary-pathname (bin (path-views-display))
+   (:module "views/display"
             :components
             ((:file "display-methods")
              (:file "display-data")
              (:file "signposts-methods")
              ))
-   (:module other
-            :source-pathname (path-views-other)
-            :binary-pathname (bin (path-views-other))
+   (:module "views/other"
             :components
             ((:file "connected-points")
              ))
-   ))
+|#             
+   )
+)
