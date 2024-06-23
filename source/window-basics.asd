@@ -13,11 +13,13 @@
 ;;;     G.W. Bennett 2017.
 ;;;
 ;;;--------------------------------------------------------------------------------
+;;; THIS IS THE SBCL FILE
 
 (asdf:defsystem "window-basics"
     :default-component-class cl-source-file.lsp
   :components
   ((:file "window-basics/window-basics-package")
+
    (:module "window-basics/startup"
             :components
             ((:file "restore")
@@ -25,49 +27,69 @@
              ;;<-- use quail's restore fns instead
              (:file "debug"))
             )
+
    (:module "window-basics/macros"
             :components
-            ((:file "macros-sblx")
-             (:file "operations-sblx")
+            (#+:sbcl-linux(:file "macros-sblx")
+             #+:aclpc-linux(:file "macros-pc")
+             #+:sbcl-linux(:file "operations-sblx")
+             #+:aclpc-linux(:file "operations-pc")
              (:file "operations")
              (:file "positions")
              (:file "display-mode"))
             )
-   ))
-#|
+
    (:module "window-basics/host"
             :components
             ((:file "host-draw-package")
-             (:file "host-system-sblx")
-             (:file "host-draw-sblx")
-             (:file "scrolling-window-sblx")
-             (:file "host-menu-canvas-sblx")
-             (:file "host-window-sblx")
-             (:file "host-fonts-sblx"))
-             )
+            #+:sbcl-linux(:file "host-system-sblx")
+             #+:aclpc-linux(:file "host-system-pc")
+             #+:sbcl-linux(:file "host-draw-sblx")
+             #+:aclpc-linux(:file "host-draw-pc")
+             #+:sbcl-linux(:file "scrolling-window-sblx")
+             #+:aclpc-linux(:file "scrolling-window-pc")
+             #+:sbcl-linux(:file "host-menu-canvas-sblx")
+             #+:aclpc-linux(:file "host-menu-canvas-pc")
+             #+:sbcl-linux(:file "host-window-sblx")
+             #+:aclpc-linux(:file "host-window-pc")
+             #+:sbcl-linux(:file "host-fonts-sblx")
+             #+:aclpc-linux(:file "host-fonts-pc")
+          )
+            )
+
    (:module "window-basics/region"
             :components
             ((:file "region")))
+
    (:module "window-basics/transforms"
             :components
             ((:file "list-transforms"))
              ;;(:file integer-affine-transforms)
              )
+
    (:module "window-basics/color"
             :components
-            ((:file "color-sblx")
+            (#+:sbcl-linux(:file "color-sblx")
+             #+:aclpc-linux(:file "color-pc")   
              (:file "color")
              (:file "color-table")
-             (:file "color-mixin-sblx")
+             #+:sbcl-linux(:file "color-mixin-sblx")
+             #+:aclpc-linux(:file "color-mixin-pc")
              )
-            :depends-on ("window-basics/macros"))
+            :depends-on ("window-basics/macros")
+            )
+
    (:module "window-basics/fonts"
             :components
             ((:file "font")
-             (:file "default-fonts-sblx")
-             (:file "font-mixin-sblx")
+             #+:sbcl-linux(:file "default-fonts-sblx")
+             #+:aclpc-linux(:file "default-fonts-pc")
+             #+:sbcl-linux(:file "font-mixin-sblx")
+             #+:aclpc-linux(:file "font-mixin-pc")
              )
-            :depends-on ("window-basics/macros"))
+            :depends-on ("window-basics/macros")
+            )
+
    (:module "window-basics/pen"
             :components
             ((:file "pen")
@@ -75,107 +97,156 @@
              ;; (:file (wb-add-system-extension "pen"))
              (:file "pen-mixin"))
             )
+
    (:module "window-basics/bitmap"
             :components
-            ((:file "bitmap-sblx")
-             (:file "bitmap")
-             (:file "cursor-sblx")
+            (        
+            #+:sbcl-linux(:file "bitmap-sblx") ;; stubbed 11MAR2022  gwb
+             #+:aclpc-linux(:file "bitmap-pc")
+             (:file "bitmap") ;; stubbed 11MAR2022  gwb
+             ;#+:sbcl-linux(:file "cursor-sblx")
+             #+:aclpc-linux(:file "cursor-pc")
              (:file "shades")
-             (:file "shades-sblx")
-             (:file "cursor")
+             #+:sbcl-linux(:file "shades-sblx")
+             #+:aclpc-linux(:file "shades-pc")
+             ;(:file "cursor")
              (:file "patterns")
              )
-            :depends-on ("window-basics/pen" "window-basics/macros"))
+            :depends-on ("window-basics/pen" "window-basics/macros")
+            )
+
+
    (:module "window-basics/monitor"
             :components
-            ((:file "screen-sblx")
+            (#+:sbcl-linux(:file "screen-sblx")
+             #+:aclpc-linux(:file "screen-pc")
              (:file "screen")
-             (:file "device-sblx")
+             #+:sbcl-linux(:file "device-sblx")
+             #+:aclpc-linux(:file "device-pc")
              (:file "device"))
              )
+
    (:module "window-basics/mouse"
             :components
-            ((:file "mouse-sblx")
+            (#+:sbcl-linux(:file "mouse-sblx")
+             #+:aclpc-linux(:file "mouse-pc")
              (:file "button-default")
              (:file "canvas-button")
              (:file "mouse")
-             (:file "canvas-button-sblx"))
+             #+:sbcl-linux(:file "canvas-button-sblx")
+             #+:aclpc-linux(:file "canvas-button-pc"))
              )
+   
    (:module "window-basics/menus"
             :components
-            ((:file "menu-canvas")
-             (:file "menu-canvas-sblx")
+            ((:file "menu-canvas")     
+             #+:sbcl-linux(:file "menu-canvas-sblx") ;does nothing
+             #+:aclpc-linux(:file "menu-canvas-pc")
              (:file "menu")
-             (:file "menu-sblx"))
+             #+:sbcl-linux(:file "menu-sblx") ;stub version 07MAR2022
+             #+:aclpc-linux(:file "menu-pc"))
              )
+
    (:module "window-basics/prompt"
             :components
-            ((:file "dialog-items-sblx")
-             (:file "dialog-sblx")
-             (:file "prompt-sblx")
-             (:file "pick-one-sblx")
-             (:file "check-items-sblx")
-             (:file "collect-input-sblx"))
+            (#+:sbcl-linux(:file "dialog-items-sblx")
+             #+:aclpc-linux(:file "dialog-items-pc")
+             #+:sbcl-linux(:file "dialog-sblx")
+             #+:aclpc-linux(:file "dialog-pc")
+             #+:sbcl-linux(:file "prompt-sblx")
+             #+:aclpc-linux(:file "prompt-pc")
+             #+:sbcl-linux(:file "pick-one-sblx")
+             #+:aclpc-linux(:file "pick-one-pc")
+             #+:sbcl-linux(:file "check-items-sblx")
+             #+:aclpc-linux(:file "check-items-pc")
+             #+:sbcl-linux(:file "collect-input-sblx")
+             #+:aclpc-linux(:file "collect-input-pc"))
              )
+
    (:module "window-basics/redisplay"
           :components
-            ((:file "canvas-ops-sblx")
+            (#+:sbcl-linux(:file "canvas-ops-sblx")
+             #+:aclpc-linux(:file "canvas-ops-pc")
              (:file "canvas-redisplay")
-             (:file "canvas-redisplay-sblx"))
+             #+:sbcl-linux(:file "canvas-redisplay-sblx") ; 27AUG2021
+             #+:aclpc-linux(:file "canvas-redisplay-pc"))
              )
+            
    (:module "window-basics/postscript"
             :components
             ((:file "postscript-canvas")
-             (:file "ps-font")
+               (:file "ps-font-sblx") ;30AUG2021
+             ;(:file "ps-font")
              (:file "ps-file")
              (:file "ps-draw")
              (:file "ps-strings")
              (:file "ps-prompt")
              (:file "canvas-to-ps"))
-            :depends-on ("macros")
+            :depends-on ("window-basics/macros")
             )
+
+   
    (:module "window-basics/canvas"
             :components
             ((:file "canvas")
-             (:file "bw-canvas-sblx")
-             (:file "color-canvas-sblx")
+             #+:sbcl-linux(:file "bw-canvas-sblx")
+             #+:aclpc-linux(:file "bw-canvas-pc")
+             #+:sbcl-linux(:file "color-canvas-sblx")
+             #+:sbcl-linux(:file "color-canvas-ops-sblx") ;;New 28AUG2021
+             #+:aclpc-linux(:file "color-canvas-pc")
              (:file "make-canvas")
              (:file "key-event")
-             (:file "key-event-sblx"))
+             #+:sbcl-linux(:file "key-event-sblx")
+             #+:aclpc-linux(:file "key-event-pc"))
            )
+           
+
    (:module "window-basics/draw"
             :components
             ((:file "draw")
-             (:file "draw-sblx")
-             (:file "strings-sblx")
+             #+:sbcl-linux(:file "draw-sblx")
+             #+:aclpc-linux(:file "draw-pc")
+             #+:sbcl-linux(:file "strings-sblx") ;DONE! 22 November 2019
+             #+:aclpc-linux(:file "strings-pc")
              (:file "strings")
-             (:file "erase"))
+             (:file "erase")
+             )
             :depends-on ("window-basics/macros" "window-basics/pen" "window-basics/fonts" "window-basics/host"))
+            
+
    (:module "window-basics/canvas-regions"
             :components
             (;;(:file (wb-add-system-extension "canvas-regions"))
              (:file "canvas-regions")
-             (:file "clip-sblx")
+             #+:sbcl-linux(:file "clip-sblx")
+             #+:aclpc-linux(:file "clip-pc")
              (:file "clip")
-             (:file "drag-sblx")
+             #+:sbcl-linux(:file "drag-sblx") ;07MAR2022 test
+             #+:aclpc-linux(:file "drag-pc")
              )
             :depends-on ("window-basics/macros" "window-basics/pen"))
+           
    (:module "window-basics/hardcopy"
             :components
-            ((:file "canvas-export-sblx")
-             (:file "hardcopy-sblx"))
+            (#+:sbcl-linux(:file "canvas-export-sblx")
+             #+:aclpc-linux(:file "canvas-export-pc")
+             #+:sbcl-linux(:file "hardcopy-sblx")
+             #+:aclpc-linux(:file "hardcopy-pc"))
              )
+        
    (:module "window-basics/fast-graphics"
             :components
-            ((:file "point-defs-sblx")
-             (:file "points-sblx"
-                    :depends-on (#+:ccl "point-defs-mcl"))
-             (:file "symbols-sblx" 
-                    :depends-on (#+:ccl "point-defs-mcl"))
-             (:file "/lines-sblx"
-                    :depends-on (#+:ccl "point-defs-mcl"))
-             (:file "rotate"))
-            :depends-on ("window-basics/macros" "window-basics/pen"))
+            (#+:sbcl-linux(:file "point-defs-sblx")
+             #+:aclpc-linux(:file "point-defs-pc")
+             #+:sbcl-linux(:file "points-sblx")
+             #+:aclpc-linux(:file "points-pc")
+             #+:sbcl-linux(:file "symbols-sblx")
+             #+:aclpc-linux(:file "symbols-pc" )
+             #+:sbcl-linux(:file "lines-sblx")
+             #+:aclpc-linux(:file "lines-pc")
+             (:file "rotate")) 
+             :depends-on ("window-basics/macros" "window-basics/pen"))
+
    (:module "window-basics/surface"
             :components
             ((:file "surface-rotate")
@@ -183,10 +254,13 @@
              (:file "show-lines")
              (:file "hide-lines")
              (:file "surface-fill"))
-             )
+          )
+
+
    (:module "window-basics/start-windows"
             :components
-            ((:file "start-windows-sblx")
+            (#+:sbcl-linux(:file "start-windows-sblx")
+             #+:aclpc-linux(:file "start-windows-pc")
              ))
-   ))
-|#
+
+))
