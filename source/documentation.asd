@@ -13,66 +13,44 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-PLACEHOLDER ONLY
-
-(defsystem documentation
-   :source-pathname (identity (append-directories
-                                 (path-source)
-                                 (path-documentation)))
-   :binary-pathname (identity (append-directories
-                                      (path-binary)
-                                      (bin (path-documentation))))
-   :components ((:file "inform-user")
-                (:file "edit-file")
-                (:file "doc-vars")
-                (:file "doc-utility")
-                (:file "documentation")
-                (:file "doc-type")
-                (:file "utility-args")
-                (:file "doc")
-                (:file "write-doc")
-                (:file "format-ext")
-                (:file "format-doc")
-                (:file "topic")
-                (:file "install-topics")
-                (:file "generate-topic")
-                (:file "format-tree")
-                (:file "documentation-string")
-                (:file "make-doc")
-                (:file "document-topics")
-                (:file "auto-topics")
-                (:file "help")
-                (:file "tex-basic")
-                (:file "write-tex")
-                (:file "tex-ext")
-                (:file "doc-tex-index")
-                (:file "write-tex-doc")
-                (:file "document-symbols")
-                (:file "tex-doc-symbols")
-                (:file "track-new-symbols")
-                (:file "header-box")
-                (:file "doc-display-lists")
-                (:file "help-window")
-                (:file "help-sub-views")
-                (:file "help-view")
-                (:file "help-display")
-                (:file "doc-index")
-                ))
-
-(defun compile-documentation (&rest op-on-sys-keyword-pairs
-                              &key (verbose T)
-                              &allow-other-keys)
-  "Compiles the documentation system using make's~
-   operate-on-system's keywords."
-  (apply #'operate-on-system 'documentation 'compile
-         :verbose verbose
-         :allow-other-keys T op-on-sys-keyword-pairs))
-
-(defun load-documentation (&rest op-on-sys-keyword-pairs
-                           &key (verbose T)
-                           &allow-other-keys)
-  "Loads the documentation system using make's~
-   operate-on-system's keywords."
-  (apply #'operate-on-system 'documentation 'load
-         :verbose verbose
-         :allow-other-keys T op-on-sys-keyword-pairs))
+(asdf:defsystem "documentation"
+    :default-component-class cl-source-file.lsp
+   :components ((:file "documentation/documentation-path") ;07JAN2020
+                (:file "documentation/inform-user")
+                (:file "documentation/edit-file")
+                (:file "documentation/doc-vars")
+                (:file "documentation/doc-utility")
+                (:file "documentation/documentation")
+                (:file "documentation/doc-type")
+                (:file "documentation/utility-args")
+                (:file "documentation/doc")
+                (:file "documentation/write-doc")
+                (:file "documentation/format-ext")
+                (:file "documentation/format-doc")
+                (:file "documentation/topic")
+                (:file "documentation/install-topics")
+                (:file "documentation/generate-topic")
+                (:file "documentation/format-tree")
+                (:file "documentation/documentation-string")
+                (:file "documentation/make-doc")
+                (:file "documentation/document-topics")
+                (:file "documentation/auto-topics")
+                (:file "documentation/help")
+                (:file "documentation/tex-basic")
+                (:file "documentation/write-tex")
+                (:file "documentation/tex-ext")
+                (:file "documentation/doc-tex-index")
+                (:file "documentation/write-tex-doc")
+                (:file "documentation/document-symbols")
+                (:file "documentation/tex-doc-symbols")
+                (:file "documentation/track-new-symbols")
+                (:file "documentation/header-box")
+                (:file "documentation/help-window")
+                ;(:file "documentation/header-box")
+                (:file "documentation/doc-display-lists")
+                ;(:file "documentation/help-window")
+                (:file "documentation/help-sub-views")
+                (:file "documentation/help-view")
+                (:file "documentation/help-display")
+                (:file "documentation/doc-index")
+           ))
