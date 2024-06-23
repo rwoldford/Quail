@@ -18,7 +18,9 @@
 ;;;----------------------------------------------------------------------------
 
 
-(asdf:defsystem "quail"
+(asdf:defsystem "quail" ;; since that is where quail-package.lsp is! 
+                                    ;; There is now a quail directory within source.
     :default-component-class cl-source-file.lsp
-    :components ((:file "quail-package")
+    :components ((:file "quail/quail-package")
+    	         ;(:file "force-to-pathname") ;; this is in test-documentation-path.lsp
     ))
