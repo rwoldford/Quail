@@ -22,13 +22,18 @@
     :components ((:file "quail-kernel/quail-kernel-package")
                  #+:sbcl-linux(:file  "quail-kernel/quail-kernel-system-sblx")
                  #+:ccl-1.11(:file  "quail-kernel/quail-kernel-system-ccl")
+                 #+:aclpc-linux(:file "quail-kernel/quail-kernel-system-pc")
+
                (:module "quail-kernel/mop"
                         :components (#+:sbcl-linux(:file "mop-sblx")
                                      #+:ccl.1-11(:file "mop-ccl")
+                                     #+:aclpc-linux(:file "mop-pc")
                                      (:file "mixin-to-quail")
                                      #+:sbcl-linux(:file "function-info-sblx")
-                                     #+:ccl-1.11(:file "function-info-ccl"))
-                        )
+                                     #+:ccl-1.11(:file "function-info-ccl")
+                                     #+:aclpc-linux(:file "function-info-pc")
+                                     ))
+
                (:module "quail-kernel/basic"
                         :components ((:file "defmethod-multi")
                                      (:file "special-vars")
@@ -56,11 +61,13 @@
                                      (:file "slots")
                                      #+:sbcl-linux(:file "save-sblx")
                                      #+:ccl-1.11(:file "save-ccl")
+                                     #+:aclpc-linux(:file "save-pc")
                                      (:file "restore")
                                      ;; (:file (add-system-extension "restore"))
                                      )
                          :depends-on ("quail-kernel/basic")
                         )
+
                (:module "quail-kernel/ref"
                         :components ((:file "ref-object")
                                      (:file "eref")
@@ -85,6 +92,7 @@
                         :components (#+(not (or :sbcl-linux :ccl-1.11))(:file "extended-ops")
                                      #+:sbcl-linux(:file "extended-ops-sblx")
                                      #+:ccl-1.11(:file "extended-ops-ccl")
+                                     #+:aclpc-linux(:file "extended-ops-pc")
                                      (:file "matrix-multiply")) 
                          :depends-on ("quail-kernel/basic" "quail-kernel/io" "quail-kernel/ref")
                         )
@@ -120,5 +128,7 @@
                                      (:file "reduce-slices")
                                      )
                          :depends-on ("quail-kernel/basic" "quail-kernel/io" "quail-kernel/ref" "quail-kernel/math")
-                        )))
+                        ))
+
+)
 
