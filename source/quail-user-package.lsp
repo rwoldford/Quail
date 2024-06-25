@@ -17,6 +17,12 @@
 #+:cl-2
 (defpackage "QUAIL-USER" 
   (:use "QUAIL" "COMMON-LISP")
+  (:IMPORT-FROM "QUAIL-KERNEL"
+                 "<-"  ;28JUN2020
+                 "CGLUE" ;03AUG2023
+                 "REF") ;03AUG2023
+  (:IMPORT-FROM "VIEWS"
+                 "DATASET") ;28JUN2020
   (:SHADOWING-IMPORT-FROM "QUAIL"
                           "ARRAY-ELEMENT-TYPE"
                           "ARRAY-RANK"
