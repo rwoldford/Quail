@@ -22,8 +22,8 @@
              :components
              ((:file "summary-statistics")
               (:file "sweep")))
-    #| contains wb:
-    (:module "stat-graphics"
+    
+    (:module "statistics/stat-graphics"
              :components
              ((:file "projection-trace")
               (:file "qq-plot")
@@ -35,7 +35,7 @@
               (:file "image")
               )
              )
-    |#
+    
     (:module "statistics/models"
              :components ((:file "parse")
                           (:file "formula-reduce")
@@ -67,10 +67,10 @@
                           ;;(:file "display") << has wb:
                           )
              )
-     #| contains wb:
+     
     (:module "statistics/stat-sessions"
              :components
              ((:file "response-session"))
              )
-    |#
+    
     ))
