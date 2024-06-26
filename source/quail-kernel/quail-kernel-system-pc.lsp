@@ -6,6 +6,7 @@
 ;;;     Greg Anglin 1990, 1991.
 ;;;     Simply copied by G.W. Bennett 1997
 ;;;--------------------------------------------------------------------------------
-(in-package :quail-kernel)
+;(in-package :quail-kernel)
 (defun system-get-pointer (x)
+  (declare (ignore x)) ;24JUN2023
   0)

@@ -16,8 +16,12 @@
 
 #+:CL-2
 (DEFPACKAGE "QUAIL-KERNEL"
-  (:USE "COMMON-LISP") 
+  #+:sbcl-linux (:USE :clim :clim-lisp :clim-extensions) ;"COMMON-LISP")  ; 19 November 2019
+  #+:aclpc-linux (:USE :common-lisp)
   (:NICKNAMES "QK" "quail-kernel")
+  ;(:SHADOWING-IMPORT-FROM "COMMON-LISP" "ARRAY") ; 19 November 2019 commented out 07JUN2023 to avoid compile complaint?
+  #+:aclpc-linux(:SHADOWING-IMPORT-FROM "ACLMOP" "CLASS-PRECEDENCE-LIST") ; 05 FEB 2020
+  #+:aclpc-linux(:SHADOWING-IMPORT-FROM "SYSTEM" "FUNCTION-INFORMATION") ; 05 FEB 2020
   (:SHADOW "ARRAY-ELEMENT-TYPE"
            "ARRAY-RANK"
            "ARRAY-DIMENSION"
@@ -27,7 +31,11 @@
            "ADJUSTABLE-ARRAY-P"
            "ARRAY-ROW-MAJOR-INDEX"
            "SORT"
-           "PACKAGE")
+           "PACKAGE"
+           ;"ARRAY"  ;; see above shadowing-import-from 19 November 2019
+           "CLASS-SLOTS"
+           ;#-:aclpc-linux "CLASS-PRECEDENCE-LIST" ; see above 23feb2020 It's in :SHADOWING-IMPORT-FROM ABOVE l23
+           "CLASS-PROTOTYPE")
   (:EXPORT "ARRAY-ELEMENT-TYPE"
            "ARRAY-RANK"
            "ARRAY-DIMENSION"
@@ -38,6 +46,11 @@
            "ARRAY-ROW-MAJOR-INDEX"
            "SORT"
            "SORT-OBJECT"
+           "<-" ;; 05FEB2020
+           "+INFINITY" ;;07APR2020
+           "INFINITY"  ;;07APR2020
+           "-INFINITY" ;; 07APR2020
+           ;"DIMENSIONED-REF-OBJECT" ;;15AUG2020
            ))
 
 #-:CL-2

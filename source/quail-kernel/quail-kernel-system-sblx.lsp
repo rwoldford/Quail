@@ -8,4 +8,5 @@
 ;;;--------------------------------------------------------------------------------
 (in-package :quail-kernel)
 (defun system-get-pointer (x)
+	(declare (ignore x))
   0)
