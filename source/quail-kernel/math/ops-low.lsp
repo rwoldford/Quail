@@ -32,7 +32,7 @@
 ;;; vector with scalar
 
 (defun v-op-s (op op-name v s &optional (dim-v (dimensions-of v)))
-  (declare (optimize speed))
+  (declare (optimize (speed 3)))
   (declare (ignore op-name))
   (let* ((result (make-dimensioned-result dim-v v s))
          (s-eref (eref s)))
@@ -45,7 +45,7 @@
 ;;; matrix with scalar
 
 (defun m-op-s (op op-name m s &optional (dim-m (dimensions-of m)))
-  (declare (optimize speed))
+  (declare (optimize (speed 3)))
   (declare (ignore op-name))
   (let* ((result (make-dimensioned-result dim-m m s))
          (s-eref (eref s)))
@@ -62,7 +62,7 @@
 
 (defun v-op-v (op op-name a b &optional (dim-a (dimensions-of a))
                                         (dim-b (dimensions-of b)))
-  (declare (optimize speed))
+  (declare (optimize (speed 3)))
   (let* ((len (first dim-a)))
     (if (eq len (first dim-b))
       (let ((result (make-dimensioned-result dim-a a b)))
@@ -77,7 +77,7 @@
 
 (defun m-op-mv (op op-name a b &optional (dim-a (dimensions-of a))
                                          (dim-b (dimensions-of b)))
-  (declare (optimize speed))
+  (declare (optimize (speed 3)))
   (let* ((num-dim-b (length dim-b))
          (rows-in-a (first dim-a))
          (cols-in-a (second dim-a))

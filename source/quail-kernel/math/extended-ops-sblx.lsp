@@ -213,8 +213,8 @@
       (otherwise (quail-error "invalid arguments to ~s: ~s and ~s." ext-op num1 num2)))))
 
 (defun ext_+ (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (let (result)    
     (cond ((numberp num1)
            (if (numberp num2)
@@ -256,8 +256,8 @@
     result))
 
 (defun ext_- (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (let (result)    
     (cond ((numberp num1)
            (if (numberp num2)
@@ -299,8 +299,8 @@
     result))
 
 (defun ext_* (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (let (result)
     (cond ((numberp num1)
            (if (numberp num2)
@@ -359,7 +359,8 @@
                     *zero-over-zero*
                     *plus-inf-over-zero*
                     *minus-inf-over-zero*)
-           (optimize (speed 3)))
+           ;(optimize (speed 3))
+           )
   (let (result)    
     (cond ((numberp num1)
            (if (numberp num2)
@@ -405,8 +406,8 @@
 
 
 (defun ext_min (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (let (result)    
     (cond ((and (numberp num1) (numberp num2))
            (setf result (cl:min num1 num2)))          
@@ -425,8 +426,8 @@
     result))
 
 (defun ext_max (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (let (result)    
     (cond ((and (numberp num1) (numberp num2))
            (setf result (cl:max num1 num2)))          
@@ -447,8 +448,8 @@
 
 
 (defun ext_= (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((and (numberp num1)
               (numberp num2))
          (cl:= num1 num2))
@@ -464,8 +465,8 @@
 
 
 (defun ext_< (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((and (numberp num1)
               (numberp num2))
          (cl:< num1 num2))
@@ -485,8 +486,8 @@
 
 
 (defun ext_> (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((and (numberp num1)
               (numberp num2))
          (cl:> num1 num2))
@@ -506,8 +507,8 @@
 
 
 (defun ext_<= (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((and (numberp num1)
               (numberp num2))
          (cl:<= num1 num2))
@@ -525,8 +526,8 @@
 
 
 (defun ext_>= (num1 num2 &optional method)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((and (numberp num1)
               (numberp num2))
          (cl:>= num1 num2))
@@ -548,7 +549,8 @@
 (defun ext_exp (number)
   (declare (special ;+infinity -infinity NaN 
     *most-positive-long-logarithm*)
-           (optimize (speed 3)))
+           ;(optimize (speed 3))
+           )
   (cond ((numberp number)
          (if (> number *most-positive-long-logarithm*)
            +infinity
@@ -562,8 +564,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_sqrt (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:sqrt number))
         ((ext_nanp number)  
@@ -575,8 +577,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_isqrt (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:isqrt number))
         ((ext_nanp number)  
@@ -588,8 +590,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_abs (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:abs number))
         ((ext_nanp number)  
@@ -601,8 +603,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_phase (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:phase number))
         ((ext_nanp number)  
@@ -615,8 +617,8 @@
 
 
 (defun ext_signum (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:signum number))
         ((ext_nanp number)  
@@ -628,8 +630,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_sin (radians)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp radians)
          (cl:sin radians))
         ((ext_nanp radians)  
@@ -641,8 +643,8 @@
         (t (quail-error "Not an extended number: ~s" radians))))
 
 (defun ext_cos (radians)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp radians)
          (cl:cos radians))
         ((ext_nanp radians)  
@@ -654,8 +656,8 @@
         (t (quail-error "Not an extended number: ~s" radians))))
 
 (defun ext_tan (radians)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp radians)
          (cl:tan radians))
         ((ext_nanp radians)  
@@ -667,8 +669,8 @@
         (t (quail-error "Not an extended number: ~s" radians))))
 
 (defun ext_cis (radians)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp radians)
          (cl:cis radians))
         ((extnump radians)  
@@ -676,8 +678,8 @@
         (t (quail-error "Sorry can't calculate (cis ~s).  " radians))))
 
 (defun ext_asin (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:asin number))
         ((ext_nanp number)  
@@ -689,8 +691,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_acos (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:acos number))
         ((ext_nanp number)  
@@ -702,8 +704,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_atan (number &optional (x NIL))
-  (declare ;(special pi +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special pi +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (if x
            (cond
@@ -734,8 +736,8 @@
          (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_sinh (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:sinh number))
         ((ext_nanp number)  
@@ -747,8 +749,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_cosh (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:cosh number))
         ((ext_nanp number)  
@@ -760,8 +762,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_tanh (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:tanh number))
         ((ext_nanp number)  
@@ -773,8 +775,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_asinh (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:asinh number))
         ((ext_nanp number)  
@@ -786,8 +788,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_acosh (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:acosh number))
         ((ext_nanp number)  
@@ -799,8 +801,8 @@
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_atanh (number)
-  (declare ;(special pi +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special pi +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number)
          (cl:atanh number))
         ((ext_nanp number)  NaN)
@@ -811,7 +813,7 @@
 
 
 (defun ext_float (number &optional other)
-  (declare (optimize (speed 3)))
+  ;(declare (optimize (speed 3)))
   (cond ((numberp number)
          (if other
            (if (floatp other)
@@ -824,7 +826,7 @@
 
 
 (defun ext_rational (number)
-  (declare (optimize (speed 3)))
+  ;(declare (optimize (speed 3)))
   (cond ((numberp number)
          (cl:rational number))
         ((extnump number) number)
@@ -833,7 +835,7 @@
 
 
 (defun ext_rationalize (number)
-  (declare (optimize (speed 3)))
+  ;(declare (optimize (speed 3)))
   (cond ((numberp number)
          (cl:rationalize number))
         ((extnump number) number)
@@ -842,7 +844,7 @@
 
 
 (defun ext_numerator (number)
-  (declare (optimize (speed 3)))
+  ;(declare (optimize (speed 3)))
   (cond ((numberp number)
          (cl:numerator number))
         ((extnump number) number)
@@ -851,7 +853,7 @@
 
 
 (defun ext_denominator (number)
-  (declare (optimize (speed 3)))
+  ;(declare (optimize (speed 3)))
   (cond ((numberp number)
          (cl:denominator number))
         ((ext_nanp number)  NaN)
@@ -862,14 +864,14 @@
 
 
 (defun ext_realpart (number)
-  (declare (optimize (speed 3)))
+  ;(declare (optimize (speed 3)))
   (cond ((numberp number)
          (cl:realpart number))
         ((extnump number) number)
         (t (quail-error "Not an extended number: ~s" number))))
 
 (defun ext_imagpart (number)
-  (declare (optimize (speed 3)))
+  ;(declare (optimize (speed 3)))
   (cond ((numberp number)
          (cl:imagpart number))
         ((ext_nanp number)  NaN)
@@ -880,8 +882,8 @@
 
 
 (defun ext_floor (number &optional (divisor NIL))
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (if (and divisor (complexp divisor))
     (quail-error "The divisor argument to floor ~
                   must not be complex! (number = ~s divisor = ~s)"
@@ -941,8 +943,8 @@
 
 
 (defun ext_ceiling (number &optional (divisor NIL))
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (if (and divisor (complexp divisor))
     (quail-error "The divisor argument to ceiling ~
                   must not be complex! (number = ~s divisor = ~s)"
@@ -1002,8 +1004,8 @@
 
 
 (defun ext_truncate (number &optional (divisor NIL))
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (if (and divisor (complexp divisor))
     (quail-error "The divisor argument to truncate ~
                   must not be complex! (number = ~s divisor = ~s)"
@@ -1041,8 +1043,8 @@
 
 
 (defun ext_round (number &optional (divisor NIL))
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (if (and divisor (complexp divisor))
     (quail-error "The divisor argument to round ~
                   must not be complex! (number = ~s divisor = ~s)"
@@ -1080,8 +1082,8 @@
 
 
 (defun ext_ffloor (number &optional (divisor NIL))
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (if (and divisor (complexp divisor))
     (quail-error "The divisor argument to ffloor ~
                   must not be complex! (number = ~s divisor = ~s)"
@@ -1141,8 +1143,8 @@
 
 
 (defun ext_fceiling (number &optional (divisor NIL))
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (if (and divisor (complexp divisor))
     (quail-error "The divisor argument to fceiling ~
                   must not be complex! (number = ~s divisor = ~s)"
@@ -1202,8 +1204,8 @@
 
 
 (defun ext_ftruncate (number &optional (divisor NIL))
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (if (and divisor (complexp divisor))
     (quail-error "The divisor argument to ftruncate ~
                   must not be complex! (number = ~s divisor = ~s)"
@@ -1241,8 +1243,8 @@
 
 
 (defun ext_fround (number &optional (divisor NIL))
-  (declare ;(special NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special NaN)
+  ;         (optimize (speed 3)))
   (if (and divisor (complexp divisor))
     (quail-error "The divisor argument to fround ~
                   must not be complex! (number = ~s divisor = ~s)"
@@ -1280,8 +1282,8 @@
 
 
 (defun ext_complex (realpart &optional (imagpart NIL))
-  (declare ;(special  NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special  NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp realpart)
          (if imagpart
            (cond
@@ -1309,8 +1311,8 @@
 
 
 (defun ext_expt (base-number power-number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond
    ((and (numberp base-number) (numberp power-number))
     (if (and (zerop base-number) (minusp power-number))
@@ -1368,8 +1370,8 @@
 
 
 (defun ext_log (number &optional (base NIL))
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond
    ((numberp number)
     ;; quick hack by dga 93 03 to allow (log 0 b), b real > 0, --> -infinity
@@ -1413,7 +1415,7 @@
 
 
 (defun ext_rem (number divisor)
-  (declare (optimize (speed 3)))
+  ;(declare (optimize (speed 3)))
   (cond ((and (numberp number)
               (numberp divisor))
          (cl:rem number divisor))
@@ -1429,7 +1431,7 @@
 
 
 (defun ext_mod (number divisor)
-  (declare (optimize (speed 3)))
+  ;(declare (optimize (speed 3)))
   (cond ((and (numberp number)
               (numberp divisor))
          (cl:mod number divisor))
@@ -1445,8 +1447,8 @@
 
 
 (defun ext_gcd (&rest integers)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((every #'numberp integers)
          (apply #'cl:gcd integers))
         ((every #'(lambda (x) (or (ext_NaNp x)
@@ -1458,8 +1460,8 @@
           integers))))
 
 (defun ext_lcm (&rest integers)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((every #'numberp integers)
          (apply #'cl:lcm integers))
         ((every #'(lambda (x) (or (ext_NaNp x)
@@ -1471,8 +1473,8 @@
           integers))))
 
 (defun ext_conjugate (number)
-  (declare ;(special +infinity -infinity NaN)
-           (optimize (speed 3)))
+  ;(declare ;(special +infinity -infinity NaN)
+  ;         (optimize (speed 3)))
   (cond ((numberp number) (cl:conjugate number))
         ((extnump number) number)
         (t

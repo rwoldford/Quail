@@ -32,8 +32,9 @@
 
 (defun matmult (a b)
   "Matrix multiplication of two objects having dimensions."
-  (declare (optimize speed)
-           (inline ext_+ ext_*))
+  #-:sbcl(declare (optimize (speed 3))
+           (inline ext_+ ext_*)
+           )
   (let* ((dim-a (dimensions-of a))
          (dim-b (dimensions-of b))
          (len-a (length dim-a))
@@ -66,8 +67,8 @@
                                (ext_+ accum (ext_* (eref a i k) (eref b k j)))))
                        accum))))
                 result)
-              (quail-error "MATMULT: Cannot multiply matrix ~S by matrix ~S.~
-                            ~&They are not conformable. ~
+              (quail-error "MATMULT: Cannot multiply matrix ~S by matrix ~S.
+                            ~&They are not conformable.
                             ~&Dimensions are ~s and ~s respectively."
                            a b dim-a dim-b))))
          (1 
@@ -90,8 +91,8 @@
                 (if (= 1 rows-in-a )
                   (eref result 0 0)
                   result))
-              (quail-error "MATMULT: Cannot multiply matrix ~S by column vector ~S.~
-                            ~&They are not conformable. ~
+              (quail-error "MATMULT: Cannot multiply matrix ~S by column vector ~S.
+                            ~&They are not conformable.
                             ~&Dimensions are ~s and ~s respectively."
                            a b
                            (matrix-dimensions-of a)
@@ -101,7 +102,7 @@
                 (ext_* (eref a) (eref b))
                 (map-element #'ext_* nil a b))
               (quail-error
-               "MATMULT: Dimensions ~s and ~s do not conform. ~&~
+               "MATMULT: Dimensions ~s and ~s do not conform. ~&
                 Perhaps you meant to use the element-wise multiplication *"
                dim-a
                dim-b))
@@ -129,8 +130,8 @@
                         do
                         (setf (eref result i j) (ext_* (eref a i) (eref b 0 j)))))
                     result)))
-              (quail-error "MATMULT: Cannot multiply column vector ~S by matrix ~S.~
-                            ~&They are not conformable. ~
+              (quail-error "MATMULT: Cannot multiply column vector ~S by matrix ~S.
+                            ~&They are not conformable.
                             ~&Dimensions are ~s and ~s respectively."
                            a b
                            (matrix-dimensions-of a)
@@ -140,7 +141,7 @@
                 (ext_* (eref a) (eref b))
                 (map-element #'ext_* nil a b))
               (quail-error
-               "MATMULT: Dimensions ~s and ~s do not conform. ~&~
+               "MATMULT: Dimensions ~s and ~s do not conform. ~&
                 Perhaps you meant to use the element-wise multiplication *"
                (matrix-dimensions-of a)
                (matrix-dimensions-of b)))
@@ -154,12 +155,12 @@
                   (ext_* (eref a) (eref b))
                   (map-element #'ext_* nil a b))
                 (quail-error
-                 "MATMULT: Dimensions ~s and ~s do not conform. ~&~
+                 "MATMULT: Dimensions ~s and ~s do not conform. ~&
                   Perhaps you meant to use the element-wise multiplication *"
                  dim-a
                  dim-b)))
            (1 (quail-error
-               "MATMULT: Dimensions ~s and ~s do not conform. ~&~
+               "MATMULT: Dimensions ~s and ~s do not conform. ~&
                 Perhaps you meant to use the element-wise multiplication *"
                (matrix-dimensions-of a)
                (matrix-dimensions-of b)))
@@ -173,8 +174,8 @@
 
 (defun .* (&rest args)
   "The matrix multiplication operator or \"dot-product\".~
-   Takes arbitrary number of arguments whose dimensions must conform.  ~
-   Implemented recursively, calling dot-times-object at each level.  ~
+   Takes arbitrary number of arguments whose dimensions must conform.  
+   Implemented recursively, calling dot-times-object at each level.  
    (:see-also (* :function) (dot-times-object :generic-function))"
   (case (length args)
     (0 1)
@@ -207,6 +208,12 @@
   (let ((result (make-dimensioned-result (dimensions-of b) b)))
     (setf (ref result) b)
     result))
+;;; added for symmetry 05SEP2023
+(defmethod-multi dot-times-object ((a (sequence array dimensioned-ref-object))
+                                                         (b (eql :identity)))
+  (let ((result (make-dimensioned-result (dimensions-of a) a)))
+    (setf (ref result) a)
+    result))
 
 (defmethod dot-times-object ((x1 number) (x2 number))
   (declare (inline *))
@@ -220,13 +227,29 @@
   (ext_* x1 x2 'dot-times-object))
 
 
-
+#|
 (defmethod-multi dot-times-object ((a (symbol number sequence array
                                               dimensioned-ref-object)) 
                                    (b (symbol number sequence array
                                               dimensioned-ref-object)))
   (matmult a b))
+|#
+;;; Added to replace the immediate above 05SEP2023. To avoid multiple defintions complaint
+(defmethod-multi dot-times-object ((a (sequence array  dimensioned-ref-object)) 
+                                                        (b (sequence array dimensioned-ref-object)))
+  (matmult a b))
+  
+(defmethod-multi dot-times-object ((a (symbol number)) 
+                                                        (b (sequence array  dimensioned-ref-object)))
+  (matmult a b))
 
+(defmethod-multi dot-times-object ((a (sequence array dimensioned-ref-object)) 
+                                                        (b (symbol number)))
+  (matmult a b))
+
+;;; and for symmetry
+(defmethod-multi dot-times-object ((a ((eql :identity) symbol number)) (b (eql :identity)))
+                 a)
 
 
 
