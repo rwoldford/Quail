@@ -38,15 +38,15 @@
   (missing-method 'number-of-slices object slices))
 
 (defmethod number-of-slices ((object symbol) slices)
-  (declare (ignore object slices))
+  (declare (ignorable object slices)) ;(declare (ignore object slices)) 25JUL2023
   1)
 
 (defmethod number-of-slices ((object number) slices)
-  (declare (ignore object slices))
+  (declare (ignorable object slices)) ;(declare (ignore object slices))  25JUL2023
   1)
 
 (defmethod number-of-slices ((object T) (slices null))
-  (declare (ignore object slices))
+  (declare (ignorable object slices)) ;(declare (ignore object slices))  25JUL2023
   1)
 
 (defmethod number-of-slices :around ((object T) (slices list))
