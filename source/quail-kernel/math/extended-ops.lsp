@@ -17,7 +17,7 @@
 
 (in-package :quail-kernel)
 
-(eval-when (:compile-toplevel :load-toplevel :execute) (export '(+infinity infinity -infinity nan
+(eval-when (:compile-toplevel :load-toplevel :execute) (export '(+infinity infinity -infinity NaN 
           with-zero-over-zero with-plus-inf-over-zero with-minus-inf-over-zero
           with-plus-over-zero with-minus-over-zero with-inf-over-inf)))
 
