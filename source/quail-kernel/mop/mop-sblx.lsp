@@ -120,9 +120,10 @@
 ;;; Had to ensure that the class was finalized before calling
 ;;;
 ;;; Added for the benefit of ACL6.0 for right-button problem
+(sb-ext:with-unlocked-packages (:sb-mop)
 (defmethod sb-mop::finalize-inheritance
   ((thing T))
- )
+ ))
 
 (defmethod class-precedence-list ((thing standard-class))
    (unless (sb-mop::class-finalized-p  thing)
@@ -181,15 +182,16 @@
   (:documentation "Returns the name of the method."))
 
 
+(sb-ext:with-unlocked-packages (:sb-mop)
   (defmethod method-name ((thing sb-mop::standard-method))
    (let ((gf (slot-value thing 'generic-function))
          )
       (when gf
          (slot-value gf 'sb-mop::name))
       )
-   )
-      
+   ))
 
+ (sb-ext:with-unlocked-packages (:sb-mop)     
   (defmethod method-name ((thing sb-mop::standard-writer-method))
    (let ((gf (slot-value thing 'generic-function))
          name)
@@ -198,7 +200,7 @@
       (when (and name (listp name))
          (setf name (second name)))
       name)
-      )         
+      ))     
 
 
 (defun reader-method-p (method)
@@ -374,41 +376,47 @@
                   direct-class-slots
                   direct-instance-slots)))
 
+(sb-ext:with-unlocked-packages (:sb-mop)
 (defmethod slot-definition-readers ((thing T))
-   NIL)
+   NIL))
 
+(sb-ext:with-unlocked-packages (:sb-mop)
 (defmethod slot-definition-writers ((thing T))
-   NIL)
+   NIL))
 
+(sb-ext:with-unlocked-packages (:sb-mop)
 (defmethod slot-definition-readers ((thing standard-class))
   (let ((direct-methods (specializer-direct-methods thing))
         )
     (loop for method in direct-methods
           when (typep method 'sb-mop::standard-reader-method)
           collect
-          method)))
+          method))))
 
+(sb-ext:with-unlocked-packages (:sb-mop)
 (defmethod slot-definition-writers ((thing standard-class))
   (let ((direct-methods (specializer-direct-methods thing))
         )
     (loop for method in direct-methods
           when (typep method 'sb-mop::standard-writer-method)
           collect
-          method)))
+          method))))
 
+(sb-ext:with-unlocked-packages (:sb-mop)
 (defmethod slot-definition-readers ((thing sb-mop:standard-effective-slot-definition))
   (let ((direct-methods (specializer-direct-methods thing))
         )
     (loop for method in direct-methods
           when (typep method 'sb-mop::standard-reader-method)
           collect
-          method)))
+          method))))
 
+(sb-ext:with-unlocked-packages (:sb-mop)
 (defmethod slot-definition-writers ((thing sb-mop:standard-effective-slot-definition))
   (let ((direct-methods (specializer-direct-methods thing))
         )
     (loop for method in direct-methods
           when (typep method 'sb-mop::standard-writer-method)
           collect
-          method)))
+          method))))
 

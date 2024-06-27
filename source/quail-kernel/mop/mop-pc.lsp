@@ -50,12 +50,12 @@
 ;;; here we import it to common-lisp and common-lisp-user,
 ;;; then export it from both before proceeding as before.
 ;;; This has to be done early in the LOAD of Quail.
-(in-package "COMMON-LISP")
-(import 'sys::function-information)
-(export 'function-information)
-(in-package "COMMON-LISP-USER")
-(import 'sys::function-information)
-(export 'function-information)
+;(in-package "COMMON-LISP") ;; 12JUN2023
+;(import 'sys::function-information)  ;; 12JUN2023
+;(export 'function-information)  ;; 12JUN2023
+;(in-package "COMMON-LISP-USER") ;; 12JUN2023
+;(import 'sys::function-information)  ;; 12JUN2023
+;(export 'function-information)  ;; 12JUN2023
 ;;; 28oct2005
 
 
@@ -67,18 +67,26 @@
 ;;; In aclwin there is no CLOS package  <= *****
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (import '(clos::class-direct-subclasses clos::class-direct-superclasses
-            clos::class-direct-slots clos::specializer-direct-methods
-            clos::specializer-direct-generic-functions clos::generic-function-methods
-            clos::method-function  clos::method-generic-function
-            clos::method-specializers clos::slot-definition-readers
-            clos::slot-definition-writers clos::slot-definition-initargs
+  (import '(clos::class-direct-subclasses 
+            clos::class-direct-superclasses 
+            clos::class-precedence-list
+            clos::class-direct-slots 
+            clos::specializer-direct-methods
+            clos::specializer-direct-generic-functions 
+            clos::generic-function-methods
+            clos::method-function  
+            clos::method-generic-function
+            clos::method-specializers 
+            clos::slot-definition-readers
+            clos::slot-definition-writers 
+            clos::slot-definition-initargs
             clos::slot-definition-initform
             clos::slot-definition-type
             clos::slot-definition-name
             clos::slot-definition-allocation
             clos::slot-definition-initfunction)
 	    ))
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (shadow '(clos::class-precedence-list
             clos::class-prototype
@@ -87,12 +95,19 @@
   )
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(class-direct-subclasses class-direct-superclasses
-            class-direct-slots specializer-direct-methods
-            specializer-direct-generic-functions generic-function-methods
-            method-function  method-generic-function
-            method-specializers slot-definition-readers
-            slot-definition-writers slot-definition-initargs
+  (export '(class-direct-subclasses 
+            class-direct-superclasses
+            class-precedence-list
+            class-direct-slots 
+            specializer-direct-methods
+            specializer-direct-generic-functions 
+            generic-function-methods
+            method-function  
+            method-generic-function
+            method-specializers 
+            slot-definition-readers
+            slot-definition-writers 
+            slot-definition-initargs
             slot-definition-initform
             slot-definition-type
             slot-definition-name
@@ -117,26 +132,44 @@
 ;;; Had to ensure that the class was finalized before calling
 ;;;
 ;;; Added for the benefit of ACL6.0 for right-button problem
-(defmethod clos::finalize-inheritance
+ (excl:without-package-locks
+  (defmethod clos::finalize-inheritance
   ((thing T))
- )
+ ))
+;; re-type the following two defmethods - cause acl10.1express to crash on loading the compiled code with them in
+#|
+ (excl:without-package-locks
+  (defmethod class-precedence-list ((thing standard-class))
+  (unless (clos::class-finalized-p thing)
+    (clos::finalize-inheritance thing))
+  (clos::class-precedence-list thing)))
 
-(defmethod class-precedence-list ((thing standard-class))
+ (excl:without-package-locks
+  (defmethod class-precedence-list ((thing T))
+  (unless (clos::class-finalized-p thing)
+    (clos::finalize-inheritance thing))
+  (if (clos::class-finalized-p thing)
+    (clos::class-precedence-list thing)
+    (remove thing (clos::compute-class-precedence-list thing)))))
+
+ (excl:without-package-locks
+  (defmethod class-precedence-list ((thing standard-class))
    (unless (clos::class-finalized-p  thing)
       (clos::finalize-inheritance thing))
    (clos::class-precedence-list thing)
-   )
+   ))
 
 ;; Added 02DEC98 for errors on right-button - see porting.lsp [57]
-(defmethod class-precedence-list ((thing T))
+ (excl:without-package-locks
+  (defmethod class-precedence-list ((thing T))
    (unless (clos::class-finalized-p thing)
       (clos::finalize-inheritance thing))
    (if (clos::class-finalized-p thing)
       (clos::class-precedence-list thing)
       (remove thing (clos::compute-class-precedence-list thing))
       )
-   )
-
+   ))
+|#
 (defmethod class-prototype ((thing standard-class))
    (unless (clos::class-finalized-p  thing)
       (clos::finalize-inheritance thing))
@@ -366,41 +399,47 @@
                   direct-class-slots
                   direct-instance-slots)))
 
-(defmethod slot-definition-readers ((thing T))
-   NIL)
+ (excl:without-package-locks
+  (defmethod slot-definition-readers ((thing T))
+   NIL))
 
-(defmethod slot-definition-writers ((thing T))
-   NIL)
+ (excl:without-package-locks
+  (defmethod slot-definition-writers ((thing T))
+   NIL))
 
-(defmethod slot-definition-readers ((thing standard-class))
+ (excl:without-package-locks
+  (defmethod slot-definition-readers ((thing standard-class))
   (let ((direct-methods (specializer-direct-methods thing))
         )
     (loop for method in direct-methods
           when (typep method 'clos::standard-reader-method)
           collect
-          method)))
+          method))))
 
-(defmethod slot-definition-writers ((thing standard-class))
+ (excl:without-package-locks
+  (defmethod slot-definition-writers ((thing standard-class))
   (let ((direct-methods (specializer-direct-methods thing))
         )
     (loop for method in direct-methods
           when (typep method 'clos::standard-writer-method)
           collect
-          method)))
+          method))))
 
-(defmethod slot-definition-readers ((thing clos:standard-effective-slot-definition))
+ (excl:without-package-locks
+  (defmethod slot-definition-readers ((thing clos:standard-effective-slot-definition))
   (let ((direct-methods (specializer-direct-methods thing))
         )
     (loop for method in direct-methods
           when (typep method 'clos::standard-reader-method)
           collect
-          method)))
+          method))))
 
-(defmethod slot-definition-writers ((thing clos:standard-effective-slot-definition))
+ (excl:without-package-locks
+  (defmethod slot-definition-writers ((thing clos:standard-effective-slot-definition))
   (let ((direct-methods (specializer-direct-methods thing))
         )
     (loop for method in direct-methods
           when (typep method 'clos::standard-writer-method)
           collect
-          method)))
+          method))))
 

@@ -12,4 +12,5 @@
 (in-package :quail-kernel)
 
 (defun function-name (f)
+	(declare (ignore f))
     NIL)
