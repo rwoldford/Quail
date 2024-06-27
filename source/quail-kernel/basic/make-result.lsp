@@ -23,7 +23,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(make-dimensioned-result)))
 
 (defun make-dimensioned-result (dimensions &rest args)
-  ;(declare (special NaN))
+  (declare (special NaN)) ;; uncommented 25JUL2023 from F-D-7
   (multiple-value-bind (proto-list minimal-class)
                        (interpret args '(:class))
     (let* ((len-dim (length dimensions))
@@ -39,7 +39,7 @@
                           (eq len-dim 1))
                      (make-sequence 'list (first dimensions)))
                     (t
-                     (array nan :dimensions dimensions)))
+                     (array NaN :dimensions dimensions)))
               ;;  We do (make-instance ret-class ...) rather than
               ;;  (make-instance (find-class ret-class) ...) because
               ;;  then we catch occurrences of, for example,

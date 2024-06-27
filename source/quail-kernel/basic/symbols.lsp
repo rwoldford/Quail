@@ -117,7 +117,7 @@
 
 (defvar *extension-symbols*)
 
-(eval-when (load eval) (setf *extension-symbols* nil))
+(eval-when (:load-toplevel :execute) (setf *extension-symbols* nil))
 
 (defun push-extension-symbols (&rest symbols)
   (declare (special *extension-symbols*))
