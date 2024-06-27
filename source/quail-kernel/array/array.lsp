@@ -15,7 +15,7 @@
 
 (in-package :quail-kernel)
 
-#+:sbcl-linux(shadow '(array dimensions))
+;#+:sbcl-linux(shadow '(array dimensions)) ;; OUT 15 Nov 2019
 
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(array)))
 
@@ -57,14 +57,20 @@
 (defgeneric array-default-class-name (contents dimensions &optional deconstruct))
 
 (defmethod array-default-class-name ((contents t) dimensions &optional deconstruct)
-  (declare (ignore dimensions deconstruct))
+  (declare (ignorable dimensions deconstruct)) ;(declare (ignore dimensions deconstruct))  25JUL2023
   (missing-method 'array-default-class-name contents))
+
+;;; following moved from below 05SEP2023
+(defmethod-multi array-default-class-name 
+  ((contents (symbol string)) dimensions &optional deconstruct)
+  (declare (ignorable dimensions deconstruct)) ;(declare (ignore dimensions deconstruct)) 25JUL2023
+  'ref-array)
 
 (defmethod-multi array-default-class-name 
   ((contents (number (eql nan) (eql infinity) (eql +infinity) (eql -infinity)))
    dimensions
    &optional deconstruct)
-  (declare (ignore deconstruct))
+  (declare (ignorable deconstruct)) ;(declare (ignore deconstruct))  25JUL2023
   (if (<= (length dimensions) 2)
     'matrix
     'num-array))
@@ -81,16 +87,17 @@
 
 (defmethod array-default-class-name ((contents scan-env)  
                                      dimensions &optional deconstruct)
-  (declare (ignore deconstruct))
+  (declare (ignorable deconstruct)) ;(declare (ignore deconstruct))  25JUL2023
   ;; for the moment assume its numerical, until -derive is online
   (if (<= (length dimensions) 2)
         'matrix
         'num-array))
 
-(defmethod-multi array-default-class-name 
-  ((contents (symbol string)) dimensions &optional deconstruct)
-  (declare (ignore dimensions deconstruct))
-  'ref-array)
+;;; Following moved up 05SEP2023
+;(defmethod-multi array-default-class-name 
+;  ((contents (symbol string)) dimensions &optional deconstruct)
+;  (declare (ignorable dimensions deconstruct)) ;(declare (ignore dimensions deconstruct)) 25JUL2023
+;  'ref-array)
 
 ;;;
 ;  array-derive-class-name
@@ -100,7 +107,7 @@
 
 (defmethod array-derive-class-name ((contents t) &optional (dimensions :default)
                                     (deconstruct t))
-  (declare (ignore dimensions deconstruct))
+  (declare (ignorable dimensions deconstruct)) ;(declare (ignore dimensions deconstruct)) 25JUL2023
   (missing-method 'array-derive-class-name contents))
 
 ;;;
@@ -110,26 +117,26 @@
 (defgeneric array-provide-dimensions (dimensions contents &optional deconstruct))
 
 (defmethod array-provide-dimensions ((dimensions t) contents &optional deconstruct)
-  (declare (ignore deconstruct))
+  (declare (ignorable deconstruct)) ;(declare (ignore deconstruct)) 25JUL2023
   (missing-method 'array-provide-dimensions dimensions contents))
 
 (defmethod array-provide-dimensions ((dimensions (eql :default)) contents
                                      &optional (deconstruct t))
-  (declare (ignore dimensions))
+  (declare (ignorable dimensions)) ;(declare (ignore dimensions))  25JUL2023
   (if deconstruct
     (array-default-dimensions contents)
     (list 1)))
 
 (defmethod array-provide-dimensions ((dimensions (eql :default)) (contents string)
                                      &optional (deconstruct nil))
-  (declare (ignore dimensions))
+  (declare (ignorable dimensions)) ;(declare (ignore dimensions))  25JUL2023
   (if deconstruct
     (list (length contents))
     (list 1)))
 
 (defmethod array-provide-dimensions ((dimensions (eql :matrix)) contents
                                      &optional (deconstruct t))
-  (declare (ignore dimensions))
+  (declare (ignorable dimensions)) ;(declare (ignore dimensions))  25JUL2023
   (if deconstruct
     (subseq (full-matrix-dimensions
              (array-default-dimensions contents))
@@ -141,12 +148,12 @@
 ;; to support Allegro port
 (defmethod array-provide-dimensions ((dimensions integer) contents
                                      &optional deconstruct)
-  (declare (ignore contents deconstruct))
+  (declare (ignorable contents deconstruct)) ;(declare (ignore contents deconstruct))  25JUL2023
   (list dimensions))
 
 (defmethod array-provide-dimensions ((dimensions list) contents
                                      &optional deconstruct)
-  (declare (ignore contents deconstruct))
+  (declare (ignorable contents deconstruct)) ;(declare (ignore contents deconstruct))  25JUL2023
   dimensions)
 
 ;;;
@@ -166,7 +173,7 @@
 
 (defmethod-multi array-provide-class-name ((class symbol) dimensions contents
                                            &optional deconstruct)
-  (declare (ignore contents dimensions deconstruct))
+  (declare (ignorable contents dimensions deconstruct)) ;(declare (ignore contents dimensions deconstruct))  25JUL2023
   (if (keywordp class)
     (quail-error "Unrecognized array class specifier ~S." class)
     class))
@@ -182,13 +189,13 @@
 
 (defmethod array-provide-class-name ((class standard-class) dimensions contents
                                      &optional deconstruct)
-  (declare (ignore dimensions contents deconstruct))
+  (declare (ignorable dimensions contents deconstruct)) ;(declare (ignore dimensions contents deconstruct))  25JUL2023
   (class-name class))
   
 ;;;
 ;  array
 ;
-
+#|  OUT 15 November 2019
 #-:sbcl-linux(defgeneric array (contents &rest initargs 
                           &key &allow-other-keys)
   (:documentation
@@ -228,8 +235,9 @@
 ;; valid keys:  dimensions class fill deconstruct element-copy type
 ;; future?:     instance-copy element-type
   )
-
-#+:sbcl-linux(sb-ext:with-unlocked-packages (:common-lisp)(defgeneric array (contents &rest initargs 
+|#
+#+:aclpc-linux(excl:without-package-locks 
+  (defgeneric array (contents &rest initargs 
                           &key &allow-other-keys)
   (:documentation
    "Creates an array whose contents are given by the first argument. ~
@@ -269,12 +277,105 @@
 ;; future?:     instance-copy element-type
   ))
 
+#+:sbcl-linux(sb-ext:without-package-locks
+(defgeneric array (contents &rest initargs 
+                          &key &allow-other-keys)
+  (:documentation
+   "Creates an array whose contents are given by the first argument. ~
+    Various methods are implemented that depend on the class of the ~
+    contents given.  Typically the contents can be any ref'able data ~
+    structure like a list or an array. ~
+    (:required ~
+    (:arg contents The cell contents of the array.  Usually just a list of ~
+    the elements, perhaps organized as a list of lists in row-major order. ~
+    Other possibilities include anything that is returned by array, ~
+    :empty to get an empty array, :default, a number, a string, or a symbol. ~
+    If the number of elements of the contents do not match the dimensions ~
+    given then array tries to fill out to an array the required dimensions ~
+    using the contents as elements.) ~
+    ) ~
+    (:key ~
+    (:arg dimensions :default A list of the dimensions of the array.  For example ~
+    a 10 by 4 matrix would have dimensions (list 10 4). ~
+    By default the dimensions will be inferred from the contents.) ~
+    (:arg class :default  If given this will be the class of the array returned. ~
+      If :default, some effort is made to produce an appropriate return class.) ~
+    (:arg fill :row  The major order in which the array is filled.  If :row ~
+    then row major order is used.  If :col, then column-major order.) ~
+    (:arg deconstruct :default  If deconstruct is NIL, contents is used like an initial-element ~
+    ie. each element of the resulting instance is the value of contents. ~
+    The default value of deconstruct is NIL if source is a number, symbol, or string ~
+    (for speed, mostly) T   otherwise.) ~
+    (:arg element-copy #'identity Function to be applied to each element of contents ~
+    that will appear in the array.) ~
+    (:arg type  NIL No further information available.) ~
+    ) ~
+    (:rest (:arg initargs NIL Other keyword value initialization arguments to be passed ~
+    on to the class to be created by array.))"
+   )
+;; valid keys:  dimensions class fill deconstruct element-copy type
+;; future?:     instance-copy element-type
+  )
+)
+
+#-(or :aclpc-linux :sbcl-linux)(defgeneric array (contents &rest initargs 
+                          &key &allow-other-keys)
+  (:documentation
+   "Creates an array whose contents are given by the first argument. ~
+    Various methods are implemented that depend on the class of the ~
+    contents given.  Typically the contents can be any ref'able data ~
+    structure like a list or an array. ~
+    (:required ~
+    (:arg contents The cell contents of the array.  Usually just a list of ~
+    the elements, perhaps organized as a list of lists in row-major order. ~
+    Other possibilities include anything that is returned by array, ~
+    :empty to get an empty array, :default, a number, a string, or a symbol. ~
+    If the number of elements of the contents do not match the dimensions ~
+    given then array tries to fill out to an array the required dimensions ~
+    using the contents as elements.) ~
+    ) ~
+    (:key ~
+    (:arg dimensions :default A list of the dimensions of the array.  For example ~
+    a 10 by 4 matrix would have dimensions (list 10 4). ~
+    By default the dimensions will be inferred from the contents.) ~
+    (:arg class :default  If given this will be the class of the array returned. ~
+      If :default, some effort is made to produce an appropriate return class.) ~
+    (:arg fill :row  The major order in which the array is filled.  If :row ~
+    then row major order is used.  If :col, then column-major order.) ~
+    (:arg deconstruct :default  If deconstruct is NIL, contents is used like an initial-element ~
+    ie. each element of the resulting instance is the value of contents. ~
+    The default value of deconstruct is NIL if source is a number, symbol, or string ~
+    (for speed, mostly) T   otherwise.) ~
+    (:arg element-copy #'identity Function to be applied to each element of contents ~
+    that will appear in the array.) ~
+    (:arg type  NIL No further information available.) ~
+    ) ~
+    (:rest (:arg initargs NIL Other keyword value initialization arguments to be passed ~
+    on to the class to be created by array.))"
+   )
+    
+;; valid keys:  dimensions class fill deconstruct element-copy type
+;; future?:     instance-copy element-type
+  )
 
 
+#+:aclpc-linux(excl:without-package-locks
 (defmethod array ((contents t) &rest initargs 
                 &key (dimensions :default) (class :default))
-  (declare (ignore initargs dimensions class))
+  (declare (ignorable initargs dimensions class)) ;(declare (ignore initargs dimensions class)) 25JUL2023
+  (missing-method 'array contents)))
+
+#+:sbcl-linux(sb-ext:without-package-locks
+(defmethod array ((contents t) &rest initargs 
+                &key (dimensions :default) (class :default))
+  (declare (ignorable initargs dimensions class)) ;(declare (ignore initargs dimensions class))  25JUL2023
+  (missing-method 'array contents)))
+
+#-(or :sbcl-linux :aclpc-linux)(defmethod array ((contents t) &rest initargs 
+                &key (dimensions :default) (class :default))
+  (declare (ignorable initargs dimensions class)) ;(declare (ignore initargs dimensions class))  25JUL2023
   (missing-method 'array contents))
+
 
 (defmethod-multi array ((contents ((eql :empty) (eql :default)))
                       &rest initargs 
@@ -288,7 +389,29 @@
          :dimensions dimensions
          initargs))
 
-(defmethod-multi array ((contents (number symbol))
+#+:aclpc-linux(excl:without-package-locks (defmethod-multi array ((contents (number symbol))
+                      &rest initargs 
+                      &key (dimensions :default) (class :default))
+  (setf dimensions (array-provide-dimensions dimensions contents))
+  (setf class (array-provide-class-name class dimensions contents))
+  (apply #'initialize-contents 
+         class 
+         contents
+         :dimensions dimensions
+         initargs)))
+
+#+:sbcl-linux(sb-ext:without-package-locks(defmethod-multi array ((contents (number symbol))
+                      &rest initargs 
+                      &key (dimensions :default) (class :default))
+  (setf dimensions (array-provide-dimensions dimensions contents))
+  (setf class (array-provide-class-name class dimensions contents))
+  (apply #'initialize-contents 
+         class 
+         contents
+         :dimensions dimensions
+         initargs)))
+
+#-(or :aclpc-linux :sbcl-linux)(defmethod-multi array ((contents (number symbol))
                       &rest initargs 
                       &key (dimensions :default) (class :default))
   (setf dimensions (array-provide-dimensions dimensions contents))
@@ -299,7 +422,32 @@
          :dimensions dimensions
          initargs))
 
-(defmethod-multi array ((contents (dimensioned-ref-object list array scan-env))
+
+#+:aclpc-linux (excl:without-package-locks (defmethod-multi array ((contents (dimensioned-ref-object list array scan-env))
+                        &rest initargs 
+                        &key (dimensions :default) (class :default)
+                        (deconstruct (not (stringp contents))))
+   (setf dimensions (array-provide-dimensions dimensions contents deconstruct))
+   (setf class (array-provide-class-name class dimensions contents deconstruct))
+   (apply #'initialize-contents 
+               class 
+               contents
+               :dimensions dimensions
+               initargs)))
+
+#+:sbcl-linux (sb-ext:without-package-locks (defmethod-multi array ((contents (dimensioned-ref-object list array scan-env))
+                        &rest initargs 
+                        &key (dimensions :default) (class :default)
+                        (deconstruct (not (stringp contents))))
+  (setf dimensions (array-provide-dimensions dimensions contents deconstruct))
+  (setf class (array-provide-class-name class dimensions contents deconstruct))
+  (apply #'initialize-contents 
+         class 
+         contents
+         :dimensions dimensions
+         initargs)))
+
+#-(or :aclpc-linux :sbcl-linux)(defmethod-multi array ((contents (dimensioned-ref-object list array scan-env))
                         &rest initargs 
                         &key (dimensions :default) (class :default)
                         (deconstruct (not (stringp contents))))
@@ -381,7 +529,7 @@
 (defmethod initialize-contents ((class standard-class) (init t)
                                 &rest initargs 
                                 &key (dimensions :not-provided-is-an-error))
-  (declare (ignore dimensions))
+  (declare (ignorable dimensions)) ;(declare (ignore dimensions))  25JUL2023
   (let ((new-instance (apply #'make-instance
                              class
                              :proto init
