@@ -115,7 +115,7 @@
                               type
                               stable?)
   "Returns object since sorting doesn't quite make sense here."
-  (declare (ignore predicate key slices type stable?))
+  (declare (ignorable predicate key slices type stable?)) ;(declare (ignore predicate key slices type stable?))  25JUL2023
   object)
 
 
@@ -141,7 +141,7 @@
                         (type (eql :exterior))
                         stable?)
   "In this situation the usual Common Lisp sort function applies."
-  (declare (ignore slices type))
+  (declare (ignorable slices type)) ;(declare (ignore slices type))  25JUL2023
   (if key
     (if stable?
       (cl:stable-sort object predicate :key key)
@@ -158,7 +158,7 @@
    (slices null)
    (type (eql :exterior))
    stable?)
-  (declare (ignore predicate key slices type stable?))
+  (declare (ignorable predicate key slices type stable?)) ;(declare (ignore predicate key slices type stable?))  25JUL2023
   object)
 
 
@@ -170,7 +170,7 @@
    (type (eql :exterior))
    stable?)
   "In this situation the basic-sort-by-eref is used."
-  (declare (ignore slices type))
+  (declare (ignorable slices type)) ;(declare (ignore slices type))  25JUL2023
   (basic-sort-by-eref object predicate :key key :stable? stable?))
 
 (defmethod-multi sort-object ((object (dimensioned-ref-object sequence array))
@@ -179,7 +179,7 @@
                               (slices list)
                               (type (eql :exterior))
                               stable?)
-  (declare (ignore stable?))
+  (declare (ignorable stable?)) ;(declare (ignore stable?))  25JUL2023
   (order object (sort-position object predicate 
                                :key key 
                                :slices slices 

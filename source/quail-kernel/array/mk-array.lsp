@@ -45,11 +45,11 @@
 (defgeneric make-ref-array (thing dimensions &rest rest))
 
 (defmethod make-ref-array ((self T) dimensions &rest rest)
-   (declare (ignore solf dimensions rest))
+   (declare (ignorable self dimensions rest)) ;(declare (ignore self dimensions rest))  25JUL2023
    T)  ;; added May29 98 gwb
 
 (defmethod make-ref-array :around ((self T) dimensions &rest rest)
-  (declare (ignore dimensions rest))
+  (declare (ignorable dimensions rest)) ;(declare (ignore dimensions rest))  25JUL2023
   (error "Called the Quail function MAKE-REF-ARRAY, which is supposed to be ~
           deprecated.  Contact quail-bugs@setosa.uwaterloo.ca."))
 
