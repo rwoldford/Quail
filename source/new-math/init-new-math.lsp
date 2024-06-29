@@ -39,7 +39,7 @@
                             &KEY
                             &REST
                             &REQUIRED))))
-  (format t "~%cl-function-name is ~s of type ~s " cl-function-name (type-of cl-function-name))
+  ;(format t "~%cl-function-name is ~s of type ~s " cl-function-name (type-of cl-function-name))
     (if (intersection '(&REST &BODY) lambda-list)
       `(defun ,function-name ,lambda-list
          (apply #'map-element 
@@ -101,7 +101,7 @@
           ,@pruned-lambda-list))))))
 
 
-(eval-when (eval load)
+(eval-when (:load-toplevel :execute);(eval load) 12JAN2021
   
   "Redefines all the *logical-numerical-ops*."
   

@@ -3,7 +3,8 @@
 ;;; COPYRIGHT, 1991, STATISTICAL COMPUTING LABORATORY, UNIVERSITY OF WATERLOO
 
 (DEFPACKAGE "NEW-MATH"
-  (:USE "QUAIL-KERNEL" "COMMON-LISP")
+  #+:sbcl-linux (:USE :clim :clim-lisp :clim-extensions) ;"COMMON-LISP") ;19November 2019
+  #+:aclpc-linix (:USE :common-lisp)
   (:SHADOWING-IMPORT-FROM "QUAIL-KERNEL"
                           "ARRAY-ELEMENT-TYPE"
                           "ARRAY-RANK"
@@ -15,6 +16,9 @@
                           "ARRAY-ROW-MAJOR-INDEX"
                           "SORT")
   (:IMPORT-FROM "QUAIL-KERNEL"
+                "DIMENSIONED-REF-OBJECT" ;;22JAN2020
+                "MATRIX" ;;22JAN2020
+                "SEQ-DIFFERENCE" ;;22JAN2020
                 "DEFMETHOD-MULTI"
                 "EXT_+"
                 "EXT_*"
@@ -72,7 +76,17 @@
                 "EXT_LCM"
                 "EXT_CONJUGATE"
                 ;;"GET-LAMBDA-LIST"
-                )
+                "MAP-ELEMENT" ;; 03FEB2020
+           "+INFINITY" ;;07APR2020
+           "INFINITY"  ;;07APR2020
+           "-INFINITY" ;; 07APR2020
+           "EREF" ;; 12JAN2021
+           "MATRIX-DIMENSIONS-OF" ;; 12JAN2021
+           "MISSING-METHOD" ;; 12JAN2021
+           "NUMBER-OF-ELEMENTS" ;; 12JAN2021
+           "REDUCE-SLICES" ;; 12JAN2021
+           )
+                
   (:SHADOW
    "+" "-" "*" "/"
    "FLOAT" "RATIONAL"
