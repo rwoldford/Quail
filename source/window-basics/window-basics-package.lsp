@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;                               window-basics-package.lisp                             
+;;;                               window-basics-package.lsp                             
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -15,8 +15,9 @@
 ;;;----------------------------------------------------------------------------
 
 #+:cl-2
-(defpackage "WINDOW-BASICS"
-  (:use "COMMON-LISP")
+(defpackage #:window-basics
+  #+:sbcl-linux (:use :clim-lisp :clim :clim-extensions) ; "COMMON-LISP" 19 November 2019
+  #+:aclpc-linux (:use :common-lisp)
   (:nicknames "WB")
   (:import-from "QUAIL-KERNEL"
                 *QUAIL-RESTORE-LISP-FUNCTIONS*
@@ -34,19 +35,31 @@
                 QUAIL-Y-OR-N-P 
                 QUAIL-YES-OR-NO-P)
   (:shadow
-   "MAKE-POINT" "MOUSE-DOWN-P" "SHIFT-KEY-P" "CONTROL-KEY-P"
+   "MAKE-POINT" "POINT-X" "POINT-Y" 
+   "DRAW-LINE" "DRAW-RECTANGLE" "DRAW-ELLIPSE" "DRAW-POLYGON"
+   "MOUSE-DOWN-P" "SHIFT-KEY-P" "CONTROL-KEY-P"
+   "MAKE-POSITION" "COPY-POSITION" "POSITION-X" "POSITION-Y"
+   "MOVE-TO" "LINE-TO"
+   "MAKE-COLOR" "*BLACK-COLOR*" "*WHITE-COLOR*" "*PINK-COLOR*"
+    "*RED-COLOR*" "*ORANGE-COLOR*" "*YELLOW-COLOR*" "*GREEN-COLOR*"
+    "*DARK-GREEN-COLOR*" "*LIGHT-BLUE-COLOR*" "*BLUE-COLOR*"
+    "*PURPLE-COLOR*" "*BROWN-COLOR*" "*TAN-COLOR*"
+    "*LIGHT-GRAY-COLOR*" "*GRAY-COLOR*" "*DARK-GRAY-COLOR*" "REDISPLAY" "COLORP"
+    "COLOR") ;"COLOR" added 07MAY2024 to avoid sbcl compiler error
+
+
+  (:export
+   "MAKE-POINT" "POINT-X" "POINT-Y" 
+   "DRAW-LINE" "DRAW-RECTANGLE" "DRAW-ELLIPSE" "DRAW-POLYGON"
+   "MOUSE-DOWN-P" "SHIFT-KEY-P" "CONTROL-KEY-P"
+   "MAKE-POSITION" "COPY-POSITION" "POSITION-X" "POSITION-Y"
+   "MOVE-TO" "LINE-TO"
    "MAKE-COLOR" "*BLACK-COLOR*" "*WHITE-COLOR*" "*PINK-COLOR*"
     "*RED-COLOR*" "*ORANGE-COLOR*" "*YELLOW-COLOR*" "*GREEN-COLOR*"
     "*DARK-GREEN-COLOR*" "*LIGHT-BLUE-COLOR*" "*BLUE-COLOR*"
     "*PURPLE-COLOR*" "*BROWN-COLOR*" "*TAN-COLOR*"
     "*LIGHT-GRAY-COLOR*" "*GRAY-COLOR*" "*DARK-GRAY-COLOR*")
-  (:export
-   "MAKE-POINT" "MOUSE-DOWN-P" "SHIFT-KEY-P" "CONTROL-KEY-P"
-   "MAKE-COLOR" "*BLACK-COLOR*" "*WHITE-COLOR*" "*PINK-COLOR*"
-    "*RED-COLOR*" "*ORANGE-COLOR*" "*YELLOW-COLOR*" "*GREEN-COLOR*"
-    "*DARK-GREEN-COLOR*" "*LIGHT-BLUE-COLOR*" "*BLUE-COLOR*"
-    "*PURPLE-COLOR*" "*BROWN-COLOR*" "*TAN-COLOR*"
-    "*LIGHT-GRAY-COLOR*" "*GRAY-COLOR*" "*DARK-GRAY-COLOR*"))
+  (:export #:window-basics))
 
 #-:cl-2
 (in-package "WINDOW-BASICS" :use '(pcl lisp) :nicknames '(wb))
