@@ -59,7 +59,7 @@
 ;;;
 ;;; ... rwo
 ;;;============================================================
-
+;;; host-window inherits from clim::standard-application-frame
 
 (defclass canvas (color-mixin
                   pen-mixin
@@ -69,11 +69,14 @@
                   canvas-redisplay-mixin
                   host-window
                   font-mixin
+                  #+:sbcl-linux sheet
                   )
 
   ()
    (:documentation
     "Canvas is a window on which one can draw."))
+
+
 
 (defun canvas-p (canvas)
   "Returns T if the argument is a canvas, NIL otherwise."

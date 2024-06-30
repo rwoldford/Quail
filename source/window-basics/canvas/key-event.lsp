@@ -37,7 +37,7 @@
 (defmethod handle-key-event ((receiver T) (event T))
   "Ignores both receiver and event and returns NIL.  The default behaviour ~
    in that most things just do not handle key-events."
-  (declare (ignore receiver event))
+  (declare (ignorable receiver event)) ;(declare (ignore receiver event)) ; 28JUL2023
   NIL)
 
 (defmethod handle-key-event ((receiver canvas) (event T))
@@ -49,12 +49,12 @@
     handled?)
   )
 
-(defmethod handle-key-event ((receivers list) (event T))
+(defmethod handle-key-event ((receiver list) (event t)) ;(defmethod handle-key-event ((receivers list) (event T)) ; 28JUL2023
   "Recursively calls handle-key-event on the elements of the list giving each ~
    the opportunity to handle the event."
   (let ((handled? NIL))
-    (when receivers
-      (loop for r in receivers
+    (when receiver ;(when receivers ; 28JUL2023
+      (loop for r in receiver ;(loop for r in receivers ; 28JUL2023
             do (setf handled?
                      (or handled? (handle-key-event r event))))
       )

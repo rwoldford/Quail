@@ -1,5 +1,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;                         color-canvas-clx.lisp
+;;;                         color-canvas-pc.lsp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;  Copyright (c) Statistical Computing Laboratory
 ;;;                University of Waterloo
@@ -21,6 +21,20 @@
 ;;; =======================================================================
 ;;;                     Creating a colour canvas
 ;;; =======================================================================
+
+(defmethod initialize-instance :after ((self pen-mixin)
+                                       &rest initargs
+                                       &key pen-color pen-width pen-operation)
+  (declare (ignore initargs))
+  (unless (pen-of self)
+    (setf (slot-value self 'pen)
+          (make-instance 'pen)))
+  (canvas-set-pen self :width pen-width :operation pen-operation :color pen-color)
+  )
+;;; 05MAR2021 - END defun to replace the :after method of pen-mixin
+
+
+
 (defun make-color-canvas (&rest
                           canvas-keywords
                           &key
@@ -40,6 +54,7 @@
                     *default-canvas-pen-color*
                     *white-color*
                     *black-color*))    
+
   (unless left
     (setq left (round (/ (- (screen-width) width) 2))))
   (unless bottom

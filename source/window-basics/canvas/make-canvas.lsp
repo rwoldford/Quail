@@ -41,17 +41,28 @@
 ;; in a boundp is nicest to the user, maximizing the ease of setting the thing
 ;; before this code or after it.  (User can change it anytime at all.)
 
-(unless (boundp '*screen-top-margin*)
-  (defvar *screen-top-margin* 4 "Top margin to leave when making big window"))
+;(declare (special *screen-left-margin* *screen-bottom-margin* *screen-right-margin* *screen-left-margin)) ; 06AUG2023
 
-(unless (boundp '*screen-left-margin*)
-  (defvar *screen-left-margin* 4 "Left margin to leave when making big window"))
+;(defvar *screen-left-margin* 0) ; 07AUG2023
+;(defvar *screen-top-margin* 0) ; 07AUG2023
+;(defvar *screen-bottom-margin* 0) ; 07AUG2023
+;(defvar *screen-right-margin* 0) ; 07AUG2023
 
-(unless (boundp '*screen-bottom-margin*)
-  (defvar *screen-bottom-margin* 4 "Bottom margin to leave when making big window"))
+;(unless (boundp '*screen-top-margin*)
+  (defvar *screen-top-margin* 4 "Top margin to leave when making big window")
+;  )
 
-(unless (boundp '*screen-right-margin*)
-  (defvar *screen-right-margin* 4 "Right margin to leave when making big window"))
+;(unless (boundp '*screen-left-margin*)
+  (defvar *screen-left-margin* 4 "Left margin to leave when making big window")
+;  )
+
+;(unless (boundp '*screen-bottom-margin*)
+  (defvar *screen-bottom-margin* 4 "Bottom margin to leave when making big window")
+;  )
+
+;(unless (boundp '*screen-right-margin*)
+  (defvar *screen-right-margin* 4 "Right margin to leave when making big window")
+;  )
 
 
 ;; Assume a smart screen-height function (e.g. subtracting menubar on MacOS)
@@ -87,11 +98,13 @@
 ;;;  Default screen positions for a canvas (modified 1995, jrm)
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+#| 26SEP2023 already defined in canvas/canvas.lsp
 (defvar *default-canvas-region*
   (make-region *screen-left-margin* *screen-bottom-margin* 300 300)
   "Set to a default screen region where the canvas will appear.")
 
+
+; already defined in canvas/canvas.lsp  09MAR2022 gwb
 (defun set-up-default-canvas-region
        (&optional (left *screen-left-margin*) (bottom *screen-bottom-margin*)
                   (width 300) (height 300))
@@ -99,6 +112,7 @@
         screen."
        
   (setf *default-canvas-region*  (make-region left bottom width height)))
+|#  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
