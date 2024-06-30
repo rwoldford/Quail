@@ -27,11 +27,14 @@
 
 (in-package :wb)
 
+#| stubbed 11MAR2022  gwb
 (eval-when (:compile-toplevel :load-toplevel :execute) (export  '(bitmap-width bitmap-height bitmap-host-bitmap
            bitmap
            *circle-bitmap* *cross-bitmap* *square-bitmap* *star-bitmap*
            make-blank-bitmap make-circle-bitmap make-box-bitmap
            plot-glyph-at)))
+|#
+(eval-when (:compile-toplevel :load-toplevel :execute) (export '(bitmap)))
 
 ;;;============================================================
 ;;; Bitmaps
@@ -42,7 +45,7 @@
   width height host-bitmap)
 
 
-
+#| stubbed 11MAR2022  gwb
 (defvar *circle-bitmap*   NIL)
 (defvar *cross-bitmap*    NIL)
 (defvar *square-bitmap*   NIL)
@@ -159,10 +162,13 @@
                   bm)
    ))
 
-
-
+|#
+;;; stubbed 12MAR2022  gwb
 (defun plot-glyph-at (canvas position-x position-y glyph
                              &key (operation :default))
+  (declare (ignorable canvas position-x position-y glyph operation)) ;  10MAY2024 to avoid Warnings
+(format t "~%Not implements in mcclim yet")
+#|
   (let* ((glyph-width (bitmap-width glyph))
          (glyph-height (bitmap-height glyph))
          (newx (- position-x 
@@ -170,4 +176,6 @@
          (newy (- position-y 
                   (truncate glyph-height 2))))
     (canvas-bitblt canvas glyph :canvas-left newx 
-                   :canvas-bottom newy :operation operation)))
+                   :canvas-bottom newy :operation operation))
+                   |#
+  )

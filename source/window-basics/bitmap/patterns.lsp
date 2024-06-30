@@ -59,7 +59,7 @@
 
 (add-restore-lisp-functions #'setup-patterns)
 
-(eval-when (load) (setup-patterns))
+(eval-when (:load-toplevel) (setup-patterns))
 
 (defun eq-patterns (pattern-1 pattern-2)
   "Test whether two patterns are equal.~

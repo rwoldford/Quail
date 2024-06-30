@@ -22,6 +22,7 @@
 
 (defun make-cursor (bitmap &key mask (hotspot (h-draw:make-point 0 0)))
    "Returns a cursor structure for use with with-cursor."
+   (declare (ignore bitmap mask hotspot)) ;  25JUL2023 to avoid Warnings
 ;;; There is such a function in CG =>
 ;;; (cg::make-cursor texture hot-spot mask)
 ;;; <hot-spot> is a position relative to the upper left corner of the

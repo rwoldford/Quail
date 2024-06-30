@@ -23,6 +23,7 @@
 ;;;============================================================
 ;; From bitmap-mcl
 (defun make-window-use-bitmap (w bm)
+  (declare (ignore w bm)) ;  25JUL2023 for Warnings
    #| "Make the window w use the host bitmap bm as its draw area."
 (let ((grafport (rref (wptr w) windowRecord.port)))
    (with-port grafport
@@ -41,6 +42,7 @@
 )
 
 (defmacro with-bitmap-as-window (bm w &body body)
+  (declare (ignore bm w body)) ;  25JUL2023 for Warning
    #|
 `(let ((,w (make-instance 'window :window-show nil)))
 (make-window-use-bitmap ,w ,bm)
@@ -53,6 +55,7 @@
 
 
 (defun array-to-bitmap (the-array bitmap-width)
+  (declare (ignore the-array bitmap-width)) ;  25JUL2023 for Warning
    ;;; make a bitmap with an array of integer and a width for the bitmap
    #|
 (let* ((the-bitmap (make-bitmap :width bitmap-width
@@ -71,6 +74,7 @@
 )
 
 (defun bitmap-to-array (the-bitmap bitmap-width)
+  (declare (ignore the-bitmap bitmap-width)) ;  25JUL2023 for Warning
    ;;; make a bitmap with an array of integer and a width for the bitmap
    #|
 (let* ((the-bitmap (make-bitmap :width bitmap-width
@@ -96,6 +100,8 @@
       (width (bitmap-width bitmap))
       (height (bitmap-height bitmap))
       (operation :default))
+  (declare (ignorable canvas bitmap canvas-left canvas-bottom bitmap-left bitmap-bottom
+                   width height operation)) ;  25JUL2023 for Warnings ignore -> ignorable 25SEP2023
    (format *terminal-io* "~&canvas-bitblt unimplemented for PC~%")
 #|
  (let* ((raw-bitmap (bitmap-host-bitmap bitmap))
@@ -128,6 +134,7 @@
                                      width
                                      height)
   "Copy a region of the canvas to a bitmap."
+  (declare (ignore source-canvas source-left source-top dest-bitmap width height)) ;  25JUL2023 for Warnings
    (format *terminal-io* "~&copy-canvas-region-to-bitmap unimplemented
 for PC~%")
    #|
