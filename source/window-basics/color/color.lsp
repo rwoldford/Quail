@@ -66,38 +66,54 @@
 
 (defparameter   *black-color*
   (make-color 0.0 0.0 0.0))
+ 
 (defparameter   *white-color*
   (make-color 1.0 1.0 1.0))
+ 
 (defparameter   *pink-color*
   (make-color 0.9490196078431372 0.03137254901960784 0.5176470588235295))
+ 
 (defparameter *red-color*
   (make-color 0.8666666666666667 0.03137254901960784 0.023529411764705882))
 (defparameter *orange-color*
   (make-color 1.0 0.39215686274509803 0.00784313725490196))
+ 
 (defparameter *yellow-color*
   (make-color 0.9882352941176471 0.9529411764705882 0.0196078431372549))
+ 
 (defparameter *green-color*
   (make-color 0.12156862745098039 0.7176470588235294 0.0784313725490196))
+ 
 (defparameter *dark-green-color*
   (make-color 0.0 0.39215686274509803 0.06666666666666667))
+ 
 (defparameter *light-blue-color*
   (make-color 0.00784313725490196 0.6705882352941176 0.9176470588235294))
+ 
 (defparameter *blue-color*
   (make-color 0.0 0.0 0.8313725490196079))
+ 
 (defparameter wb::*cyan-color*
   (wb::make-color 0.0 1.0 1.0))
+ 
 (defparameter *purple-color*
   (make-color 0.27450980392156865 0.0 0.6470588235294118))
+ 
 (defparameter *brown-color*
   (make-color 0.33725490196078434 0.17254901960784313 0.0196078431372549))
+ 
 (defparameter *tan-color*
   (make-color 0.5647058823529412 0.44313725490196076 0.22745098039215686))
+ 
 (defparameter *light-gray-color*
   (make-color 0.7529411764705882 0.7529411764705882 0.7529411764705882))
+ 
 (defparameter *gray-color*
   (make-color 0.5019607843137255 0.5019607843137255 0.5019607843137255))
+ 
 (defparameter *dark-gray-color*
   (make-color 0.25098039215686274 0.25098039215686274 0.25098039215686274))
+ 
 
 ;;;
 ;;; Accounting for different spellings of gray
@@ -127,15 +143,16 @@
 (defparameter  *light-gray-colour*    *light-gray-color*)
 (defparameter  *gray-colour*          *gray-color*)
 (defparameter  *dark-gray-colour*     *dark-gray-color*)
-
-(defparameter  *grey-colour*          *gray-color* )
-(defparameter  *light-grey-colour*    *light-gray-color* )
-(defparameter  *dark-grey-colour*     *dark-gray-color*) 
+ 
+;(defparameter  *grey-colour*          *gray-color* ;;DUPLICATE of line 128 01SEP2021
+;(defparameter  *light-grey-colour*    *light-gray-color* ) ;;DUPLICATE of line 127 01SEP2021
+;(defparameter  *dark-grey-colour*     *dark-gray-color*) ;;DUPLICATE of line 129 01SEO2021
 
 (defparameter  *bright-green-color*   (make-color 0 1.0 0))
 (defparameter  *bright-green-colour*  *bright-green-color*)
 (defparameter  *magenta-color*        (make-color 1.0 0 1.0))
 (defparameter  *magenta-colour*       *magenta-color*)
+ 
 
 
 

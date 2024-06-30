@@ -134,5 +134,5 @@
 (defun deoptimize-color-record (optimized-color)
   "Returns the color record from an optimized-color ~
    that was optimized for the current machine."
-  color)
+  optimized-color)
    

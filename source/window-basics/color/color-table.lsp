@@ -54,9 +54,9 @@
    on each rgb color component is made between these two colors.  ~
    If fast-colors? is T (default is NIL) then the color records used in the ~
    table are of optimal record-type for the given machine."
-  (declare (optimize (speed 3) (safety 0)
-                     (space 0) (compilation-speed 0))
-           (special *black-color*
+  #-:sbcl(declare (optimize (speed 3) (safety 0)
+                     (space 0) (compilation-speed 0)))
+   (declare (special *black-color*
                     *bright-white-color*))
   (unless (or colors number) (setf number 32))
   (flet

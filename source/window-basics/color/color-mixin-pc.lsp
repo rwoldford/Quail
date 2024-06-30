@@ -44,7 +44,7 @@
                      (canvas-set-background-color canvas color)
     (when (and (colorp color) (colored-canvas-p canvas))
       ;(cg::set-background-color mp color) 18oct05
-      (setf (cg::background-color mp) color) 18oct05
+      (setf (cg::background-color mp) color) ;18oct05 25JUL2023
        (cg::clear-page mp)
        (redisplay canvas)
       ))))
