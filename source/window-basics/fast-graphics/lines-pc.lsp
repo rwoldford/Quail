@@ -111,7 +111,8 @@
      (declare (optimize (speed 3) (safety 0)
                       (space 0) (compilation-speed 0))
         (type fixnum width)
-        (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase))
+        (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase)
+        (ignore invisible?)) ; 28JUL2023
      (with-focused-canvas canvas
   (let ((mp (cg::frame-child canvas)))
     ;(cg::set-line-width mp width) 18oct05
@@ -141,7 +142,8 @@ Results with color background are undefined."
      (declare (special  *host-xor-mode* cg::po-paint cg::po-replace cg::po-invert cg::po-erase)
         (optimize (speed 3) (safety 0)
            (space 0) (compilation-speed 0))
-        (type fixnum width))
+        (type fixnum width)
+        (ignore invisible?)) ; 28JUL2023
      (with-focused-canvas canvas
   (let ((mp (cg::frame-child canvas)))
       (h-draw::set-pen-mode canvas *host-xor-mode*)
@@ -200,6 +202,7 @@ Results with color background are undefined."
      "Draws or erases lines with varying color and width."
      (declare (optimize (speed 3) (safety 0)
                       (space 0) (compilation-speed 0))
+              (ignore invisible?) ;;02OCT2023 as unused
         (type fixnum width)
         (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase))
      (with-focused-canvas canvas

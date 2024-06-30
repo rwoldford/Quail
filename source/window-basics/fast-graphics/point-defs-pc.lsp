@@ -74,7 +74,7 @@
 
 (defmacro fast-draw-box (canvas x y  size fill? )
    (declare (special cg::po-erase cg::po-paint cg::po-replace cg::po-invert))
-   (let ((s2 (gensym)) (lx (gensym)) (ly (gensym)) (mp (gensym)))
+   (let ((s2 (gensym "fdbs2")) (lx (gensym "fdblx")) (ly (gensym "fdbly")) (mp (gensym "fdbmp")))
       `(let* ((,s2 (truncate ,size 2))
              (,lx  (- ,x ,s2))
                (,ly (- ,y ,s2))
@@ -106,7 +106,7 @@
 ;; which uses x,y as CENTRE
 (defmacro fast-erase-box (canvas x y  size fill? )
    (declare (special cg::po-erase cg::po-paint cg::po-replace cg::po-invert))
-   (let ((s2 (gensym)) (lx (gensym)) (ly (gensym)) (mp (gensym)))
+   (let ((s2 (gensym "febs2")) (lx (gensym "febs2")) (ly (gensym "febly")) (mp (gensym "febmp")))
       `(let* ((,s2 (truncate ,size 2))
               (,lx (- ,x ,s2))
                 (,ly (- ,y ,s2))
@@ -152,8 +152,8 @@
 (defmacro fast-draw-circle (canvas x y  size fill? )
    (declare (special cg::po-erase cg::po-paint cg::po-replace cg::po-invert)
      (inline cg-draw-filled-circle cg::draw-circle))
-   (let ((s2 (gensym))
-        (mp (gensym)))
+   (let ((s2 (gensym "fdcs2"))
+        (mp (gensym "fdcmp")))
       ;;; Check for size = 1 as special 05jan00
   `(let ((,mp (cg::frame-child ,canvas)))
       (cond ((eq 1 ,size)
@@ -176,7 +176,7 @@
 (defmacro fast-erase-circle (canvas x y  size fill? )
    (declare (special cg::po-erase cg::po-paint cg::po-replace cg::po-invert)
      (inline cg-erase-filled-circle cg::erase-circle))
-   (let ((s2 (gensym)) (mp (gensym)))
+   (let ((s2 (gensym "fecs2")) (mp (gensym "fecmp")))
       ;;; Check for size = 1 as special 05jan00
   `(let ((,mp (cg::frame-child ,canvas)))
       (cond ((eq 1 ,size)
@@ -204,9 +204,9 @@
 (defmacro fast-draw-cross (canvas x y  s fill? )
    (declare (ignore fill?)
      (special cg::po-erase cg::po-paint cg::po-replace cg::po-invert))
-   (let ((s2 (gensym))
-         (l (gensym))
-         (mp (gensym)))
+   (let ((s2 (gensym "fdcrs2"))
+         (l (gensym "fdcrl"))
+         (mp (gensym "fdcrmp")))
       `(let* ((,s2 (if (oddp ,s) (1- (truncate (+ 1 ,s) 2))
                       (truncate (+ 1 ,s) 2)))
               (,l (list (cg::make-position (- ,x ,s2) ,y )
@@ -229,9 +229,9 @@
 (defmacro fast-erase-cross (canvas x y  s fill? )
    (declare (ignore fill?)
      (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase))
-   (let ((s2 (gensym))
-         (l (gensym))
-         (mp (gensym)))
+   (let ((s2 (gensym "fecrs2"))
+         (l (gensym "fecrl"))
+         (mp (gensym "fecrmp")))
       `(let* ((,s2 (if (oddp ,s) (1- (truncate (+ 1 ,s) 2))
                       (truncate (+ 1 ,s) 2)))
               (,l (list (cg::make-position (- ,x ,s2) ,y )
@@ -257,9 +257,9 @@
 ;; March 25, 1996
 (defmacro fast-draw-diamond (canvas x y  s fill? )
    (declare (special cg::po-erase cg::po-paint cg::po-replace cg::po-paint))
-   (let ((s2 (gensym))
-         (l (gensym))
-         (mp (gensym)))
+   (let ((s2 (gensym "fdds2"))
+         (l (gensym "fddl"))
+         (mp (gensym "fddmp")))
       ;; Check for size off the top 07jan00
   `(let ((,mp (cg::frame-child ,canvas)))
       (cond ((= 1 ,s)
@@ -286,9 +286,9 @@
 
 (defmacro fast-erase-diamond (canvas x y  s fill? )
      (declare (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase))
-     (let ((s2 (gensym))
-            (l (gensym))
-           (mp (gensym)))
+     (let ((s2 (gensym "feds2"))
+            (l (gensym "fedl"))
+           (mp (gensym "fedmp")))
         ;;; Check for size off the top 07jan00
   `(let ((,mp (cg::frame-child ,canvas)))
          (cond ((= 1 ,s)
@@ -322,11 +322,11 @@
 ;; March 25, 1996
 (defmacro fast-draw-triangle (canvas x y  s fill? )
    (declare (special cg::po-erase cg::po-paint cg::po-replace cg::po-invert))
-   (let ((s2 (gensym))
-         (l (gensym)) (r (gensym))
-         (tp (gensym)) (b (gensym))
-         (poly (gensym))
-         (mp (gensym)))
+   (let ((s2 (gensym "fdts2"))
+         (l (gensym "fdtl")) ;(r (gensym)) ; 28JUL2023
+         ;(tp (gensym)) ;(b (gensym)) 28JUL2023
+         ;(poly (gensym)) ;28JUL2023
+         (mp (gensym "fdtmp")))
       `(let* ((,s2 (if (oddp ,s) (1- (truncate (+ 1 ,s) 2))
                       (truncate (+ 1 ,s)  2))) ;; added +1 27Jne99
               (,l (list (cg::make-position (- ,x ,s2) (+ ,y ,s2))
@@ -351,11 +351,11 @@
 
 (defmacro fast-erase-triangle (canvas x y  s fill? )
    (declare (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase))
-   (let ((s2 (gensym))
-         (l (gensym)) (r (gensym))
-         (tp (gensym)) (b (gensym))
-         (poly (gensym))
-         (mp (gensym)))
+   (let ((s2 (gensym "fets2"))
+         (l (gensym "fetl")) ;(r (gensym)) ; 28JUL2023
+         ;(tp (gensym)) ;(b (gensym)) ; 28JUL2023
+         ;(poly (gensym)) ; 28JUL2023
+         (mp (gensym "fetmp")))
       `(let* ((,s2 (if (oddp ,s) (1- (truncate (+ 1 ,s) 2))
                       (truncate (+ 1 ,s)  2))) ;; added +1 27Jne99
               (,l (list (cg::make-position (- ,x ,s2) (+ ,y ,s2))
@@ -390,16 +390,16 @@
 (defmacro fast-draw-star (canvas x y  s fill? )
    (declare (ignore fill?)
      (special cg::po-erase cg::po-paint cg::po-replace cg::po-invert))
-   (let ((r (gensym)) (r*c18 (gensym))
-         (r*s18 (gensym)) (r*c54 (gensym)) (r*s54 (gensym))
-         (x1  (gensym)) (y1 (gensym))
-         (x2 (gensym)) (y2 (gensym))
-         (x3 (gensym)) 
-         (x4 (gensym)) 
-         (x5 (gensym)) (y5 (gensym))
-         (h (gensym)) (g (gensym))
-         (pt-list (gensym))
-         (mp (gensym)))
+   (let ((r (gensym "fdsr")) (r*c18 (gensym "fdsrc18"))
+         (r*s18 (gensym "fdsrs18")) (r*c54 (gensym "fdsrc54")) (r*s54 (gensym "fdsrs54"))
+         (x1  (gensym "fdsx1")) (y1 (gensym "fdsy1"))
+         (x2 (gensym "fdsx2")) (y2 (gensym "fdsy2"))
+         (x3 (gensym "fdsx3")) 
+         (x4 (gensym "fdsx4")) 
+         (x5 (gensym)) (y5 (gensym "fdsy5"))
+         ;(h (gensym)) ;(g (gensym)) ; 28JIL2023
+         (pt-list (gensym "fdsptl"))
+         (mp (gensym "fdsmp")))
       ;;; Check for size = 1 off the top
   `(let ((,mp (cg::frame-child ,canvas)))
       (cond ((= 1 ,s)
@@ -444,16 +444,16 @@
    (declare (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase))
    (declare (ignore fill?)
      (special cg::po-erase cg::po-paint cg::po-replace cg::po-invert))
-   (let ((r (gensym)) (r*c18 (gensym))
-         (r*s18 (gensym)) (r*c54 (gensym)) (r*s54 (gensym))
-         (x1  (gensym)) (y1 (gensym))
-         (x2 (gensym)) (y2 (gensym))
-         (x3 (gensym)) 
-         (x4 (gensym)) 
-         (x5 (gensym)) (y5 (gensym))
-         (h (gensym)) (g (gensym))
-         (pt-list (gensym))
-         (mp (gensym)))
+   (let ((r (gensym "fesr")) (r*c18 (gensym "fesrc18"))
+         (r*s18 (gensym "fesrs18")) (r*c54 (gensym "fesrc54")) (r*s54 (gensym "fesrs54"))
+         (x1  (gensym "fesx1")) (y1 (gensym "fesy1"))
+         (x2 (gensym "fesx2")) (y2 (gensym "fesy2"))
+         (x3 (gensym "fesx3")) 
+         (x4 (gensym "fesx4")) 
+         (x5 (gensym "fesx5")) (y5 (gensym "fesy5"))
+         ;(h (gensym)) ;(g (gensym)) ; 28JUL2023
+         (pt-list (gensym "fesptl"))
+         (mp (gensym "fesmp")))
       ;; Check for size = 1 off the top
   `(let ((,mp (cg::frame-child ,canvas)))
       (cond ((= 1 ,s)
@@ -527,15 +527,18 @@
 
 (defmacro mode-draw-symbol (canvas sim x y  size fill mode)
    (declare (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))
-  (let ((mp (gensym)))
-   `(let ((,mp (cg::frame-child ,canvas)))
+  ;(let ((mp (gensym "mdsmp"))) ;;02OCT2023 unused
+   `(let (;(,mp (cg::frame-child ,canvas)) ;;02OCT2023 unused
+          )
        (declare (optimize (speed 3) (safety 0)
                   (space 0) (compilation-speed 0))
          (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))
        (cg::with-paint-operation (,canvas ,mode)
         (fast-draw-symbol ,canvas ,sim ,x ,y  ,size ,fill)
         )
-       )))
+       )
+   ;)
+  )
 
 (defmacro mode-erase-symbol (canvas sim x y  size fill mode)
    (declare (special cg::po-erase cg::po-paint cg::po-replace cg::po-invert))
@@ -550,7 +553,7 @@
 
 (defmacro cc-set-rgb-color (canvas color)
    (declare (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))
-  (let ((mp (gensym)))
+  (let ((mp (gensym "ccsrcmp")))
    `(let ((,mp (cg::frame-child ,canvas))) 
        (declare (optimize (speed 3) (safety 0)
                   (space 0) (compilation-speed 0))
@@ -571,7 +574,7 @@
 
 (defmacro set-draw-color (canvas color)
    (declare (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))
-  (let ((mp (gensym)))
+  (let ((mp (gensym "sdcmp")))
    `(let ((,mp (cg::frame-child ,canvas)))
        (declare (optimize (speed 3) (safety 0)
                   (space 0) (compilation-speed 0))
@@ -585,7 +588,7 @@
 
 (defmacro set-fast-color (canvas color)
    (declare (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))
-  (let ((mp (gensym)))
+  (let ((mp (gensym "sfcmp")))
    `(let ((,mp (cg::frame-child ,canvas))) 
        (declare (optimize (speed 3) (safety 0)
                   (space 0) (compilation-speed 0))
@@ -596,13 +599,13 @@
           ))))
 
 (defmacro fast-move-to (canvas x y)
-  (let ((mp (gensym)))
+  (let ((mp (gensym "fmvtmp")))
    `(let ((,mp (cg::frame-child ,canvas)))
        (setf (cg::current-position ,mp) (cg::make-position ,x ,y)))))
 
 (defmacro fast-line-to (canvas x y)
    (declare (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))
-  (let ((mp (gensym)))
+  (let ((mp (gensym "flntmp")))
    `(let ((,mp (cg::frame-child ,canvas)))
        (cg::draw-line ,mp (cg::current-position ,mp)
         (cg::make-position ,x ,y))
@@ -610,7 +613,7 @@
 
 (defmacro fast-erase-to (canvas x y)
    (declare (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase))
-  (let ((mp (gensym)))
+  (let ((mp (gensym "fertmp")))
    `(let ((,mp (cg::frame-child ,canvas)))
        (cg::with-paint-operation (,canvas cg::po-erase)
         (cg::erase-line ,mp (cg::current-position ,mp)
@@ -619,7 +622,7 @@
 
 (defmacro fast-draw-line (canvas  x1 y1 x2 y2 )
    (declare (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))
-  (let ((mp (gensym)))
+  (let ((mp (gensym "fdlmp")))
    `(let ((,mp (cg::frame-child ,canvas)))
        (cg::draw-line ,mp (cg::make-position ,x1 ,y1)
         (cg::make-position ,x2 ,y2))
@@ -631,7 +634,7 @@
 ;; We need the following form for lines-pc.lsp
 (defmacro fast-erase-line (canvas x1 y1 x2 y2)
    (declare (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase))
-  (let ((mp (gensym)))
+  (let ((mp (gensym "felmp")))
    `(let ((,mp (cg::frame-child ,canvas)))
        (cg::with-paint-operation (,canvas cg::po-erase)
         (cg::erase-line ,mp (cg::make-position ,x1 ,y1)
@@ -641,8 +644,9 @@
 ;; New version from f-g\gwbtests\expts-mode-draw.lsp
 (defmacro mode-draw-line (canvas x1 y1 x2 y2 mode)
    (declare (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))
-  (let ((mp (gensym)))
-   `(let ((,mp (cg::frame-child ,canvas)))
+  ;(let ((mp (gensym "mdlmp")))  ;;02OCT2023 unused
+   `(let (;(,mp (cg::frame-child ,canvas)) ;;02OCT2020 unused
+          )
        (declare (optimize (speed 3) (safety 0)
                   (space 0) (compilation-speed 0))
          (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))
@@ -653,7 +657,9 @@
           (the fixnum ,x2)
           (the fixnum ,y2))
         )
-       )))
+       )
+   ;)
+  )
 
 (defmacro mode-erase-line (canvas x1 y1 x2 y2 mode)
    (declare (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint))

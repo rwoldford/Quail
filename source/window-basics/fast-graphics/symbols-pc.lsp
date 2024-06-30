@@ -76,6 +76,7 @@
              ))
       )))
 
+#|
 (defun xor-move-single-color-symbols
       (canvas old new 
        &key size (old-size size) fill? (old-fill? fill?)
@@ -106,6 +107,7 @@
          (fast-draw-symbol canvas sim x (- h y) s fill)
          )
         ))))
+        |#
 
 (defun move-single-color-symbols
       (canvas old new 
@@ -169,6 +171,7 @@
              (fast-draw-symbol canvas sim x (- h y) s fill)))))
         ))))
 
+#|
 (defun xor-move-multi-color-symbols
       (canvas old new 
        &key size (old-size size) fill? (old-fill? fill?)
@@ -199,6 +202,7 @@ Results with color background are undefined."
         (cg::with-foreground-color (mp c)
          (fast-draw-symbol canvas sim x (- h y) s fill )))
       )))
+      |#
 
 (defun move-multi-color-symbols
       (canvas old new 
@@ -250,7 +254,7 @@ Results with color background are undefined."
          :color color
          :fill? fill?
          :invisible? invisible? 
-         :erase? erase?)
+         :erase? (coerce (make-array (length points) :initial-element erase?) 'list))
         ))
 
 (defun canvas-erase-symbols (canvas points 
@@ -276,7 +280,7 @@ Results with color background are undefined."
                                                  (old-fill? fill?)
                                                  &allow-other-keys)
      "Moves symbols with varying size, symbol fill? color invisible?."
-     (declare (ignore old-color)
+     (declare (ignore old-color rgb-color?) ;;02OCT2023 added rgb-color? as unused
         (optimize (speed 3) (safety 0)
            (space 0) (compilation-speed 0))
         (special cg::po-erase cg::po-invert cg::po-replace cg::po-paint)
@@ -297,11 +301,12 @@ Results with color background are undefined."
          ))
      )
 
+#|
 (defun canvas-draw-symbol 
       (canvas x y  
        &key size symbol fill? color erase?
        &allow-other-keys)
-     "Draw  symbol using size symbol fill? color and erase?"
+     "Draw/erase  symbol using size symbol fill? color and erase?"
      (declare (special  *host-or-mode* 
                       cg::po-erase cg::po-invert cg::po-replace cg::po-paint)
         (optimize (speed 3) (safety 0)
@@ -326,3 +331,4 @@ Results with color background are undefined."
             size fill?)))
          )
       )))
+      |#

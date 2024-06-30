@@ -27,21 +27,21 @@
 
 
 (defun x-shift (region)
-  (declare (inline + aref round /)
-           (optimize (speed 3) (safety 0)
+  (declare (inline + aref round /))
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
             (space 0) (compilation-speed 0))
            )
   (round (+ (aref region 0) (/ (aref region 2) 2))))
 
 (defun y-shift (region)
-  (declare (inline + aref round /)
-           (optimize (speed 3) (safety 0)
+  (declare (inline + aref round /))
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
             (space 0) (compilation-speed 0))
            )
   (round (+ (aref region 1) (/ (aref region 3) 2))))
 
 (defun make-shift-transform (region)
-  (declare (optimize (speed 3) (safety 0)
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
             (space 0) (compilation-speed 0))
            )
   
@@ -50,7 +50,7 @@
 
 (defun make-rotation-transform (region direction  )
   
-  (declare (optimize (speed 3) (safety 0)
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
             (space 0) (compilation-speed 0))
            )
   (let* ((xhift (x-shift region))
@@ -79,15 +79,14 @@
                                   stop-fn)
   "Rotates a point-cloud using plotting traps. The point cloud is in list form~
    with each sublist an x,y,z observation. !!"
-  (declare (optimize (speed 3) (safety 0)
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
            (inline canvas-move-axes
-                   rotatef
                    canvas-move-symbols
                    mapply-transform-store
-                   incf
                    )
            )
+  (declare (inline rotatef incf))
   
   (let ((data (append points axes )))
         
@@ -169,7 +168,7 @@
   
   "Draws a point-cloud using plotting traps. The point cloud is in list form~
    with each sublist an x,y,z observation. !!"
-  (declare (optimize (speed 3) (safety 0)
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
            )
   
@@ -206,8 +205,9 @@
 
 
 (defmethod mapply-rotation! ((rot 3d-rotate) (a list) &key (integer? t))
-  (declare (optimize (speed 3) (safety 0) (space 0) (compilation-speed 0))
-           (inline mapply-transform! elt round * / float))
+  #:-sbcl(declare (optimize (speed 3) (safety 0) (space 0) (compilation-speed 0))
+           (inline mapply-transform! ))
+  (declare (inline elt round * / float))
   (if integer?
     (mapply-transform! rot a)
     (let* ((big 10000)
@@ -227,8 +227,8 @@
   "scales  data so that when rotated and shifted it will always fit in a window~
    with minimum dimension SIZE ~
    Data should already be centered at 0"
-  (declare (optimize (speed 3) (safety 0) (space 0) (compilation-speed 0))
-           (inline round *))
+  #:-sbcl(declare (optimize (speed 3) (safety 0) (space 0) (compilation-speed 0)))
+         (declare (inline round *))
   (let* ((size (min (aref region 2) (aref region 3)))
          (d (/ size
                (sqrt (loop for di in data
@@ -241,7 +241,7 @@
 
 (defun standardize-data-lists (data )
   "scales 3-d data so that each dimension has mean 0 and variance 1"
-  (declare (optimize (speed 3) (safety 0)
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0)))
   (let* ((mean #'(lambda(i)
               (/  (loop for di in data sum (elt di i)) (length data))))
@@ -262,7 +262,7 @@
 
 (defun center-data-lists (data )
   "center 3-d data so that each dimension has mean 0 "
-  (declare (optimize (speed 3) (safety 0)
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
            )
   (let* (
@@ -292,15 +292,14 @@
                                   stop-fn)
   "Rotates lines using plotting traps. points gives the lines coordinates,~
    where points has even length, each pair giving the segment endpoints. "
-  (declare (optimize (speed 3) (safety 0)
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
            (inline canvas-move-axes
-                   rotatef
                    canvas-move-lines
                    mapply-transform-store
-                   incf
                    )
            )
+  (declare (inline rotatef incf))
   
   (let ((data (append points axes )))
         
@@ -391,7 +390,7 @@
   
   "Draws lines using plotting traps. points gives the lines coordinates,~
    where points has even length, each pair giving the segment endpoints. "
-  (declare (optimize (speed 3) (safety 0)
+  #:-sbcl(declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
            )
   
