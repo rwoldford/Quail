@@ -262,5 +262,3 @@
                   (canvas-draw-character canvas char)
                   (canvas-move-to canvas nextx y))
                 (setq x nextx)))))))))
-
-
