@@ -78,7 +78,8 @@
                          (canvas-draw-inside-square canvas x y sq-width)
         (h-draw:draw-inside-rectangle canvas x (canvas-to-host-y canvas (+ y sq-width)) 
                                       (+ x sq-width) (canvas-to-host-y canvas y))))))
-
+;;; Original code
+#|
 (defun canvas-draw-square (canvas x y sq-width
                                   &key (width NIL) (operation NIL) (color NIL) dashing)
   (declare (ignore dashing))
@@ -91,6 +92,8 @@
         (h-draw:draw-rectangle canvas x (+ x sq-width) 
                                (canvas-to-host-y canvas y) 
                                (canvas-to-host-y canvas (+ y sq-width)))))))
+|#
+;;; Original code
 
 (defun canvas-draw-filled-square (canvas x y sq-width 
                                          &key (operation NIL) (color NIL))
@@ -102,6 +105,20 @@
         (h-draw:draw-filled-rectangle canvas x 
                                       (canvas-to-host-y canvas (+ y sq-width)) 
                                       (+ x sq-width) (canvas-to-host-y canvas y))))))
+
+;;; Revised code to get h-draw:: call correct
+ (defun canvas-draw-square (canvas x y sq-width
+                                  &key (width NIL) (operation NIL) (color NIL) dashing)
+  (declare (ignore dashing))
+  (with-focused-canvas canvas
+    (with-pen-values canvas color width operation 
+      (with-display-mode
+        canvas
+        (display-mode-of canvas) 
+        (canvas-draw-square canvas x y sq-width)
+        (h-draw:draw-rectangle canvas x 
+                               (canvas-to-host-y canvas y)  (+ x sq-width)
+                              (canvas-to-host-y canvas  (+ y  sq-width)))))))
 
 (defun canvas-draw-inside-rectangle (canvas left right bottom top    
                                             &key 
@@ -117,7 +134,8 @@
                                                        left right bottom top)
         (h-draw:draw-inside-rectangle canvas left (canvas-to-host-y canvas top) 
                                       right (canvas-to-host-y canvas bottom))))))
-
+;;; Original code
+#|
 (defun canvas-draw-rectangle (canvas x1 x2 y1 y2
                                      &key 
                                      (width NIL)
@@ -134,6 +152,27 @@
         (h-draw:draw-rectangle canvas x1 x2 
                                (canvas-to-host-y canvas y1) 
                                (canvas-to-host-y canvas y2))))))
+|#
+
+;;; Revised code
+(defun canvas-draw-rectangle (canvas x1 x2 y1 y2
+                                     &key 
+                                     (width NIL)
+                                     (operation NIL)
+                                     (color NIL)
+                                     dashing)
+  (declare (ignore  dashing))
+  (with-focused-canvas canvas
+    (with-pen-values canvas color width operation 
+      (with-display-mode
+        canvas
+        (display-mode-of canvas) 
+        (canvas-draw-rectangle canvas x1 x2 y1 y2)
+        (h-draw:draw-rectangle canvas x1  
+                               (canvas-to-host-y canvas y1)
+                               x2
+                               (canvas-to-host-y canvas y2))))))
+
 
 (defun canvas-draw-filled-rectangle (canvas left right bottom top 
                                             &key 
@@ -148,6 +187,8 @@
         (h-draw:draw-filled-rectangle canvas left 
                                       (canvas-to-host-y canvas top) 
                                       right (canvas-to-host-y canvas bottom))))))
+
+
 
 (defun canvas-draw-circle (canvas x y radius 
                                   &key 
@@ -309,7 +350,7 @@
     (with-display-mode canvas (display-mode-of canvas)
                        (canvas-move-to canvas x y)
       (setf (canvas-x canvas) x)
-      (setf (canvas-y canvas) y))))
+      (setf (canvas-y canvas) (canvas-to-host-y canvas y)))))
 
 (defun canvas-draw-region (canvas region
                                   &key (width nil) (operation nil) 
@@ -408,4 +449,3 @@
                          start-angle arc-angle
                          x-centre (canvas-to-host-y canvas y-centre)
                          x-radius y-radius)))))
-
