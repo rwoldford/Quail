@@ -36,7 +36,7 @@
   (h-draw:font-transfer-modes))
 
 (defun canvas-font-styles ()
-  "Returns the list of currently available canvas dont styles."
+  "Returns the list of currently available canvas font styles."
   (h-draw:font-styles))
 
 (defun canvas-font-names ()

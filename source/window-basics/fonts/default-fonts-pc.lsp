@@ -20,7 +20,7 @@
            *help-normal-text-font* *help-small-text-font*
            *help-key-font* *help-little-key-font*
            *help-lisp-font* *help-normal-title-font* *help-small-title-font*
-           *help-lisp-title-font*)))
+           *help-lisp-title-font* *prompt-normal-font*)))
 
 ;;; Most of the :name values should be faces, I think
 ;;; Thus times <-> times\ new\ roman
@@ -97,7 +97,15 @@
       :style :bold)
   "Canvas font used for displaying lisp code in help title.")
 
-(defparameter *prompt-normal-font*
+;;; NOTE this is 'defined' as *title-normal-font* in wb/host-host-menu-canvas-pc.lsp
+;;; to avoid compiler complaints [not exported]. If the definition below is changed
+;;; consider whether *title-normal-fonts* needs adjustment too.
+;;; gwb 28sep2023
+(defparameter *prompt-normal-font* ;(defparameter *prompt-normal-font*
   (canvas-make-font :name (cons :roman :times\ new\ roman)
-    :size 12 :style NIL))
-  "Canvas font used for prompts"
+                     :size 12 
+                     :style nil)
+  ;(cg::make-font :roman "times new roman" 20)
+  ;(canvas-make-font :name (cons :roman :times\ new\ roman)
+  ;  :size 12 :style NIL)
+  "Canvas font used for prompts")

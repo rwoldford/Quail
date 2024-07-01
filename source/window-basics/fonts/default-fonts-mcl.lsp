@@ -27,9 +27,7 @@
 
 (in-package :wb)
 
-(eval-when (:compile-toplevel :load-toplevel :execute) 
-  (export  
-       '(*very-small-graphics-font* *small-graphics-font*
+(eval-when (:compile-toplevel :load-toplevel :execute) (export  '(*very-small-graphics-font* *small-graphics-font*
            *normal-graphics-font* *large-graphics-font*
            *help-normal-text-font* *help-small-text-font*
            *help-key-font* *help-little-key-font*
