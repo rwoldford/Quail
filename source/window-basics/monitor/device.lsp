@@ -86,7 +86,7 @@
   "Determine if :black&white is the current device type."
   (eq :black&white (device-type)))
 
-(eval-when (load eval)
+(eval-when (:load-toplevel :execute)
   (if (color-available-p)
     (set-device-type :color)
     (set-device-type :black&white)))
