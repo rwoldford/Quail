@@ -37,11 +37,13 @@
 
 (defun mouse-down-p ()
   (cg::process-pending-events-if-event-handler)
+  (let ((result)) ; 27JUL2023
   (setf result
      (or (cg::key-is-down-p cg::vk-lbutton)
           (cg::key-is-down-p cg::vk-mbutton)
          (cg::key-is-down-p cg::vk-rbutton)))
   result)
+  ) ;27JUL2023
 
 (defun shift-key-p ()
      "Tests whether a shift key is being held down."
@@ -53,14 +55,16 @@
   
 (defun control-key-p ()
   "Tests whether a control key is being held down."
+  (let ((result)) ;27JUL2023
   (setf result
     (or (cg::key-is-down-p cg::vk-control)
         (cg::key-is-down-p cg::vk-left-control)
         (cg::key-is-down-p cg::vk-right-control)
         ))
-  (when result (cg.gtk::update-key-state cg::vk-right-control :up)
-    (cg.gtk::update-key-state cg::vk-left-control :up))
-  result)
+  ;(when result (cg.gtk::update-key-state cg::vk-right-control :up) ;; 23JUL2023 package cg.gtk nolonger exists
+  ;  (cg.gtk::update-key-state cg::vk-left-control :up)) ;; DITTO
+  result) ; 27JUL2023
+  )
   
 
 (eval-when (:compile-toplevel :load-toplevel :execute) (export  '(mouse-down-p shift-key-p control-key-p)))
@@ -87,7 +91,8 @@
 
 
 (defun mouse-state ()
-  (format t "Calling mouse-state~%")
+  ;(format t "Calling mouse-state~%")
+  (let ((result)) ; 27JUL2023
   (setf result
   (cond
    ((cg::key-is-down-p cg::vk-lbutton) :left)
@@ -95,8 +100,8 @@
    ((cg::key-is-down-p cg::vk-rbutton) :right)
    ( T :none)))
   (cg::process-pending-events)
-  result
-  )
+  result)
+  ) ; 27JUL2023
 
 (defun mouse-position (canvas)
      (let ((position (cg::cursor-position canvas)))
@@ -115,14 +120,13 @@
 ;;; mouse position in screen coordinates, cbh
 ;;;========================================================================================
 (defun screen-mouse-position ()
-     "Returns position of mouse in screen coords."
-    (cg::with-device-context (hdc (cg::screen cg::*system*))
-     (let* ((scrn (cg::screen cg::*system*))
-     (position (cg::cursor-position (cg::screen cg::*system*))))
-         (make-position (h-draw::point-x position)
-          (- (screen-height) (h-draw::point-y position)))))
-    )
-    
+  "Returns position of mouse in screen coords."
+  (cg::with-device-context (hdc (cg::screen cg::*system*))
+                           (let* ((scrn (cg::screen cg::*system*)) ; 27JUL2023
+                             (position (cg::cursor-position scrn)))
+                           (make-position (h-draw::point-x position)
+                                          (- (screen-height) (h-draw::point-y position))))))
+
         
 (defun screen-mouse-x ()
      (position-x (screen-mouse-position)))

@@ -89,7 +89,10 @@
     (make-position x y)))
 
 (defun screen-mouse-x ()
-  (xlib::global-pointer-position *default-display*))
+  (multiple-value-bind
+    (x y)
+  (xlib::global-pointer-position *default-display*)
+  x))
 
 (defun screen-mouse-y ()
   (multiple-value-bind

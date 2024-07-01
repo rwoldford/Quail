@@ -28,14 +28,12 @@
 (defclass host-pane (cg::bitmap-pane) NIL)
 
 (defmethod cg::default-pane-class ((window host-window)) 'host-pane)
-|#
+
 
 ;;; Methods on mouse-left-down & co go here = see Wayne's email.
 (defmethod cg::mouse-left-down ((pane host-pane) (buttons T) (cursor-position T))
-  (mouse-left-button-event-fn (cg::owner pane) 
-  (make-position (h-draw:point-x cursor-position)
-                 (host-to-canvas-y (cg::owner pane) 
-                                   (h-draw:point-y cursor-position))))
+  (mouse-left-button-event-fn (cg::owner pane) (make-position (h-draw:point-x cursor-position)
+                                                              (host-to-canvas-y (cg::owner pane) (h-draw:point-y cursor-position))))
          )
 
 (defmethod cg::mouse-right-down ((pane host-window) (buttons T) (cursor-position T))
@@ -45,7 +43,7 @@
 (defmethod cg::mouse-middle-down ((pane host-window) (buttons T) (cursor-position T))
   (mouse-middle-button-event-fn pane (make-position (h-draw:point-x cursor-position)
                                                   (host-to-canvas-y pane (h-draw:point-y cursor-position)))))
-
+|#
 
 #|  02Dec 2014
 (defmethod cg::event ((pane host-pane) event (button-state t) data )
