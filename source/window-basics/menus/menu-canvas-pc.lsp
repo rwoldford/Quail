@@ -33,8 +33,10 @@
 ;;;   
 (in-package :wb)
 
+#| 25SEP2023 Already defined in menu-canvas.lsp
 (defun release-menu-space (menu)
    (destroy-menu menu))
+|#
 
 ;;; In MCL the menu-type cannot be :pop-up
 ;;; ... the default
@@ -58,4 +60,5 @@
       :title-ctrl-middle title-ctrl-middle
       :title-ctrl-right  title-ctrl-right
       :when-selected-fn when-selected-fn)
-     (put-title-menus-on-menubar canvas))
+     (put-title-menus-on-menubar canvas)
+     )

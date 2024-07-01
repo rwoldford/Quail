@@ -137,7 +137,7 @@
                                (prompt-user
                                 :prompt-string "Enter the title: "
                                 :read-type :string
-                                :type 'string)))
+                                :result-type 'string)))
                      "Change the title of the canvas.")
                (list "Background color"
                      #'(lambda (c)
@@ -153,7 +153,7 @@
                           c
                           (prompt-user
                            :prompt-string "Enter the new width (in pixels): "
-                           :type 'integer
+                           :result-type 'integer
                            :read-type :eval)))
                      "Change the pen width.")))
    (list "Export canvas" #'canvas-export "Exports the canvas to an appropriate filetype.")
@@ -185,7 +185,7 @@
                             f-copy
                             (prompt-user
                              :prompt-string "Enter the new font size (1 to 127): "
-                             :type 'integer
+                             :result-type 'integer
                              :read-type :eval))
                            (setf (canvas-font c) f-copy)))
                      "Change the font size used in the canvas.")))
@@ -331,7 +331,8 @@
 (defun canvas-put-title-menu (canvas &key key menu)
   (with-accessors ((tm title-menus-of)) canvas
     "Adds the :menu to the title-menus using :key as a lookup key."
-    (setq tm (acons key menu tm))))
+    (setq tm (acons key menu tm)))
+  )
 
 
 (defun canvas-get-title-menu (canvas &key key)
@@ -369,7 +370,6 @@
                             (when-selected-fn #'default-when-selected-fn)
                             )
   "Installs the title items found on the browser as title-menus of the canvas."
-  
   (let (items)
     ;; release the menu record (some systems have such non-lisp things)
     (loop for m  in (title-menus-of canvas)
@@ -423,7 +423,8 @@
                    (:key ~
                    (:arg title-left \"Information\" Title of the left-title menu.)~
                    )"))
-
+ ;; out 10SEP2020 ;; in 03OCT2020 ;; out 04OCT2023
+ ;#|
 (defmethod initialize-instance :after ((canvas menu-canvas) 
                                        &key
                                        (title-left        "Information")
@@ -447,4 +448,6 @@
                       :title-ctrl-middle title-ctrl-middle
                       :title-ctrl-right  title-ctrl-right
                       :menu-type menu-type
-                      :when-selected-fn when-selected-fn))
+                      :when-selected-fn when-selected-fn)
+  )
+;|#

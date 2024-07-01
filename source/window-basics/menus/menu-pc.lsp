@@ -107,6 +107,7 @@
    NIL)
 
 (defmethod (setf when-selected-fn-of) (new-value (thing T))
+  (declare (ignorable new-value)) ; 27JUL2023
    NIL)
 
 (defmethod (setf when-selected-fn-of) (new-value (thing cg::menu-item))
@@ -118,6 +119,7 @@
          new-value))
 
 (defmethod (setf sub-item-fn-of) (new-value (thing T))
+  (declare (ignorable new-value)) ; 27JUL2023
    NIL)
 
 (defmethod (setf sub-item-fn-of) (new-value (thing cg::menu-item ))
@@ -129,6 +131,7 @@
          new-value))
 
 (defmethod (setf when-unheld-fn-of) (new-value (thing T))
+  (declare (ignorable new-value)) ; 27JUL2023
    NIL)
 
 (defmethod (setf when-unheld-fn-of) (new-value (thing cg::menu-item))
@@ -139,8 +142,6 @@
                (cg::plist thing)))))
          new-value))
 
-(defmethod (setf when-unheld-fn-of) (new-value (thing T))
-   NIL)
 
 ;;;-----------------------------------------------------------------------------
 ;;;                          pop-up menu
@@ -249,7 +250,7 @@
               (font *default-menu-font*)
           (change-offset-fn nil)
           (menu-type :pop-up)
-          &aux menu)
+          &aux menu) 
      (declare (ignore change-offset-fn font)
         (special *default-menu-font*))
      (let ((*menu-class* (if (eq menu-type :pop-up)
