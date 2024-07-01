@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;                               canvas-export-pc.lisp
+;;;                               canvas-export-pc.lsp
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -24,6 +24,8 @@
 
 (defmethod canvas-export ((self canvas) &key left top width height filetype )
    "Exports the canvas contents to a file of type filetype"
+   (declare (special the-array the-tex) ;28JUL2023
+            (ignore left top width height)) ; 07AUG2023
    (unless filetype
       (setf filetype (pick-one (list :postscript :bitmap))))
    (case 

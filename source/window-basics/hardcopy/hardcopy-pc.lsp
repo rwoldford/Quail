@@ -39,9 +39,14 @@
   (setq height (or height (canvas-height w)))
 
    )
+
+(defvar the-array nil) ; 07AUG2023
+(defvar the-tex nil) ; 07AUG2923
+
 (defun print-canvas (stuff)
      "stuff is assumed to be a bitmap-window~
  this merges output-to-window-or-printer and printer-test"
+ (declare (special cg::*screen*)) ;26SEP2023
      (multiple-value-setq (the-array the-tex)
           (cg::get-pixels stuff (cg::visible-box stuff)))
      (setf (cg::texture-info-invert-p the-tex) T) ;; NOTE
