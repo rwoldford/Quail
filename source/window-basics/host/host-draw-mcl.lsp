@@ -232,12 +232,23 @@
   (move-to canvas x1 y1)
   (line-to canvas x2 y2))
 
+;;; Revised code to conform with other drawing things
+(defun draw-rectangle (canvas x1 y1 x2 y2)
+  (move-to canvas x1 y1) 
+  (line-to canvas x1 y2) 
+  (line-to canvas x2 y2)  
+  (line-to canvas x2 y1)
+  (line-to canvas x1 y1))
+
+;;; Original code
+#|
 (defun draw-rectangle (canvas x1 x2 y1 y2)
   (move-to canvas x1 y1) 
   (line-to canvas x1 y2) 
   (line-to canvas x2 y2)  
   (line-to canvas x2 y1)
   (line-to canvas x1 y1))
+|#
 
 (defun draw-inside-rectangle (canvas left &optional top right bot)
   (declare (ignore canvas))

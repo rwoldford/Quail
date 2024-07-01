@@ -16,6 +16,9 @@
 
 #+:cl-2
 (defpackage "HOST-DRAW"
+  ;#+:sbcl-linux (:use :clim-lisp :clim :clim-extensions) ; "COMMON-LISP" 19 November 2019
+  ;#+:aclpc-linux (:use :common-lisp)
+  (:use "COMMON-LISP")
   (:nicknames "H-DRAW")
   (:IMPORT-FROM "QUAIL-KERNEL"
                 *QUAIL-RESTORE-LISP-FUNCTIONS*

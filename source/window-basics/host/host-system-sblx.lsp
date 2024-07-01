@@ -7,7 +7,7 @@
 ;;;     G.W. Bennett 2017
 ;;;--------------------------------------------------------------------------------
 (in-package :wb)
- (eval-when (:compile-toplevel :load-toplevel :execute)
- (shadow '(MAKE-POSITION COPY-POSITION POSITION-X POSITION-Y
- MOVE-TO LINE-TO DRAW-LINE DRAW-ELLIPSE DRAW-POLYGON) ))
+ ;(eval-when (:compile-toplevel :load-toplevel :execute)
+ ;(shadow '(MAKE-POSITION COPY-POSITION POSITION-X POSITION-Y
+ ;MOVE-TO LINE-TO DRAW-LINE DRAW-ELLIPSE DRAW-POLYGON) ))
 ;; (use-package :common-graphics)

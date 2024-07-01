@@ -23,6 +23,8 @@
   ()
   (:documentation "A class to define how title menus should appear."))
 
+(defclass qmbwin (cg::frame-window) ())
+
 (defvar *system-default-menubar*
   NIL
   "The default menubar of the system.")
@@ -44,30 +46,50 @@
      Its value will be established in make-default-system-menubar
      which is called by set-system-default-menubar.")
 
+;;; NOTE *title-normal-font* is used only in this file to get main menubar spacing correct.
+;;; However, this definition is also in wb/fonts/default-fonts-pc.lsp as *prompt-normalfont*,
+;;; whence it is exported. [fonts is after this file in window-basics.asd .. the current
+;;; definition avoids compiler complaints.]
+;;; If this definition is changed, consider whether the *prompt-normal-font* should
+;;; be adjeusted too.  gwb 28sep2023
+(defvar *title-normal-font* (cg::make-font :roman "times new roman" 20)
+  "Canvas font used for menubars and prompts")
 
 (defun menu-title-width (mnu &optional (stream *quail-menubar-window*))
      "Finds the pixel width of mnu on the stream (default
       *quail-menubar-window*).~
        mnu can be a menu or a menu-item."
      ;; 20 is a fudge factor.
+     (let ((scrn (cg::screen cg::*system*))
+        ;(a-font (wb::canvas-font-to-host-font wb::*prompt-normal-font*))
+        )
      (if (cg::menu-item-p mnu)
-         (+ 20 (cg::with-device-context (hdc (cg::screen cg::*system*)) 
+         (+ 20 (cg::with-font (scrn *title-normal-font*)
              (cg::stream-string-width stream 
-                     (cg::title mnu)))) 
-         (+ 20 (cg::with-device-context (hdc (cg::screen cg::*system*))
+                     (cg::title mnu))
+             )
+         ) 
+         (+ 20 (cg::with-font (scrn *title-normal-font*)
                (cg::stream-string-width stream 
-                     (cg::title  mnu))))
+                     (cg::title  mnu))
+               )
+         )
          ))
+     )
 
 (defun total-menu-title-width (mnb &optional
                                 (stream *quail-menubar-window*))
      "Find the sum of the stream-string-widths of the titles of the menus~
        currently on mnb wrt stream (default *quail-menubar-window*)."
      ;; 20 is a factor which seems adequate.
-   (let ((s 0))
+     (declare (ignore stream)) ;;30JUN2023
+   (let ((s 0)
+    (scrn (cg::screen cg::*system*))
+    ;(a-font (wb::canvas-font-to-host-font wb::*prompt-normal-font*))
+    )
       (loop for mnu in (cg::menu-items mnb)
         do
-        (setq s (+ s (cg::with-device-context (hdc (cg::screen cg::*system*)) 
+        (setq s (+ s (cg::with-font (scrn *title-normal-font*)
                     (cg::stream-string-width 
                       (cg::screen cg::*system*)  
                       (cg::title mnu)) 
@@ -81,10 +103,13 @@ currently on menubar mnb"
       (loop for mnu in (cg::menu-items mnb)
         do
         (setq s (+ s 
-            (cg::with-device-contex (hdc (cg::screen cg::*system*))
-              (cg::stream-string-width (cg::screen cg::*system*)
-                      (cg::title mnu)))
-             )))
+                     (let ((scrn (cg::screen cg::*system*))
+                        ;(a-font (wb::canvas-font-to-host-font wb::*prompt-normal-font*))
+                           )
+                (cg::with-font (scrn *title-normal-font*)
+               (cg::stream-string-width  scrn (cg::title mnu))
+               )
+             ))))
       s))
 
 
@@ -115,18 +140,23 @@ Returns the menubar of the window."
     (set-quail-window-min-width)
     (set-quail-window-base-height)
     (set-extra-bar-height))
-  (let* (( win (cg::make-window ':qmbwin
+  (let* (( win (cg::make-window  :qmbwin ;':qmbwin 11JUL2023
                  :device 'cg::bitmap-window :parent (cg::screen cg::*system*) :title "QUAIL MENUBAR"
                  :user-resizable NIL :user-scrollable NIL
                  :window-exterior  (cg::make-box 1 1
                                                  (+ 1 *quail-window-min-width*)
                                                  (+ *quail-window-base-height* *extra-bar-height*))
-                 :font (cg::make-font-ex nil :Arial 13 nil)))
-         ( mb1 (cg::make-window ':qmb :device 'cg::menu-bar :parent win )))
-    (setf *quail-menubar-window* win)
-    (cg::menu win) ;(cg::window-menu win) try this 15jun2004
+                 :font (cg::make-font-ex nil :Arial 13 nil)
+                 ) 
+         ;( mb1 (cg::make-window ':qmb :device 'cg::menu-bar :parent win )) ;;30JUN2023 seems not to be needed
+         )
+    ;(cg::menu win) ;(cg::window-menu win) try this 15jun2004
     )
-  )
+    (cg::open-menu NIL 
+               'cg::menu-bar win)
+    (setf *quail-menubar-window* win)
+    (cg::menu win)
+  ))
 
 (defun set-system-default-menubar 
       (&optional (menubar (make-system-default-menubar)))
@@ -138,7 +168,9 @@ Returns the menubar of the window."
      )
 
 (eval-when (load)
-  (set-system-default-menubar)) 
+  (set-system-default-menubar)
+  ;(setf *quail-menubar* *system-default-menubar*) ;; 11JUN2023 since *q-m* is only used in this file, twice otherwise for extra-height ??
+  ) 
 
 (defvar *last-menubar* *system-default-menubar*
    "The list of elements of the last menubar.  To be updated ~
@@ -262,17 +294,41 @@ and downdated as canvases are activated and deactivated.")
          (setf title-menubar
                (loop for (title . m) in title-menus
                  do 
-                 (unless (spot-on-menubar title-menubar m)
-                    (extend-menubar-by-menu title-menubar m)
+                 ;(unless (spot-on-menubar title-menubar m)
+                    ;(extend-menubar-by-menu title-menubar m)
                     (cg::add-to-menu title-menubar 
                      (make-instance 'cg::menu-item :title (cg::title m)
-                      :value m)))
+                      :value m))
+                    ;)
                  ))
          )
       (setf *last-menubar* title-menubar)
       )
    )
 ;;; end new version.
+;;; START Original version of add-menu-in-menubar 18JUN2023
+
+(defun add-menu-in-menubar (menu &optional
+                            (menubar *system-default-menubar*))
+   "Adds the menu to a menubar. ~
+   if it is not already there. Adjusts the width of the menubar if necessary.~
+   menu may be a menu or a menu-item
+   (:see-also remove-menu-from-menubar)"
+   (declare (special *system-default-menubar*))
+   (unless (spot-on-menubar menubar menu)
+      ;(add-line-to-menubar (cg::parent menubar) menubar menu)  ;;26JUN2023
+      ;(extend-menubar-by-menu menubar menu)  ;;26JUN2023 
+      (cg::add-to-menu  menubar ;menu menubar 
+       (if (cg::menu-item-p menu)
+          menu
+          (make-instance 'cg::menu-item :title (cg::title menu)
+                              :value menu)))))
+
+;;; END Original version of add-menu-in-menubar 18JUN2023
+#|
+;;; REVISED VERSION 18JUN2023
+
+
 (defun add-menu-in-menubar (menu &optional
                             (menubar *system-default-menubar*))
    "Adds the menu to a menubar. ~
@@ -282,13 +338,13 @@ and downdated as canvases are activated and deactivated.")
    (declare (special *system-default-menubar*))
    (unless (spot-on-menubar menubar menu)
       (add-line-to-menubar (cg::parent menubar) menubar menu) 
-      (extend-menubar-by-menu menubar menu)
+      (extend-menubar-by-menu menubar menu))
       (cg::add-to-menu menubar 
        (if (cg::menu-item-p menu)
           menu
           (make-instance 'cg::menu-item :title (cg::title menu)
-                              :value menu)))))
-
+                              :value menu))))
+|#
 
 (defun remove-menu-from-menubar (menu &optional (menubar
                                                   *system-default-menubar*))
@@ -334,5 +390,5 @@ and downdated as canvases are activated and deactivated.")
             (put-title-menus-on-menubar *current-canvas*)))
       result))
 
-#+:aclpc-linux (setf (cg::height wb::*quail-menubar-window*) 51)
+#+:aclpc-linux (setf (cg::height wb::*quail-menubar-window*) 49)
 

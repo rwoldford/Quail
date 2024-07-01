@@ -35,7 +35,18 @@
 ;;;
 ;;; In this implementation a Quail font-name will be a pair (ACL_family. ACL_face)
 ;;; 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;;; 05 November 2019 gwb
+;;; In mcclim, all this stuff seems to be under text-styles - Ch5 p77. ff.
+;;; A text-style is a combination of 3 things - family, face, style
+;;;  (1) family clim supports :fix :serif :sans-serif or nil
+;;;  (2) face clim supports :roman :bold :italic (:bold italic) or nil
+;;;         these correspond to *font-styles* below
+;;;  (3) size logical sizes are
+;;;           :tiny :very-small :small :normal :large :very-large :huge :smaller : larger
+;;;       or there could be a real number <-> printer's points
+;;;       or nil
+;;; There is clim::*default-text-style*
 (in-package :HOST-DRAW)
 
 (eval-when (:compile-toplevel :load-toplevel :execute) 
@@ -49,6 +60,7 @@
    *font-transfer-modes*
    (list :boole-1
      :boole-2
+
      :boole-andc1
      :boole-andc2
      :boole-and
@@ -65,23 +77,37 @@
      :boole-xor)
    "Font transfer-modes cache")
 
+#|
 (defvar 
    *points-per-inch*
    72
    "The number of font points per inch")
+|#
 
 (defun font-transfer-modes ()
      *font-transfer-modes*)
 
+;;; acl code
+;(defvar
+;   *font-styles*
+;   (list :ROMAN :BOLD :ITALIC :BOLD-ITALIC)
+;   "Font styles cache")
+;;; clim code
 (defvar
-   *font-styles*
-   (list :ROMAN :BOLD :ITALIC :BOLD-ITALIC)
-   "Font styles cache")
+  *mcclim-font-styles*
+  (list :roman :bold :italic (list :bold :italic) nil)
+  "Mcclim font faces, which acl called font-styles!")
+
+
+(defun mcclim-font-styles ()
+     "A list of styles - the fourth attribute of a font"
+     *mcclim-font-styles*)
 
 (defun font-styles ()
-     "A list of styles - the fourth attribute of a font"
-     *font-styles*)
+    "A list of styles - the fourth attribute of a font"
+    *mcclim-font-styles*)
 
+#|
 (defun font-names ()
      "Collects (family.face) list for (cg::screen cg::*system*)"
      ;(declare (special (cg::screen cg::*system*)))
@@ -95,11 +121,59 @@
              (push (cons family face) fonts))
            ))
          fonts))
+|#
+;;; For now
+(defvar *mcclim-font-family*
+  (list :fix :serif :sans-serif nil)
+"Mcclim font families which acl calls font-faces"
+  )
 
+(defun mcclim-font-family ()
+  "A list of families"
+  *mcclim-font-family*)
+
+;;; Now we can define font-names as above
+;;; Two utility forms
+
+(defun cons-cartesian-product (x y)
+  "Creates the list of all (elt-of-x . elt-of-y)"
+       (let (w)
+         (dolist (p x w)
+     (dolist (q y)
+       (push (cons p q) w)))))
+
+(defun list-cartesian-product (x y)
+  "Creates the list of all (elt-of-x elt-of-y)"
+       (let (w)
+         (dolist (p x w)
+     (dolist (q y)
+       (push (list p q) w)))))
+
+
+(defun font-names ()
+  "Collects (family.face) list for (find-port)"
+  (cons-cartesian-product *mcclim-font-family* *mcclim-font-styles*))
+
+(defvar *mcclim-font-sizes*
+    (list :normal :tiny :very-small :small :large :very-large :huge :smaller :larger nil)
+    "A list of mcclim font styles")
+
+(defun mcclim-font-sizes ()
+  "Returns a list of mcclim font sizes"
+  *mcclim-font-sizes*)
+
+#| Does not seem to be used
 (defvar
    *font-names*
    NIL
    "Font name cache")
+|#
+
+#| For now but goodness knows how to deal with this in any real sense
+There is (clim-extensions:port-all-font-families (find-port))
+which returns a list of 'available' families [in clim's sense]
+but this is clearly inaccurate since most of the text-styles do not use DejaVu !
+And the returned list does not include, for exmaple, :roman which is widely used
 
 (defun built-in-font-types (&optional (canvas (cg::screen cg::*system*)))
      "Creates a list of (list (cons family face) size style) for most of the 
@@ -126,26 +200,43 @@ supplied fonts omitting ornamental ones."
                              (push (list (cons a-family a-face) a-size a-style) whole-list))))))))
 )
          whole-list))
-
-
+|#
 (defvar
-   *built-in-font-types*
-   (built-in-font-types)
-   )
+   *built-in-font-types* NIL ;create variable
+   ;(built-in-font-types)
+   ) ;; 09APR2020
+
+;;; 29JAN2021
+(defun built-in-font-types () 
+  "Creates a list of (list (cons family face) size style) for most of the 
+supplied fonts omitting ornamental ones."
+(setf *built-in-font-types*
+(list-cartesian-product (cons-cartesian-product *mcclim-font-family* *mcclim-font-styles*) *mcclim-font-sizes*)
+  ))
+
+(setf *built-in-font-types* (built-in-font-types))
 
 (defun cached-host-font (canvas-font &optional (fonts *built-in-font-types*))
-     "Returns a real ACL font from the result of matching canvas-font 
-over a list representing real ACL fonts."
+     "Returns the host font that has been cached for this canvas-font.~
+     if one is not cached, it is found, cached, and returned."
+     (declare (ignorable fonts)) ;10MAY2024 for compiler style-warning
      (let ((host-font (sixth canvas-font)))
          (unless host-font
               (setf host-font
-                      (cg::make-font
-                       (car (second canvas-font))
-                       (cdr (second canvas-font))
-                       (font-point-to-pixel (fourth canvas-font))
-                       (if (equal (list :plain) (third canvas-font))
-                          NIL
-                          (third canvas-font))))
+                (clim-user::make-text-style 
+                  ;:family 
+                  (let ((name (second canvas-font)))
+                            (if (member name (list :fix :serif :sans-serif))
+                              name
+                              nil))
+                  ;:face is s list
+                  ;; CLIM use it only if face has a cdr, otherwise just the element of face
+                  (if (cdr (third canvas-font))
+                  (third canvas-font)
+                  (car (third canvas-font)))
+                  ;:size 
+                  (fourth canvas-font)
+                ))
               (nconc canvas-font (list host-font)))
          host-font)
      )
@@ -154,32 +245,39 @@ over a list representing real ACL fonts."
 (defun clear-host-font-cache (canvas-font)
      "Clears the host-font cache for this canvas-font."
      (if (sixth canvas-font)
-        (setf canvas-font (nbutlast canvas-font))))
+      (rplacd (last canvas-font 2) nil)))
 
 (defun get-canvas-font-name (host-font)
      "Translates the host Common Lisp font representation to get the name 
 of the corresponding canvas-font in window-basics."
-     (cons (cg::font-family host-font) (cg::font-face host-font)))
+     ;(cons (cg::font-family host-font) (cg::font-face host-font))
+     (clim:text-style-family host-font)
+     )
 
-(defun get-canvas-font-size (host-font &optional (canvas (cg::screen cg::*system*)))
+(defun get-canvas-font-size (host-font) 
      "Translates the (pixel) size of the host Common Lisp font to the 
 (point) size of the corresponding canvas-font in window-basics."
-  (cg::with-device-context (hdc (cg::screen cg::*system*))
-(font-pixel-to-point (cg::font-size host-font) canvas)))
+  ;(cg::with-device-context (hdc (cg::screen cg::*system*))
+;(font-pixel-to-point (cg::font-size host-font) canvas))
+(clim:text-style-size host-font)
+  )
 
 (defun get-canvas-font-style (host-font)
      "Translates the host Common Lisp font representation to get the style 
 of the corresponding canvas-font in window-basics."
-   (cg::with-device-context (hdc (cg::screen cg::*system*))
-     (or (cg::font-style host-font) :plain)))
+   ;(cg::with-device-context (hdc (cg::screen cg::*system*))
+     ;(or (cg::font-style host-font) :plain))
+     (clim:text-style-face host-font)
+   )
 
 (defun get-canvas-font-transfer-mode (host-font)
      "Translates the host Common Lisp font representation to get the transfer-mode 
 of the corresponding canvas-font in window-basics."
      (declare (ignore host-font))
      ;; don't know what we mean by this yet.
-     :boole-1)
-
+     ;:boole-1
+     nil)
+#|
 (defun host-font-description (host-font)
      "Returns four values that represent (in pixels) the ascent, 
 descent, max-width, and leading (suggested spacing between 
@@ -209,7 +307,26 @@ lines) of the host-font."
       )
      )
    )
+|#
+(defvar ascent nil)
+(defvar descent nil)
+(defvar width nil)
+(defvar leading nil)
 
+(defun host-font-description (host-font &key (pane (clim-user::frame-panes wb::*system-default-menubar*))) ;wb::*quail-menubar-window*))) ;*quail-menubar-pane*))
+     "Returns four values that represent (in pixels) the ascent, 
+descent, max-width, and leading (suggested spacing between 
+lines) of the host-font."
+  (setf ascent (clim:text-style-ascent host-font pane))
+  (setf descent (clim:text-style-descent  host-font pane))
+  (setf width (clim:text-style-width  host-font pane))
+  (setf leading (clim:text-style-height host-font pane))
+            (values ascent descent width leading))
+            
+;(eval-when (:compile-toplevel :load-toplevel)
+;  (host-font-description (clim:make-text-style :fix :roman :large) :pane (clim-user::frame-panes wb::*system-default-menubar*)))
+
+#|
 (defun font-pixel-to-point (pixel &optional (canvas (cg::screen cg::*system*)))
      "Returns the point size of a font for canvas given pixel size."
   (let ((scrn (cg::screen cg::*system*)))
@@ -223,3 +340,4 @@ lines) of the host-font."
     (cg::with-device-context (hdc scrn)
      (round (* (cg::stream-units-per-inch canvas) (/ point *points-per-inch*))))
     ))
+|#

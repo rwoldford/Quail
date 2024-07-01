@@ -43,19 +43,30 @@
 
 ;;; Added Oct 28, 1997
 ;;; to set wb::*current-canvas*
-(defclass host-pane (clim:pane) ())
-
+(defclass host-pane (clim::application-pane) ())
+;(defclass host-pane (clim-stream-pane) ())
+#|
 (defmethod cg::default-pane-class ((c host-window))
    'host-pane)
 
-(defmethod cg::select-window  :after ((self host-pane) &optional recursive-p)
+(defmethod cg::select-window  :after ((self host-window) &optional recursive-p)
    (declare (special *current-canvas*)
            (ignore recursive-p))
-   (setf *current-canvas* (clim::pane-frame self)))
+   (setf *current-canvas* self))
+|#
 
-(defmethod clim::raise-frame :after ((self host-pane))
+(defmethod clim::raise-frame :after ((self host-window))
   (declare (special *current-canvas*))
-    (setf *current-canvas* (clim::raise-frame (clim::pane-frame self))))
+    (setf *current-canvas* (clim::raise-frame self)))
+
+(defmethod clim:destroy-frame :after ((self host-window))
+  (declare (special *current-canvas*))
+  (setf *current-canvas* nil))
+
+(defmethod clim:bury-frame :after ((self host-window))
+  (declare (special *current-canvas*))
+  (setf *current-canvas* nil))
+
 ;(defmethod cg::bring-window-to-front  :after ((self host-pane))
 ;     (declare (special *current-canvas*))
 ;   (setf *current-canvas* (clim::raise-frame (clim::pane-frame self)))
@@ -70,6 +81,7 @@
       result))
 |#
 
+#|
 ;;; Moved from Redisplay/canvas-redisplay-pc.lsp 052598  gwb.
 (defmethod clim:redisplay-pane-frame :after ((c host-pane) &optional box)
    (declare (special *current-canvas*)
@@ -79,3 +91,4 @@
          (setf *current-canvas* pw))
       )
    )
+|#

@@ -135,6 +135,7 @@ supplied fonts omitting ornamental ones."
 (defun cached-host-font (canvas-font &optional (fonts *built-in-font-types*))
      "Returns a real ACL font from the result of matching canvas-font ~
 over a list representing real ACL fonts."
+(declare (ignore fonts))
      (let ((host-font (sixth canvas-font)))
          (unless host-font
               (setf host-font

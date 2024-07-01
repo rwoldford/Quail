@@ -105,7 +105,7 @@
 (defun set-pen-color (canvas new-color)
   (let ((mp (cg::frame-child canvas)))
     (cg::set-foreground-color mp new-color)))
-|# old version 18oct05
+|# 
 
 ;;; start new version 18oct05
 (defun set-pen-color (canvas new-color)
@@ -152,7 +152,7 @@
    (cg::move-to mp (cg::make-position x2 y2) ;; to expected end for next draw
      )))
    
-(defun draw-rectangle (canvas left right bot top)  ;;x1 x2 y1 y2)
+(defun draw-rectangle (canvas left top right bot)  ;;x1 x2 y1 y2)
   (let ((mp (cg::frame-child canvas)))
      (cg::draw-box mp (cg::make-box left top right bot))) ;; x1 y1 x2 y2)))
   )
@@ -362,9 +362,10 @@ Inside but compatible with fast-macros."
                   (cg::position-x left)) (cg::make-position
                                                     (cg::position-y top)
                                                     (cg::position-x top))))
-               (cg::fill-box mp (cg::box-left left)
+               (cg::fill-box mp (cg::make-box (cg::box-left left) ;; wrapped args with cg::make-box 25JUL2023
                 (cg::box-top left) (cg::box-right left)
-                (cg::box-bottom left)))
+                (cg::box-bottom left))
+                ))
             )
          )
       )
@@ -600,7 +601,7 @@ Inside but compatible with fast-macros."
 |#
 
 (defun make-bitmap (left &optional top right bottom &aux rowbytes bm)
-  (declare (ignore left top right bottom rwobytws bm))
+  (declare (ignore left top right bottom rowbytes bm))
    "This will make a bitmap one day. April 30, 1997  - gwb"
    NIL
    )

@@ -53,7 +53,8 @@
            (ignore recursive-p))
    (setf *current-canvas* (cg::parent self)))
 
-(defmethod cg::bring-window-to-front  :after ((self host-pane))
+(defmethod cg::bring-window-to-front  :after ((self host-pane) &key recurse) ;;21JUL2023 from KenC 2023-06-05, 21:41
+     (declare (ignore recurse)) ;; ditto
      (declare (special *current-canvas*))
    (setf *current-canvas* (cg::parent self)))
 

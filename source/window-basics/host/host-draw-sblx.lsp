@@ -9,8 +9,13 @@
 ;;;--------------------------------------------------------------------------------
 ;;; This contains checked pieces of host-draw and accumulates routines as they are done
  (in-package "HOST-DRAW")
+;;; MCCLIM note 25JULY2020
+;;; Most of these functions refer to canvas, which is an application-frame,
+;;; whereas the stream needed is its pane of type 'wb::host-pane 
+;;; which is defined in the wb package in host-window-sblx!!
 
- (shadow '(make-point point-x point-y draw-line draw-rectangle draw-ellipse draw-polygon))
+;;; Moved the (shadw.) contents to window-basics-package.lsp 01SEP2021
+ ;(shadow '(make-point point-x point-y draw-line draw-rectangle draw-ellipse draw-polygon))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)  (export '(make-point)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -25,11 +30,14 @@
   draw-string draw-char)
         ))
 
+ (defun is-position (arg)
+   (eql (type-of arg) 'CLIM:STANDARD-POINT))       
+        
 (defun make-point (x &optional y)
   "Returns a point having x and y as its coordinates."
   (if y
     (clim-user::make-point x y)
-    (if (clim-user::is-position x)  ;; There seems to be no positionp
+    (if (is-position x)  ;; There seems to be no positionp
       x
       (error "X (~s) is not a position or y missing" x)
       )))
@@ -42,7 +50,7 @@
 
 (defun point-y (point)
   "Returns the y-coordinate of point."
-  (clim-user""point-y point))
+  (clim-user::point-y point))
 
 
 (defvar *hardcopy-ptr*
@@ -68,9 +76,14 @@
 ;; but its stream-cursor-position I need.
 
 (defun pen-position (canvas)
-  (declare (ignore canvas))
-  NIL
-  )
+ (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
+  (multiple-value-bind (x y)
+    (clim-user::stream-cursor-position mp)
+    (make-point x y))))
+    
+  ;(declare (ignore canvas))
+  ;NIL
+  ;)
 
 ;; width for lines comes from a :thickness argument when they are drawn
 ;; there is a generic fn  line-style-thickness with arg  line-style.
@@ -87,7 +100,7 @@
 
 
 (defun pen-size (canvas)
-  (let* ((mp (clim-user::get-frame-pane canvas 'display))
+  (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
     (its-styles (clim-user::medium-line-style mp)))
     (clim-user::line-style-thickness its-styles)
     ))
@@ -100,23 +113,43 @@
 ;; When there is no v, h must be a point.
 
 (defun set-pen-size (canvas h &optional v)
-  (declare (inline point-x point-y))
-  (let* ((the-pane (get-frame-pane *test-frame* 'display))
-      (its-styles (medium-line-style the-pane))
-    (its-unit (clim-user::line-style-unit its-styles))
-    (its-dashes (clim-user::line-style-dashes its-styles))
-    (its-joint-shape (clim-user::line-style-joint-shape its-styles))
-    (its-cap-shape (clim-user::line-style-cap-shape its-styles))
+  #-:sbcl(declare (inline point-x point-y))
+  (format t "~%Just inside set-pen-size")
+  (format t "~%s-p-s h is ~s " h)
+  (format t "~%s-p-s v is ~s " v)
+  (format t "~%s-p-s canvas is ~s " canvas)
+  (format t "~%s-p-s is it a frame ? ~s " (clim:application-frame-p canvas))
+  (format t "~%s-p-s its host-pane pane is ~s " (clim:get-frame-pane canvas 'host-pane))
+  (let* ((its-pane (clim::get-frame-pane canvas 'host-pane)) ;,_ from 'wb::host-pane 09FE21
+      (its-line-style (clim:medium-line-style its-pane))
+    (its-unit (clim:line-style-unit its-line-style))
+    (its-dashes (clim:line-style-dashes its-line-style))
+    (its-joint-shape (clim:line-style-joint-shape its-line-style))
+    (its-cap-shape (clim:line-style-cap-shape its-line-style))
     (new-thickness (if v (floor (+ h v) 2)
       (floor (+ (point-x h) (point-y h)) 2)))
-    (new-style (clim-user::make-line-style :unit its-unit :thickness new-thickness :dashes its-dashes
+    (new-style (clim:make-line-style :unit its-unit :thickness new-thickness :dashes its-dashes
       :joint-shape its-joint-shape :cap-shape its-cap-shape))
     )
-  (setf (clim-user::medium-line-style the-pane) new-style)
-  ))
+    (format t "~%s-p-s In set-pen-size after defvar new-thickness check current values BEFORE make-line-style")
+    (format t "~%s-p-s input canvas is ~s " canvas)
+    (format t "~%s-p-s is canvas a frame ? ~s " (clim:application-frame-p canvas))
 
+    (format t "~%s-p-s input h is ~s " h)
+    (format t "~%s-p-s input v is ~s " v)
+    (format t "~%s-p-s its-pane is ~s " its-pane)
+    (format t "~%s-p-s its-line-style is ~s " its-line-style)
+    (format t "~%s-p-s its-unit is ~s " its-unit)
+    (format t "~%is-p-s ts-dashes is ~s " its-dashes)
+    (format t "~%s-p-s its-joint-shape is ~s " its-joint-shape)
+    (format t "~%s-p-s its-cap-shape is ~s " its-cap-shape)
+    (format t "~%s-p-s new-thickness is ~s " new-thickness)
+    (format t "~%s-p-s new-style is ~s " new-style)
+  (setf (clim:medium-line-style its-pane) new-style)
+  )
+  )
 
-;; Need to fins out what paint-operation is and 
+;; Need to find out what paint-operation is and 
 ;; therefore what  clim calls it
 (defun pen-mode (canvas)
   (declare (ignore canvas))
@@ -124,24 +157,33 @@
 
 
 (defun set-pen-mode (canvas new-mode)
+  "There does not seem to be any analogue of the mode/operation in CLIM"
   (declare (ignore canvas new-mode))
   )
 
 (defun set-pen-pattern (canvas new-pattern)
-  (declare (ignore canvas new-pattern))
-  )
+  "Sets the drawing color of canvas to (Q)new-color"
+  (let ((mp (clim::get-frame-pane canvas 'wb::host-pane)))
+    (setf (clim:medium-foreground mp) new-pattern))
+    )
 
 
 ;; drawing in color under clim is done via he :ink option
 ;; to whichever drawing function is being invoked, so it's tied to
 ;; the drawing function rather than to the pane. But foreground and
-;; background colors can be changed at any time (syas P83). How
+;; background colors can be changed at any time (says P83). How
 ;; to do this ? 
 ;; Apparently by using (setf (medium-foreground something)) P58
 
 (defun set-pen-color (canvas new-color)
-  (let ((mp (clim-user::get-frame-pane canvas 'display)))
-    (setf (clim-user::medium-foreground mp) new-color)))
+  "Sets the drawing color of canvas to (Q)new-color"
+  (let ((mp (clim::get-frame-pane canvas 'wb::host-pane)))
+    (format t "~% Just inside h-draw:set-pen-color")
+    (format t "~%s-p-c new-color is ~s " new-color)
+    (format t "~%s-p-c canvas is ~s " canvas)
+    (format t "~%s-p-c is canvas a frame ? ~s " (clim:application-frame-p canvas))
+    (format t "~%s-p-c does canvas have a host-pane ~s " (clim:get-frame-pane canvas 'host-pane))
+    (setf (clim:medium-foreground mp)  new-color)))
 
 ;; move-to will depend on setting the position of the mouse.
 ;; Said mouse is an instance of a clim pointer (p283). 
@@ -156,7 +198,7 @@
 
 
 (defun move-to (canvas h &optional v)
-  (let ((mp (clim-user::get-frame-pane canvas 'display)))
+  (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
      (if v
       (clim-user::stream-set-cursor-position mp h v)
       (clim-user::stream-set-cursor-position mp 
@@ -166,7 +208,7 @@
 ;; and there is stream-increment-cursor-position which does just that!
 
 (defun move (canvas h &optional v)
-  (let ((mp (clim-user::get-frame-pane canvas 'display)))
+  (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
      (if v
       (clim-user::stream-increment-cursor-position mp h v)
       (clim-user::stream-increment-cursor-position mp (clim-user::point-x h)
@@ -175,16 +217,16 @@
 
 ;; Presumably line-to draws from the current cursor position
 (defun line-to (canvas h &optional v)
-  (let* ((mp (clim-user::get-frame-pane canvas 'display))
+  (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
     (its-curs-pos (multiple-value-bind (p q) (clim-user::stream-cursor-position mp)
-      (make-point p q)))
-    )
+      (make-point p q)
+    )))
   (clim-user::draw-line mp its-curs-pos (make-point h v))
      ))
 
 
 (defun line (canvas h &optional v)
-  (let* ((mp (clim-user::get-frame-pane canvas 'display))
+  (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
     (its-curs-pos (multiple-value-bind (p q) (clim-user::stream-cursor-position mp)
       (make-point p q)))
     (cp-x (point-x its-curs-pos))
@@ -197,17 +239,8 @@
 
 ;; draw-line will have to be shadowed too.
 (defun draw-line (canvas x1 y1 x2 y2)
-  ;(let ((mp (clim-user::get-frame-pane canvas 'display)))
    (move-to canvas x1 y1)
    (line-to canvas x2 y2)
-   #|
-   ;; Why is this code here ? WHat is the purpose of the +1 ?
-   (cond ((= x1 x2)
-          (cg::draw-to mp (cg::make-position x2 (+ 1 y2))))
-         ((= y1 y2)
-          (cg::draw-to mp (cg::make-position (+ 1 x2) y2)))
-         )
-   |#
    (move-to canvas (make-point x2 y2)) ;; to expected end for next draw
      )
 
@@ -215,7 +248,7 @@
 ;; (p33.) By default draw-rectangle(*) has :filled t
 
 (defun draw-rectangle (canvas left top right bot)
-  (let ((mp (clim-user::get-frame-pane canvas 'display)))
+  (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
     (clim-user::draw-rectangle* mp left top right bot :filled NIL)
      ))
 
@@ -230,11 +263,11 @@
   (declare (ignore canvas))
   (cond ((numberp bottom)
            (list left top right bottom))
-         ((equal (type-of right) 'STANDARD-POINT)
+         ((equal (type-of right) 'CLIM:STANDARD-POINT)
            (list left top (clim-user::point-x right) (clim-user::point-y right)))
-         ((equal (type-of top) 'STANDARD-POINT)
+         ((equal (type-of top) 'CLIM:STANDARD-POINT)
            (list (clim-user::point-x left) (clim-user::point-y left) (clim-user::point-x top) (clim-user::point-y top)))
-         ((equal (type-of left) 'STANDARD-RECTANGLE)
+         ((equal (type-of left) 'CLIM:STANDARD-RECTANGLE)
            (list (clim-user::rectangle-min-x left) (clim-user::rectangle-min-y left)
                  (clim-user::rectangle-max-x left) (clim-user::rectangle-max-y left)))
          ))
@@ -243,7 +276,7 @@
 (defun draw-inside-rectangle (canvas left &optional top right bot)
   "Draws the (unfilled) rectangle left+1 top+1 right-1 bot-1 if that is not degenerate,
   ~a horizontal/vertical line if appropriate, or nothing."
-  (let* ((mp (clim-user::get-frame-pane canvas 'display))
+  (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
          (ltrb (unpack-rectangle-args canvas left top right bot))
          (lx (first ltrb))
          (tx (second ltrb))
@@ -266,13 +299,18 @@
 (defun draw-filled-rectangle (canvas left &optional top right bot)
   "Draws the filled rectangle left+1 top+1 right-1 bot-1 if that is not degenerate,
   ~a horizontal/vertical line if appropriate, or nothing."
-  (let* ((mp (clim-user::get-frame-pane canvas 'display))
+  (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
          (ltrb (unpack-rectangle-args canvas left top right bot))
          (lx (first ltrb))
          (tx (second ltrb))
          (rx (third ltrb))
          (bx (fourth ltrb))
          )
+  ;(format t "~% mp is ~s " mp)
+  ;(format t "~% lx is ~d " lx)
+  ;(format t "~% tx is ~d " tx)
+  ;(format t "~% rx is ~d " rx)
+  ;(format t "~% bx is ~d " bx)
          (if (or (> (1+ lx) (1- rx)) (> (1+ tx) (1- bx))) 
               NIL
               (if (eq (1+ lx) (1- rx))
@@ -288,7 +326,7 @@
 ;; mcclim erases by drawing with the background color explicitly, it seems.
 
 (defun erase-rect (canvas left &optional top right bot)
-  (let* ((mp (clim-user::get-frame-pane canvas 'display))
+  (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
          (ltrb (unpack-rectangle-args canvas left top right bot))
          (lx (first ltrb))
          (tx (second ltrb))
@@ -301,15 +339,16 @@
                 (clim-user::draw-line* mp lx tx lx bx :ink (clim-user::medium-background mp))
               (if (eq (1+ tx) (1- bx))
                 (clim-user::draw-line* mp lx tx rx tx :ink (clim-user::medium-background mp))
-                (clim-user::draw-rectangle* mp (1+ lx) (1+ tx) (1- rx) (1- bx) :filled NIL :ink (clim-user::medium-background mp)))
+                (clim-user::draw-rectangle* mp lx tx rx bx :filled NIL :ink (clim-user::medium-background mp)))
+                ;(clim-user::draw-rectangle* mp (1+ lx) (1+ tx) (1- rx) (1- bx) :filled NIL :ink (clim-user::medium-background mp)))
               ))
     ))
 
 
 (defun erase-filled-rectangle (canvas left &optional top right bot)
-  "Draws the filled rectangle left+1 top+1 right-1 bot-1 if that is not degenerate,
+  "Draws the filled rectangle left top right bot if that is not degenerate,
   ~a horizontal/vertical line if appropriate, or nothing."
-  (let* ((mp (clim-user::get-frame-pane canvas 'display))
+  (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
          (ltrb (unpack-rectangle-args canvas left top right bot))
          (lx (first ltrb))
          (tx (second ltrb))
@@ -322,7 +361,8 @@
                 (clim-user::draw-line* mp (1+ lx) tx (1+ lx) bx :ink (clim-user::medium-background mp))
               (if (eq (1+ tx) (1- bx))
                 (clim-user::draw-line* mp lx (1+ tx) rx (1+ tx) :ink (clim-user::medium-background mp))
-                (clim-user::draw-rectangle* mp (1+ lx) (1+ tx) (1- rx) (1- bx) :ink (clim-user::medium-background mp)))
+                (clim-user::draw-rectangle* mp lx tx rx bx :ink (clim-user::medium-background mp)))
+                ;(clim-user::draw-rectangle* mp (1+ lx) (1+ tx) (1- rx) (1- bx) :ink (clim-user::medium-background mp)))
               ))
     ))
 
@@ -335,10 +375,10 @@
 
 (defun comp-color (canvas)
      "Takes the complement of the current rgb-color triple of stream - returns this new triple"
-     (let*     ((mp (clim-user::get-frame-pane canvas 'display))
+     (let*     ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
                (current (clim-user::medium-foreground mp))
                (its-rgb  (mapcar #'(lambda (x) (truncate x)) 
-                (mapcar #'(lambda (y) (* 255 y)) (multiple-value-list (color-rgb current)))))
+                (mapcar #'(lambda (y) (* 255 y)) (multiple-value-list (clim-user::color-rgb current)))))
                (new_red (/ (- 255 (first its-rgb)) 255))
                ( new_green (/ (- 255.0 (second its-rgb)) 255))
                ( new_blue (/ (- 255.0 (third its-rgb)) 255))
@@ -356,7 +396,16 @@
 ;; to get the color with which the rectangle was drawn.
 (defun invert-rectangle (canvas left &optional top right bot)
        "A mcclim version"
-       (let ((mp (clim-user::get-frame-pane canvas 'display)))
+       (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
+         (ltrb (unpack-rectangle-args canvas left top right bot))
+         (lx (first ltrb))
+         (tx (second ltrb))
+         (rx (third ltrb))
+         (bx (fourth ltrb)))
+         (clim-user::draw-rectangle* mp lx tx rx bx :ink (comp-color canvas))
+        ))
+#|         
+         
          (if bot (clim-user::draw-rectangle* mp left top right bot :ink (comp-color canvas))
        (if right
            (clim-user::draw-rectangle mp (clim-user::make-point left top) right :ink (comp-color canvas))
@@ -370,11 +419,11 @@
            )
        )
          ))
-
+|#
 
 (defun draw-ellipse (canvas left &optional top right bot)
 "Draws an unfillled ellipse, parallel to the axes, for which LTRB is the surrounding box."
- (let* ((mp (clim-user::get-frame-pane canvas 'display))
+ (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
         (ltrb (unpack-rectangle-args canvas left top right bot))
         (cx (truncate (/ (+ (first ltrb) (third ltrb)) 2)))
         (cy (truncate (/ (+ (second ltrb) (fourth ltrb)) 2)))
@@ -387,12 +436,9 @@
     ))
 
 
-
-
-
 (defun draw-filled-ellipse (canvas left &optional top right bot)
 "Draws a fillled ellipse, parallel to the axes, for which LTRB is the surrounding box."
- (let* ((mp (clim-user::get-frame-pane canvas 'display))
+ (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
         (ltrb (unpack-rectangle-args canvas left top right bot))
         (cx (truncate (/ (+ (first ltrb) (third ltrb)) 2)))
         (cy (truncate (/ (+ (second ltrb) (fourth ltrb)) 2)))
@@ -407,20 +453,20 @@
 
 (defun draw-arc (canvas start-angle arc-angle x-centre y-centre x-radius y-radius)
      "Draws a SECTOR of an ellipse which includes drawing the radii"
-     (let ((mp (clim-user::get-frame-pane canvas 'display)))
+     (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
         (clim-user::draw-ellipse* mp x-centre y-centre x-radius 0 0 y-radius :start-angle start-angle :end-angle arc-angle :filled NIL)
         ))
 
 (defun fill-arc (canvas start-angle arc-angle x-centre y-centre x-radius y-radius)
      "Draws a SECTOR of an ellipse which includes drawing the radii"
-     (let ((mp (clim-user::get-frame-pane canvas 'display)))
+     (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
         (clim-user::draw-ellipse* mp x-centre y-centre x-radius 0 0 y-radius :start-angle start-angle :end-angle arc-angle )
         ))
 
 
 (defun erase-arc (canvas start-angle arc-angle x-centre y-centre x-radius y-radius)
      "Erases a SECTOR of an ellipse which includes the radii and the contents, if any"
-     (let ((mp (clim-user::get-frame-pane canvas 'display)))
+     (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
         (clim-user::draw-ellipse* mp x-centre y-centre x-radius 0 0 y-radius :start-angle start-angle :end-angle arc-angle 
           :filled NIL :ink (clim-user::medium-background mp))
         (clim-user::draw-ellipse* mp x-centre y-centre x-radius 0 0 y-radius :start-angle start-angle :end-angle arc-angle 
@@ -431,7 +477,7 @@
 (defun invert-arc (canvas start-angle arc-angle
                              x-centre y-centre x-radius y-radius)
      "Inverts a filled arc"
-      (let ((mp (clim-user::get-frame-pane canvas 'display)))
+      (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
         (clim-user::draw-ellipse* mp x-centre y-centre x-radius 0 0 y-radius :start-angle start-angle :end-angle arc-angle
           :ink (comp-color canvas))
         ))
@@ -439,29 +485,28 @@
 ;; This needs to be shadowed
 (defun draw-polygon (canvas list-of-points)
   "Draws an unfilled polygon defined by a list of x-y coordinates or a list of points"
-   (let*  ((mp (clim-user::get-frame-pane canvas 'display))
+   (let*  ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
            (head (car list-of-points)))
    (if (numberp head)
     (clim-user::draw-polygon* mp list-of-points :filled NIL)
-    (if (equal (type-of head) 'STANDARD-POINT)
-      (clim-user::draw-polygon mp list-of-points :filled NIL)
-      NIL))
-    ))
+    (if (equal (type-of head) 'CLIM:STANDARD-POINT)
+      (clim-user::draw-polygon mp list-of-points :filled NIL))
+    )))
 
 (defun draw-filled-polygon (canvas list-of-points)
   "Draws a filled polygon defined by a list of x-y coordinates or a list of points"
-   (let*  ((mp (clim-user::get-frame-pane canvas 'display))
+   (let*  ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
            (head (car list-of-points)))
    (if (numberp head)
     (clim-user::draw-polygon* mp list-of-points)
-    (if (equal (type-of head) 'STANDARD-POINT)
+    (if (equal (type-of head) 'CLIM:STANDARD-POINT)
       (clim-user::draw-polygon mp list-of-points)
       NIL))
     ))
 
 
 (defun make-bitmap (left &optional top right bottom &aux rowbytes bm)
-  (declare (ignore left top right bottom rwobytws bm))
+  (declare (ignore left top right bottom rowbytes bm))
    "This will make a bitmap one day. April 30, 1997  - gwb"
    NIL
    )
@@ -470,29 +515,73 @@
                   &optional (mode 0) mask-region)
   (declare (ignore source-bitmap dest-bitmap source-rect dest-rect
      mode mask-region))
-   "ACL surely contains the analoue of this. April 30, 1997 - gwb"
+   "ACL surely contains the analogue of this. April 30, 1997 - gwb"
    NIL
    )
 
+
 (defun kill-polygon (canvas polygon)
-     ;;; will need to decompose polygon into its list of points
-     ;;; if mcl thinks of it some single way
-     ;; otherwise, if polygon IS its list of pairs of coordinates
-     "Erases a polygon+contents given by a polygon list of x-y coordinates, or a list of points"
-  (let ((mp (clim-user::get-frame-pane canvas 'display)))
-    (if (equal (type-of polygon) 'STANDARD-POLYGON)
-      (clim-user::draw-polygon mp (slot-value polygon 'clim-internals::points) :ink (medium-background mp))
-      (if (and (listp polygon) (numberp (car polygon)))
-        (clim-user::draw-polygon* mp polygon :ink (medium-background mp))
-        (if (and (listp polygon) (equal (type-of (car polygon) 'STANDARD-POINT)))
-          (clim-user::draw-polygon mp polygon :ink (medium-background mp))
-          NIL)))
+  "Erases a polygon+contents - input list of xi y1 coords, list of (xi,yi) points, CLIM polygon"
+  (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
+    (cond ((and (listp polygon) (numberp (first polygon)))
+        ;;; we have a long list of coordinates x1 y1 x2 y2 ...
+        (clim-user::map-over-polygon-segments 
+          #'(lambda (x1 y1 x2 y2) (clim-user::draw-line* mp x1 y1 x2 y2
+                                                       :ink (clim-user::medium-background mp)))
+          (clim-user::make-polygon* polygon))
+        (clim-user::draw-polygon* mp polygon :ink (clim-user::medium-background mp)))
+          ((equal (type-of polygon) 'CLIM:STANDARD-POLYGON)
+           ;;; we have a clim polygon
+           (clim-user::map-over-polygon-segments 
+          #'(lambda (x1 y1 x2 y2) (clim-user::draw-line* mp x1 y1 x2 y2
+                                                       :ink (clim-user::medium-background mp)))
+           polygon)
+           (clim-user::draw-polygon* mp (poly2crds polygon)
+                                     :ink (clim-user::medium-background mp)))
+          ((and (listp polygon) (equal (type-of (car polygon)) 'CLIM:STANDARD-POINT))
+           ;; we have a list of vertices
+           (clim-user::map-over-polygon-segments 
+          #'(lambda (x1 y1 x2 y2) (clim-user::draw-line* mp x1 y1 x2 y2
+                                                       :ink (clim-user::medium-background mp)))
+          (clim-user::make-polygon polygon))
+           (clim-user::draw-polygon mp polygon 
+                                    :ink (clim-user::medium-background mp)))
+           )
+        )
+    )
+
+    
+
+(defun poly2crds (polygon)
+  "Argument is a CLIM polygon .. result is list of coordinates xi yi"
+  (let* ((polypts (clim-user::polygon-points polygon))
+         (zoo (list ())))
+    (mapcar #'(lambda (pt)
+               (setf zoo (push (clim-user::point-x pt) zoo))
+               (setf zoo (push (clim-user::point-y pt) zoo)))
+               polypts)
+            (rest (reverse zoo))
+               ))
+
+#| Not neede - for the record!
+(defun pts2crds (polygon)
+  "Argument is list of vertices .. result is list of coordinates xi yi"
+  (let ((zoo (list ())))
+    (mapcar #'(lambda (pt)
+               (setf zoo (push (clim-user::point-x pt) zoo))
+               (setf zoo (push (clim-user::point-y pt) zoo)))
+               polypts)
+            (rest (reverse zoo))
     ))
+|#
+
+;;; At some point we should consider whether there is to be a *default-quail-text-style*
+;;; and where it should be defined - here or down in fonts somewhere.
 
 
 (defun draw-string (canvas string)
-   "Draws a string at the current cursor position - a tex-style needs to be supplied."
-   (let* ((mp (clim-user::get-frame-pane canvas 'display))
+   "Draws a string at the current cursor position - a tex-style needs to be supplied. Cannot be 0 0"
+   (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
           (cur-pos (multiple-value-list (clim-user::stream-cursor-position mp)))
           (position (clim-user::make-point (first cur-pos) (second cur-pos))))
    ;(format t "~%mp is ~s " mp)
@@ -502,6 +591,6 @@
 
 (defun draw-char (canvas char)
   "Uses h-draw:draw-string and thus draws at the current cursor position"
-   (let ((mp (clim-user::get-frame-pane canvas 'clim-user::display)))
-     (draw-string canvas  char)
+   (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
+     (draw-string mp  char)
          ))
