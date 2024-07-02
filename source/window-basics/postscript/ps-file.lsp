@@ -28,6 +28,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute) (export  '(read-write concatenate-ps)))
 
+#| ;moved to postscript-canavs.lsp 28AUG2023
 (defparameter *ps-paper-width*
   612
   "Device independence parameter. Currently set to 8.5x11 paper only! Width=612/72"
@@ -37,6 +38,7 @@
   792
   "Device independence parameter. Currently set to 8.5x11 paper only! Height=792/72"
   )
+|#
 
 (defun read-write (input output)
   "Reads from input file and appends on output file."
@@ -151,6 +153,7 @@
    It is used to reset the list when the header filename is changed."
   (mapcar #'(lambda (list) (setf (cdr list) NIL)) (included-of canvas)))
 
+#| ; moved to postscript-canvas.lsp 28AUG20233
 (defparameter *include-list*
   (list (cons "e"  NIL)
         (cons "fe" NIL)
@@ -173,11 +176,12 @@
    indicates that the command definition has been included and 'NIL' indicates that~
    the command definition has not been added to the postscript header file."
   )
+  |#
 
 (defun postscript-include (filename)
   "This function adds the correct full pathname to the names of the include files so that~
    the functions which use the names of the include files will be MCL independent."
-  (concatenate 'string (mk::fullpath-postscript) filename))
+  (concatenate 'string "zot" filename));(mk::fullpath-postscript) filename))
 
 (defun include-file-of (ps-name)
   "This function returns the correct include file path and name for the postscript command~

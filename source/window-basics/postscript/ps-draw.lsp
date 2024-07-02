@@ -105,9 +105,9 @@
 (defun ps-canvas-draw-filled-circle (canvas x y radius)
   "This function is almost the same as ps-canvas-draw-circle~
     save that the circle drawn is then filled."
-  (declare (ignore operation)
-           (ignore width)
-           (ignore color))
+  ;(declare (ignore operation)
+  ;         (ignore width)
+  ;         (ignore color))
   (let ((scale (min (ps-x-scale-of canvas) (ps-y-scale-of canvas))))
     (write-ps canvas fe 
               (canvas-to-ps-x canvas x)
@@ -136,9 +136,9 @@
 ;;;
 (defun ps-canvas-draw-polygon (canvas list-of-points)
   "This function draws a polygon on the postscript canvas"
-  (declare (ignore operation)
-           (ignore width)
-           (ignore color))
+  ;(declare (ignore operation)
+  ;         (ignore width)
+  ;         (ignore color))
   (ps-canvas-move-to canvas
                      (car (first list-of-points))
                      (cdr (first list-of-points)))
@@ -175,9 +175,9 @@
 ;;;
 (defun ps-canvas-draw-filled-polygon (canvas list-of-points)
   "This function draws a filled polygon on the postscript canvas"
-  (declare (ignore operation)
-           (ignore width)
-           (ignore color))
+  ;(declare (ignore operation)
+  ;         (ignore width)
+  ;         (ignore color))
   (setq list-of-points
         (mapcar #'(lambda(p)
               (cons (canvas-to-ps-x canvas (car p))
@@ -270,9 +270,9 @@
   "This function draws a filled arc centred at coordinates x y ~
    of radius xradius in the x direction and yradius in the y direction ~
    from start-angle degrees to an additional arc-angle degrees."
-  (declare (ignore operation)
-           (ignore width)
-           (ignore color))
+  ;(declare (ignore operation)
+  ;         (ignore width)
+  ;         (ignore color))
   (write-ps canvas fa 
             (canvas-to-ps-x canvas x)
             (canvas-to-ps-y canvas y)
@@ -285,9 +285,9 @@
   "This function draws an arc centred at coordinates x y ~
    of radius xradius in the x direction and yradius in the y direction ~
    from start-angle degrees to an additional arc-angle degrees."
-  (declare (ignore operation)
-           (ignore width)
-           (ignore color))
+  ;(declare (ignore operation)
+  ;         (ignore width)
+  ;         (ignore color))
   (write-ps canvas a 
             (canvas-to-ps-x canvas x)
             (canvas-to-ps-y canvas y)

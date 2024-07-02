@@ -109,13 +109,14 @@
                   (if (not (numberp read-val))
                     :wrong
                     read-val))))
-       (test-val-for-boole (read-val)
-         (if (and (symbolp read-val)
-                  (not (boundp read-val)))
-           :wrong
-           (if (eval read-val)
-             T
-             NIL))))
+       ;(test-val-for-boole (read-val) ; 28JUL2023
+       ;  (if (and (symbolp read-val)
+       ;           (not (boundp read-val)))
+       ;    :wrong
+       ;    (if (eval read-val)
+       ;      T
+       ;      NIL))) ; 28JUL2023
+       )
       (setf new-info
             (collect-input
              (list
@@ -161,7 +162,7 @@
                                 (test-val-for-num
                                  (read-from-string  (prompt-user :prompt-string
                                                                  (concatenate 'string (car pair)
-                                                                              " MUST BE A NUMBER") :type 'string)))))
+                                                                              " MUST BE A NUMBER") :result-type 'string))))) ;; from :type 16JAN2021
                               ((not (eq ans :wrong)) ans))))))
         (setf (ps-x-origin-of pi-info)
               (cdr (assoc x-origin-prompt new-info :test #'string=)))

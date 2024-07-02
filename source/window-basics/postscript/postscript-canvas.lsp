@@ -26,6 +26,39 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute) (export  '(postscript-info-of)))
 
+(defparameter *ps-paper-width*
+  612
+  "Device independence parameter. Currently set to 8.5x11 paper only! Width=612/72"
+  )
+
+(defparameter *ps-paper-height*
+  792
+  "Device independence parameter. Currently set to 8.5x11 paper only! Height=792/72"
+  )
+
+(defparameter *include-list*
+  (list (cons "e"  NIL)
+        (cons "fe" NIL)
+        (cons "r"  NIL)
+        (cons "fp" NIL)
+        (cons "a"  NIL)
+        (cons "fa" NIL)
+        (cons "t"  NIL)
+        (cons "l"  NIL)
+        (cons "c"  NIL)
+        (cons "i"  NIL)
+;;        (cons "redraw" NIL)
+        (cons "x"  NIL)
+        (cons "y"  NIL)
+        (cons "vshow" NIL)
+        (cons "Outline Font Generation Procedures" NIL)
+        (cons "Defaults" NIL))
+  "This variable contains the list of commands which have command definitions in the~
+   include files.  It also contains the status of these includable commands.  'T'~
+   indicates that the command definition has been included and 'NIL' indicates that~
+   the command definition has not been added to the postscript header file."
+  )
+
 (defclass postscript-info ()
   ((directory  :initform NIL :accessor write-directory-of
                :initarg :directory
