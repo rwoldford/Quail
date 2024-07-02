@@ -24,9 +24,11 @@
 
 (in-package :wb)
 
+
 (eval-when (:compile-toplevel :load-toplevel :execute) (export  '(canvas-redisplay-mixin set-redisplay-fn set-redisplay-test
            redisplay  redisplay-p redisplay-fn-of redisplay-p-of display-of
            canvas-display)))
+
 
 ;;; Give canvas a hook to the thing it's displaying. This is 
 ;;; necessary to get the Mac windows to refresh themselves

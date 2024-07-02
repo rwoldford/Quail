@@ -33,7 +33,8 @@
 (defun at-top-p (canvas)
   "Test whether the canvas is the top-most in the display."
    (declare (special *quail-menubar-window*))
-   (let ((fw (cg::front-window (cg::screen cg::*system*))))
+   (let ((fw (first (canvases));(cg::front-window (cg::screen cg::*system*)) 08JUN2021
+    ))
      (and (canvas-p canvas)
           (not (member 
                 ;(cg::window-state canvas) 19oct05

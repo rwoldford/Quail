@@ -17,6 +17,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute) (export  '()))
 
 (defmethod cg::resize-window ((self canvas-redisplay-mixin) position)
+  (declare (ignorable position)) ; 28JUL2023
      (let (result )
       (cond
        ((eq :icon (cg::state self))
