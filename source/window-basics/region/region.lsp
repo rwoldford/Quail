@@ -26,12 +26,13 @@
 
 (in-package :wb)
 
+
 (eval-when (:compile-toplevel :load-toplevel :execute) (export  '(make-region copy-region region-p region-left
            region-bottom region-width region-height region-right
            region-top region-bounds subregion-p intersect-regions inside-p
            same-region-p position-in-region-p)))
 ;;;============================================================
-;;; Regions
+;;; Regionswidth
 ;;;============================================================
 ;;; changed representation of regions from lists to vectors, jam, 11-17-88.
 ;;; --makes it possible to implement some graphics operations
@@ -119,4 +120,3 @@
          (> (+ (region-left region) (region-width region)) x)
          (<= (region-bottom region) y)
          (> (+ (region-bottom region) (region-height region)) y))))
-
