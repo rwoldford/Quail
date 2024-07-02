@@ -152,9 +152,9 @@
   "Apply a shift transform to each sublist of the list.  ~
    A sublist has fixnums  in the order x,y,z. ~
    This routine returns a *new* list of fixnums. "
-  (declare (optimize (speed 3) (safety 0)
-                     (space 0) (compilation-speed 0))
-           (inline + list))
+  #-:sbcl(declare (optimize (speed 3) (safety 0)
+                     (space 0) (compilation-speed 0)))
+         (declare (inline + list))
 
   (loop with xs fixnum = (x-shift-of self)
         with ys fixnum = (y-shift-of self)
@@ -170,6 +170,9 @@
    through a given angle, specified by the transformation. ~
    A sublist has fixnums  in the order x,y,z. ~
    This routine returns a *new* list of fixnums. "
+    #-:sbcl(declare (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline + * - list round))
   (let* ((c (cos (angle-of self)))
          (s (sin (angle-of self)))
          (u (- 1 c))
@@ -177,9 +180,7 @@
          (yc (y-component-of self))
          (zc (z-component-of self))
          )
-    (declare (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline + * - list round))
+   
     (loop for (x y z) fixnum in a
           collect 
           (list (round (+ (* x (+ (* u xc xc) c))
@@ -192,20 +193,41 @@
                           (* y (+ (* u yc zc) (* s xc)))
                           (* z (+ (* u zc zc) c))))))))
 
+
+#|
 (defmethod mapply-transform ((self 3d-x-rotate) (a list))
-  "Rotate each sublist of the list about the x-axis  ~
-   through a given angle, specified by the transformation. ~
-   A sublist has fixnums  in the order x,y,z. ~
-   This routine returns a *new* list of fixnums. "
+  "Rotate each sublist of the list about the x-axis ~
+  through a given angle, specified by the transformation. ~
+  A sublist has fixnums in the order x,y,z. ~
+  This routine returns a *new*list of fixnums. "
+  #-:sbcl(declare
+    (optimize (speed 3) (safety 0)
+      (space 0) (compilation-speed 0)))
+  (declare (inline + - * ash list) (fixnum c s))
+  
   (let ((c (round (* 1024 (cos (angle-of self)))))
         (s (round (* 1024 (sin (angle-of self))))))
-    (declare (fixnum c s)
+  (loop for (x y z) fixnum in a
+    collect (list x
+                  (ash (- (* y c) (* z s)) -10)
+                  (ash (+ (* y s) (* z c)) -10)))))
+|#
+
+(defmethod mapply-transform ((self 3d-x-rotate) (a list))
+  "Rotate each sublist of the list about the y-axis  ~
+   through a given angle, specified by the transformation. ~
+   A sublist has fixnums  in the order x,y,z. ~
+   This routine returns a *new* list of fixnums."
+    #-:sbcl(declare 
              (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline + - * ash list))
+                       (space 0) (compilation-speed 0)))
+             (declare (inline + - * ash list))
+  
+  (let ((c (round (* 1024 (cos (angle-of self)))))
+        (s (round (* 1024 (sin (angle-of self))))))
     (loop for (x y z) fixnum in a
-          collect (list x
-                        (ash (- (* y c) (* z s)) -10)
+          collect (list (ash (- (* y c) (* z s)) -10)
+                        y
                         (ash (+ (* y s) (* z c)) -10)))))
 
 
@@ -214,13 +236,13 @@
    through a given angle, specified by the transformation. ~
    A sublist has fixnums  in the order x,y,z. ~
    This routine returns a *new* list of fixnums."
+    #-:sbcl(declare 
+             (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline + - * ash list))
   
   (let ((c (round (* 1024 (cos (angle-of self)))))
         (s (round (* 1024 (sin (angle-of self))))))
-    (declare (fixnum c s)
-             (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline + - * ash list))
     (loop for (x y z) fixnum in a
           collect (list (ash (+ (* x c) (* z s)) -10)
                         y
@@ -232,14 +254,12 @@
    through a given angle, specified by the transformation. ~
    A sublist has fixnums  in the order x,y,z. ~
    This routine returns a *new* list of fixnums."
-  
-  
+    #-:sbcl(declare 
+             (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline + - * ash list))
   (let ((c (round (* 1024 (cos (angle-of self)))))
         (s (round (* 1024 (sin (angle-of self))))))
-    (declare (fixnum c s)
-             (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline + - * ash list))
     (loop for (x y z) fixnum in a
           collect (list (ash (- (* x c) (* y s)) -10)
                         (ash (+ (* x s) (* y c)) -10)
@@ -249,9 +269,9 @@
   "Shift each sublist of the list along all three axes. ~
    A sublist has fixnums  in the order x,y,z. ~
    This routine returns a *new* list of fixnums. "
-  (declare (optimize (speed 3) (safety 0)
-                     (space 0) (compilation-speed 0))
-           (inline + list))
+  #-:sbcl(declare (optimize (speed 3) (safety 0)
+                     (space 0) (compilation-speed 0)))
+           (declare (inline + list))
   (loop with xs fixnum  = (x-shift-of self)
         with ys fixnum = (y-shift-of self)
         with zs fixnum = (z-shift-of self)
@@ -263,10 +283,9 @@
   "Scale each sublist of the list along all three axes. ~
    A sublist has fixnums  in the order x,y,z. ~
    This routine returns a *new* list of fixnums."
-  
-  (declare (optimize (speed 3) (safety 0)
-                     (space 0) (compilation-speed 0))
-           (inline * list))
+  #-:sbcl(declare (optimize (speed 3) (safety 0)
+                     (space 0) (compilation-speed 0)))
+           (declare (inline * list))
   (loop with xs fixnum  = (x-scale-of self)
         with ys fixnum = (y-scale-of self)
         with zs fixnum = (z-scale-of self)
@@ -284,9 +303,10 @@
   "apply a shift transform to a list of lists. Observations correspond to lists~
    fixnum calculations are used, and ~
    an fixnum LIST MUST BE GIVEN TO THIS ROUTINE!!!"
-  (declare (optimize (speed 3) (safety 0)
-                     (space 0) (compilation-speed 0))
-           (inline first second incf))
+  #-:sbcl(declare (optimize (speed 3) (safety 0)
+                     (space 0) (compilation-speed 0)))
+           (declare (inline first second))
+           ;inline first second incf)) ;16 November 2019
   (loop with xs fixnum = (x-shift-of self)
         with ys fixnum = (y-shift-of self)
         for ai in a do 
@@ -301,7 +321,9 @@
   "apply a shift transform to each sublist of the list ~
    A sublist has fixnums  in the order x,y,z. 
    This routine modifies the fixnum list "
-  
+    #-:sbcl(declare (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline first second third round + * -))
   (let* ((c (cos (angle-of self)))
          (s (sin (angle-of self)))
          (u (- 1 c))
@@ -309,9 +331,6 @@
          (yc (y-component-of self))
          (zc (z-component-of self))
          )
-    (declare (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline first second third round + * -))
     (loop for (x y z) fixnum in a 
           for ai in a do
           (setf (first ai)
@@ -331,13 +350,12 @@
   "Rotates each sublist of the list about the x-axis.~
    A sublist has fixnums  in the order x,y,z. 
    This routine modifies the fixnum list "
-  
+    #-:sbcl(declare 
+             (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline ash second third + * -))  
   (let ((c (round (* 1024 (cos (angle-of self)))))
         (s (round (* 1024 (sin (angle-of self))))))
-    (declare (fixnum c s)
-             (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline ash second third + * -))
     (loop for (x y z) fixnum in a 
           for ai in a do
           (setf (second ai) (ash (- (* y c) (* z s)) -10))
@@ -349,12 +367,12 @@
   "Rotates each sublist of the list about the y-axis.~
    A sublist has fixnums  in the order x,y,z. 
    This routine modifies the fixnum list "
+    #-:sbcl(declare 
+             (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline ash first third + * -))
   (let ((c (round (* 1024 (cos (angle-of self)))))
         (s (round (* 1024 (sin (angle-of self))))))
-    (declare (fixnum c s)
-             (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline ash first third + * -))
     (loop for (x y z) fixnum in a
           for ai in a  do
           (setf (first ai) (ash (+ (* x c) (* z s)) -10)
@@ -366,13 +384,12 @@
   "Rotates each sublist of the list about the z-axis.~
    A sublist has fixnums  in the order x,y,z. 
    This routine modifies the fixnum list "
-  
+    #-:sbcl(declare 
+             (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline ash second first + * -))
   (let ((c (round (* 1024 (cos (angle-of self)))))
         (s (round (* 1024 (sin (angle-of self))))))
-    (declare (fixnum c s)
-             (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline ash second first + * -))
     (loop for (x y z) fixnum in a
           for ai in a  do
           (setf (first ai) (ash (- (* x c) (* y s)) -10)
@@ -382,9 +399,10 @@
   "Shifts each sublist of the list along all axes.~
    A sublist has fixnums  in the order x,y,z. 
    This routine modifies the fixnum list "
-  (declare (optimize (speed 3) (safety 0)
-                     (space 0) (compilation-speed 0))
-           (inline incf first second third))
+  #-:sbcl(declare (optimize (speed 3) (safety 0)
+                     (space 0) (compilation-speed 0)))
+          (declare (inline first second third))
+          ;(inline incf first second third)) ;16 November 2019
   (loop with xs fixnum = (x-shift-of self)
         with ys fixnum = (y-shift-of self)
         with zs fixnum = (z-shift-of self)
@@ -399,9 +417,9 @@
   "Scales each sublist of the list along all axes.~
    A sublist has fixnums  in the order x,y,z. 
    This routine modifies the fixnum list "
-  (declare (optimize (speed 3) (safety 0)
-                     (space 0) (compilation-speed 0))
-           (inline * first second third))
+  #-:sbcl(declare (optimize (speed 3) (safety 0)
+                     (space 0) (compilation-speed 0)))
+           (declare (inline * first second third))
   (loop with xs fixnum = (x-scale-of self)
         with ys fixnum = (y-scale-of self)
         with zs fixnum = (z-scale-of self)
@@ -426,13 +444,12 @@
   "Rotates each sublist around x-axis, and shifts along x and y~
    A sublist has fixnums  in the order x,y,z. 
    This results are placed in store "
-  
+    #-:sbcl(declare 
+             (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline * + - first second third))
   (let ((c (round (* 1024 (cos (angle-of self)))))
         (s (round (* 1024 (sin (angle-of self))))))
-    (declare (fixnum s c)
-             (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline * + - first second third))
     (loop with xs fixnum = (x-shift-of self)
           with ys fixnum = (y-shift-of self)
           for (x y z) fixnum in a 
@@ -445,12 +462,12 @@
   "Rotates each sublist around y axis, and shifts along x and y~
    A sublist has fixnums  in the order x,y,z. 
    This results are placed in store "
+    #-:sbcl(declare 
+             (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline * + - first second third ash))
   (let ((c (round (* 1024 (cos (angle-of self)))))
                     (s (round (* 1024 (sin (angle-of self))))))
-    (declare (fixnum s c)
-             (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline * + - first second third ash))
     (loop with xs fixnum = (x-shift-of self)
           with ys  fixnum = (y-shift-of self)
           for (x y z) fixnum in a
@@ -465,13 +482,12 @@
   "Rotates each sublist around z-axis, and shifts along x and y~
    A sublist has fixnums  in the order x,y,z. 
    This results are placed in store "
-  
+    #-:sbcl(declare 
+             (optimize (speed 3) (safety 0)
+                       (space 0) (compilation-speed 0)))
+             (declare (inline * + - first second third ash))
   (let ((c (round (* 1024 (cos (angle-of self)))))
         (s (round (* 1024 (sin (angle-of self))))))
-    (declare (fixnum s c)
-             (optimize (speed 3) (safety 0)
-                       (space 0) (compilation-speed 0))
-             (inline * + - first second third ash))
     (loop with xs fixnum = (x-shift-of self)
           with ys fixnum = (y-shift-of self)
           for (x y z) fixnum in a
