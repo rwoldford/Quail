@@ -93,7 +93,7 @@
   "Saves the value of arg as the value of a symbol retrieved from a prompt."
   (eval
    `(setf ,(prompt-user  :read-type :read
-                         :type 'symbol
+                         :result-type 'symbol
                          :prompt-string
                          "Give a symbol to store the value on:")
           ,arg)))
