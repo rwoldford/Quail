@@ -26,8 +26,8 @@
                         depth-cue? erase? fast-color-table)
   (declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
-           (inline aref + - / * sqrt truncate round
-                   fast-move-to fast-line-to
+           (inline aref + - / * sqrt truncate round))
+    #-:sbcl(declare (inline fast-move-to fast-line-to
                    ))
   (with-pen-values-restored canvas
     (with-focused-canvas canvas
@@ -229,13 +229,15 @@
          )
         ))))
 
+
 (defun show-lines (canvas
                    x-origin y-origin
                    x y cz szv c ncol aa
                    depth-cue? color-table)
   (declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
-           (inline + - * / aref canvas-move-to canvas-draw-to))
+           (inline + - * / aref))
+  #-:sbcl(declare (inline canvas-move-to canvas-draw-to))
   
   (with-pen-values-restored canvas
     (let*

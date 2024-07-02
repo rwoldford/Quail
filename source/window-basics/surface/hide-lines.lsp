@@ -27,7 +27,8 @@
                           a c ncol aa depth-cue? color-table)
   (declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
-           (inline aref + - / * sqrt truncate show-line))
+           (inline aref + - / * sqrt truncate))
+  #-:sbcl-linux(declare (inline show-line))
   (with-pen-values-restored
     canvas
     (let*
@@ -176,6 +177,7 @@
        )
       ))))
 
+
 (defun show-line (canvas x1 y1 x2 y2 x-origin y-origin
                          lower-y upper-y dl nl 
                          ct st mx my col2 color-table)
@@ -183,8 +185,8 @@
   (declare (fixnum x1 y1 x2 y2 mx my col2)
            (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
-           (inline aref + - / * sqrt truncate round
-                   canvas-move-to canvas-draw-to
+           (inline aref + - / * sqrt truncate round))
+   #-:sbcl-linux(declare (inline canvas-move-to canvas-draw-to
                    update-border))
   (let (nx1 ny1 nx2 ny2 s)
     (setf mx (truncate mx 2))
@@ -315,18 +317,20 @@
     )
   )
 
+
 (defun update-border (border x1 y1 x2 y2 s dl nl)
   (declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
-           (inline aref + - / * update-line))
+           (inline aref + - / * ))
+  #-:sbcl-linux(declare (inline update-line))
   
-  (let (dx
-        dy
-        up
-        tx1 ty1 tx2
-        sx sy dxa dya
-        d inc1 inc2
-        x y
+  (let ((dx 0)
+        (dy 0)
+        (up T)
+        (tx1 0) (ty1 0) (tx2 0)
+        (sx 0) (sy 0) (dxa 0) (dya 0)
+        (d 0) (inc1 0) (inc2 0)
+        (x 0) (y 0)
         )
     
       (declare (fixnum dxa dya dx dy tx1 tx2 ty1 sx sy d inc1 inc2 x y s x1 y1 x2 y2))
@@ -472,12 +476,13 @@
     )
   )
 
+
 (defun update-line (x1 y1 x2 y2 dl nl)
   (declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
            (inline aref + - / * > =))
   
-  (let (n size1 size2 size3)
+  (let ((n 0) (size1 0)  (size2 0)  (size3 0))
     (declare (fixnum x1 y1 x2 y2 n size1 size2 size3))
     (block outer
       (setf n (aref nl 0))
@@ -540,7 +545,8 @@
                                a c ncol aa depth-cue? color-table)
   (declare (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
-           (inline aref + - / * sqrt truncate fast-show-line))
+           (inline aref + - / * sqrt truncate ))
+  #-:sbcl-linux(declare (inline fast-show-line))
   (with-pen-values-restored canvas
     (with-focused-canvas canvas
       (let*
@@ -694,6 +700,7 @@
             (incf dd step-in-first))
           ))))))
 
+
 (defun fast-show-line (canvas x1 y1 x2 y2 x-origin y-origin
                          lower-y upper-y dl nl 
                          ct st mx my col2 color-table)
@@ -701,8 +708,8 @@
   (declare (fixnum x1 y1 x2 y2 mx my col2)
            (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
-           (inline aref + - / * sqrt truncate round
-                   fast-move-to fast-line-to
+           (inline aref + - / * sqrt truncate round ))
+  #-:sbcl-linux(declare (inline fast-move-to fast-line-to
                    update-border))
   (let (nx1 ny1 nx2 ny2 s)
     (setf mx (truncate mx 2))
