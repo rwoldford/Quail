@@ -30,7 +30,9 @@
 
 
 (defvar *control-button-text-color* *black-color*)
-(defvar *control-button-color* *gray-color*)
+
+;originally defvar-ed in views/views-general/special-vars.lsp .. therefore  ;; 18SEP 2023
+(setf *control-button-text-color* *gray-color*) ;(defvar *control-button-color* *gray-color*) 
 
 
 (defclass control-button (control-mixin label) 
@@ -77,11 +79,14 @@
          (left (round (- x-centre half-width)))
          (right (round (+ x-centre half-width)))
          (top (round (+ y-centre half-height)))
-         (bottom (round (- y-centre half-height))))
+         (bottom (round (- y-centre half-height)))
+         (x 0) ;; 14MAR2022  gwb
+         (y 0) ;; 14MAR2022  gwb
+         )
 
     (if (not (numberp (elt location 0)))
       (setf x (elt location 1)
-            y (elt location 2))
+            y (elt location 2)) ;; sbcl requires x and y to be initialised before being used 14MAR2022  gwb
       (setf x (elt location 0)
             y (elt location 1))
       )

@@ -158,13 +158,15 @@
                                                (if (eq mheight :viewport)
                                                  (height-of (viewport-of self))
                                                  mheight))
-                                 :type 'integer :read-type :eval)))
+                                 :result-type 'integer 
+                                 :read-type :eval)))
         (width (if w (wb::prompt-user :prompt-string 
                                       (format NIL "Enter width (currently ~s): " 
                                               (if (eq mwidth :viewport)
                                                 (width-of (viewport-of self))
                                                 mwidth))
-                                :type 'integer :read-type :eval))))
+                                :result-type 'integer
+                                :read-type :eval))))
     (erase-view self)
     (cond (elliptical-button    ;not larger than the viewport
            (progn (if (and h (< height (height-of (viewport-of self))))

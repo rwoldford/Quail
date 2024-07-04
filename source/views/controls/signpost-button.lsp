@@ -57,6 +57,7 @@
                              (button-fn NIL)
                              (draw? NIL)
                              )
+  (declare (ignore draw? font button-color)) ; 29JUL2023
   (apply #'make-instance 'signpost-button  :text text :color text-color :left-fn button-fn
          keyword-args))
 

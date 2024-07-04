@@ -94,25 +94,25 @@
 
 (defmethod right-button-fn ((self logical-widget) 
                             &key viewport)
-  (declare (ignore self viewport))
+  (declare (ignorable self viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
   ())
 
 
 (defmethod shift-left-button-fn ((self logical-widget) 
                                  &key viewport )
-  (declare (ignore self viewport))
+  (declare (ignorable self viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
   ())
  
 
 (defmethod shift-middle-button-fn ((self logical-widget) 
                                    &key viewport)
-  (declare (ignore self viewport))
+  (declare (ignorable self viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
   ())
  
 
 (defmethod shift-right-button-fn ((self logical-widget) 
                                    &key viewport)
-  (declare (ignore self viewport))
+  (declare (ignorable self viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
   ())
 
 ;;; Some special classes.
