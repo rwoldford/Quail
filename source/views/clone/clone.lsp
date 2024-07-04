@@ -46,7 +46,7 @@
 (defun clone-view-fn-prompt(view &key viewport)
   (let* ((pos (prompt-position view viewport))
         (name 
-         (wb:prompt-user :type 'symbol
+         (wb:prompt-user :result-type 'symbol
                          :read-type :read
                          :prompt-string "Name of function?"
                          :left (2d-position-x pos)
