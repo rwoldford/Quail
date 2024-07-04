@@ -16,10 +16,10 @@
 
 #+:cl-2
 (defpackage "VIEWS"
-  (:use ;;;;;"WINDOW-BASICS"
-   "COMMON-LISP")
-  (:nicknames "VW" "VI")
-  
+  #+:sbcl-linux (:USE :clim :clim-lisp :clim-extensions) ;"COMMON-LISP")  ; 19 November 2019
+  #+:aclpc-linux (:USE :common-lisp)
+  (:nicknames "VI" "VW")
+  (:SHADOW "DRAW-LINES" "DRAW-ARROW") ;; from the CLIM: defintions  19MAR2022  gwb
   (:IMPORT-FROM "QUAIL-KERNEL"
                 *QUAIL-RESTORE-LISP-FUNCTIONS*
                 *QUAIL-STANDARD-INPUT* 
@@ -35,7 +35,8 @@
                 QUAIL-QUERY
                 QUAIL-Y-OR-N-P 
                 QUAIL-YES-OR-NO-P
-                ADD-MIXIN-TO-QUAIL-OBJECT)
+                ADD-MIXIN-TO-QUAIL-OBJECT
+                "<-") ;;05FEB2020
   (:IMPORT-FROM "WINDOW-BASICS"
                 HANDLE-KEY-EVENT
                 *black-color*
