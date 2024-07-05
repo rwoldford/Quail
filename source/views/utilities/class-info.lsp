@@ -25,8 +25,8 @@
         (unless  (eq sym class-name)
           (setq a-class (find-class sym nil))
           (if (and a-class 
-                   (member base-class 
-                           (qk:class-precedence-list a-class)))
+                   (member base-class (qk:class-precedence-list a-class)
+                           ))
             (setq class-names (push sym class-names))))))
     class-names))
 
@@ -44,7 +44,8 @@
                       nil)
                      ((and (listp b) (eq 'not (car b)))
                       (not (subclass a (second b))))
-                     (t (member b (qk:class-precedence-list a)))))
+                     (t (member b (qk:class-precedence-list a)
+                      ))))
              
              (view-classes-not-spec(spec)
                (if (symbolp spec)

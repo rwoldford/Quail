@@ -60,7 +60,7 @@
 (defun y-scale (affine) (aref affine 1 1))
 
 
-(eval-when (eval load)
+(eval-when (:execute :load-toplevel) ;(eval load) 09MAR2022 gwb
   (defvar x-scale(make-affine-transform 2)))
 
 
@@ -246,7 +246,7 @@
     new-at))
 
 
-(eval-when (eval load)
+(eval-when (:execute :load-toplevel) ;(eval load) 09MAR2022 gwb
   (defvar *identity-2d-transform* (make-affine-transform 2)))
   
 
