@@ -56,8 +56,8 @@
   (let ( 
         (old-brs (gensym  "old-brs"))
         (views (gensym  "views"))
-        (v (gensym  "v")) (br (gensym  "br")) (d (gensym  "d")) 
-        (vs (gensym  "vs")) (ds (gensym  "ds")) 
+        (v (gensym  "v")) (br (gensym  "br")) ;(d (gensym  "d")) 
+        (vs (gensym  "vs")) ;(ds (gensym  "ds")) 
         (mod-views (gensym  "mod-views"))
         
         )
