@@ -32,7 +32,7 @@
 
 
 (defun prompt-for-dataset (&optional (msg "Enter dataset" ))
-  (let ((d (wb::prompt-user :type t :prompt-string msg :read-type :eval)))
+  (let ((d (wb::prompt-user :result-type t :prompt-string msg :read-type :eval)))
     (if (dataset-p d) d nil)))
 
 
@@ -107,7 +107,7 @@
               until (>= (length result-list) n )
               finally (return (subseq  (mapcar #'second result-list) 0 n))))
       (loop for i from 1 to n  collect
-            (wb::prompt-user :type t :read-type :eval :prompt-string msg))))
+            (wb::prompt-user :result-type t :read-type :eval :prompt-string msg))))
 
 
 (defun choose-some-variables (&optional dataset (n 1) msg menu-items)
@@ -129,7 +129,7 @@
       (loop with v = t 
             until (and (>= (length var) n) (null v))
             do
-            (setq v (wb::prompt-user :type t :read-type :eval :prompt-string msg))
+            (setq v (wb::prompt-user :result-type t :read-type :eval :prompt-string msg))
             when v collect v into var
             finally (return var))))
 

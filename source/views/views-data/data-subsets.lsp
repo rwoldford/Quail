@@ -45,6 +45,7 @@
   (:documentation "Finds  cases in dataset using the information in test ~
                    and returns the cases as a list."))
 
+#| ;duplicated at ll287-298
 (defun data-subsets-fn (var &rest args)
   "Constructs a function which when applied ~
    to a dataset, groups the cases into datasets according to ~
@@ -57,7 +58,7 @@
          (apply #'subsets-by-var (car var) args))
         (t (apply #'subsets-by-vars var args))
         ))
-
+|#
 
 
 (let ((saved-groups nil))

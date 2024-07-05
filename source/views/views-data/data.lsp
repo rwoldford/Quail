@@ -114,13 +114,14 @@
                    an error will result.")
   )
 
+#| 28SEP2023 email from rwo model no longer uses (c ..) cases, but (d ..) datasets
 (defgeneric values-of (c variates &key default &allow-other-keys)
   (:documentation "List the values of c for each variate of variates. ~
                    If default is :error an error will be signalled if ~
                    there is no such value, otherwise default ~
                    (when supplied) is returned."))
 
-
+|#
 (defgeneric values-of (d var &key default &allow-other-keys)
   (:documentation "Returns the values in order of  list cases~
                    of the dataset c corresponding to the ~
@@ -167,11 +168,11 @@
   (:documentation "Test whether v1 and v2 are both variate expressions-~
                    and are eq.")
   )
-
-(defgeneric eq-identifiers (i1 i2)
-  (:documentation "Test whether i1 and i2 are both identifiers ~
-                   and are eq.")
-  )
+;; defined at line 153
+;(defgeneric eq-identifiers (i1 i2)
+;  (:documentation "Test whether i1 and i2 are both identifiers ~
+;                   and are eq.")
+;  )
 
 (defgeneric eq-variates (v1 v2)
   (:documentation "Test whether v1 and v2 are both variates ~
@@ -455,12 +456,12 @@
 
 
                 
+;;; commented out 11SEP2023 as per rwo email
+;(defmethod contains-data-p  (a b &key (order? nil))
+;  (declare (ignorable order? a b))
+;  NIL)
 
-(defmethod contains-data-p  (a b &key (order? nil))
-  (declare (ignore order? a b))
-  NIL)
-
-(defmethod contains-data-p(a b &key (order? nil))
+(defmethod contains-data-p (a b &key (order? nil))
   (and (dataset-p a) (dataset-p b)
        (or (eq-dataset a b)
            (if order? (ancestor-data-p a b)
