@@ -316,7 +316,7 @@
     
     (cond ((and (null min) (null max))
            (let ((new (wb:prompt-user 
-                       :type 'list 
+                       :result-type 'list
                        :read-type :read
                        :prompt-string (format nil msg
                                               (coerce (tic-interval-of self) 'list))
@@ -326,7 +326,7 @@
              (setq max (second new))))
           ((null min)
            (setq min (wb:prompt-user 
-                      :type 'number 
+                      :result-type 'number 
                       :read-type :eval
                       :prompt-string (format nil "Change min from ~S to:"
                                              (min-of (tic-interval-of self)))
@@ -334,7 +334,7 @@
                       :top (2d-position-y pos))))
           ((null max)
            (setq max (wb:prompt-user 
-                      :type 'number 
+                      :result-type 'number 
                       :read-type :eval
                       :prompt-string (format nil "Change max from ~S to:"
                                              (max-of (tic-interval-of self)))
@@ -353,7 +353,7 @@
   (let ((pos (prompt-position self viewport))
         (dir (axis-of-orientation self)))
     (setf tics
-          (or tics (wb:prompt-user :type 'list :read-type :read
+          (or tics (wb:prompt-user :result-type 'list :read-type :read
                                    :prompt-string msg
                                    :left (2d-position-x pos)
                                    :top (2d-position-y pos))))
@@ -375,7 +375,7 @@
   (let ((pos (prompt-position self viewport))
         (dir (axis-of-orientation self)))
     (setf ntics (or ntics
-                    (wb:prompt-user :type 'integer :read-type :eval
+                    (wb:prompt-user :result-type 'integer :read-type :eval
                                     :prompt-string msg
                                     :left (2d-position-x pos)
                                     :top (2d-position-y pos))))
@@ -403,7 +403,7 @@
       (cond
        ((string-equal format-type "Lisp format directive")
         (setf format
-              (wb:prompt-user :type 'string :read-type :eval
+              (wb:prompt-user :result-type 'string :read-type :eval
                               :prompt-string 
                               (format nil "Format directive string:")
                               :left (2d-position-x pos)
@@ -419,7 +419,7 @@
                  ("Pad character" )
                  )
                :prompt-text (format NIL
-                                    "Fixed-format floating point. ~%~
+                                    "Fixed-format floating point. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -461,7 +461,7 @@
                  ("Exponent character" )
                  )
                :prompt-text (format NIL
-                                    "Exponential floating point. ~%~
+                                    "Exponential floating point. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -502,7 +502,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Decimal. ~%~
+                                    "Decimal. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -541,7 +541,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Binary. ~%~
+                                    "Binary. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -580,7 +580,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Octal. ~%~
+                                    "Octal. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -619,7 +619,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Hexadecimal. ~%~
+                                    "Hexadecimal. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -660,7 +660,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Radix. ~%~
+                                    "Radix. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -700,7 +700,7 @@
                  ("Pad character" )
                  )
                :prompt-text (format NIL
-                                    "Dollars floating point. ~%~
+                                    "Dollars floating point. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -734,7 +734,7 @@
                  ("Exponent character" )
                  )
                :prompt-text (format NIL
-                                    "General floating point. ~%~
+                                    "General floating point. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -767,7 +767,7 @@
         )
        (T
         (setf format
-              (wb:prompt-user :type 'string :read-type :eval
+              (wb:prompt-user :result-type 'string :read-type :eval
                               :prompt-string 
                               (format nil "Format directive string:")
                               :left (2d-position-x pos)
@@ -808,7 +808,7 @@
     ))
 
 (defmethod new-variable ((self axis) &key )
-  (declare (ignore self))
+  (declare (ignorable self)) ;(ignore self)) ; 04SEP2023
   (call-next-method)
  )
 

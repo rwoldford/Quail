@@ -295,7 +295,7 @@
     (case new
       (:fatter (+  old 1)) 
       (:thinner (max 1 (-  old 1)))
-      (:prompt (wb:prompt-user :type 'number 
+      (:prompt (wb:prompt-user :result-type 'number 
                                :read-type :eval
                                :prompt-string 
                                (format nil "Change width from ~A" old)))

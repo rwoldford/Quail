@@ -136,7 +136,7 @@
          )
     (cond ((and (null min) (null max))
            (let ((new (wb:prompt-user 
-                       :type 'list 
+                       :result-type 'list 
                        :read-type :read
                        :prompt-string (if current (format nil "Change min and max from ~S to:"
                                                                       current)
@@ -148,7 +148,7 @@
              (setq max (second new))))
           ((null min)
            (setq min (wb:prompt-user 
-                      :type 'number 
+                      :result-type 'number 
                       :read-type :eval
                       :prompt-string (if current (format nil "Change min from ~S to:"
                                                                       (first current))
@@ -158,7 +158,7 @@
                       :top (2d-position-y pos))))
           ((null max)
            (setq max (wb:prompt-user 
-                      :type 'number 
+                      :result-type 'number 
                       :read-type :eval
                       :prompt-string (if current (format nil "Change max from ~S to:"
                                                                       (second current))

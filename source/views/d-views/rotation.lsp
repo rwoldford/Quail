@@ -57,7 +57,7 @@
     (y-text :initform nil :initarg :y-text :accessor y-text-of)
     (z-text :initform nil :initarg :z-text :accessor z-text-of)
    )
-  (:default-initargs :font wb:*very-small-graphics-font* 
+  (:default-initargs :font wb::*very-small-graphics-font* 
     :axis-color *default-axis-color*
     :viewport-compute-method #'compute-viewport-axis-coords)
   )
@@ -269,7 +269,7 @@
           (case region
             (:prompt
              (apply #'make-region
-                    (wb:prompt-user :type 'list :read-type :read
+                    (wb::prompt-user :result-type 'list :read-type :read
                                     :prompt-string "(left right bottom top)")))
             (:original (recenter-scaled-coords self  :original)
                        (adjust-subviews self )
@@ -286,9 +286,9 @@
 
 
 (defmethod stop-rotate ((self rotating-cloud))
-  (if (wb:mouse-down-p)
-    #'(lambda() (not (wb:mouse-down-p)))
-    #'(lambda() (wb:mouse-down-p))))
+  (if (wb::mouse-down-p)
+    #'(lambda() (not (wb::mouse-down-p)))
+    #'(lambda() (wb::mouse-down-p))))
 
 (defmethod rotate-points ((self rotating-cloud) &key 
                           viewport (direction :y) (steps 1000) 
@@ -333,7 +333,7 @@
              
           (multiple-value-bind 
             (rot end-coords end-axes)
-            (wb:rotate-point-cloud (window-of viewport) 
+            (wb::rotate-point-cloud (window-of viewport) 
                                    temp-coords
                                    :axes (if (draw-axis-p self) 
                                            (centered-viewport-axis-coords-of self  viewport))
@@ -349,7 +349,7 @@
                                    :viewport-coords? nil
                                    :draw-rate draw-rate)
             
-            (wb:mapply-rotation! rot (rotation-of self) :integer? nil)
+            (wb::mapply-rotation! rot (rotation-of self) :integer? nil)
             
             (setf (plot-coords-cache-of self) nil)
             
@@ -449,8 +449,8 @@
   
   (setq viewport (or viewport (car (viewports-of self))))
   (let* ((temp (centered-viewport-axis-coords-of self  viewport))
-          (shift (wb:make-shift-transform (wb-region viewport))))
-    (wb:mapply-transform shift temp)))
+          (shift (wb::make-shift-transform (wb-region viewport))))
+    (wb::mapply-transform shift temp)))
 
 (defmethod viewport-axis-coords-of ((self rotating-cloud) 
                                     viewport)
@@ -469,13 +469,13 @@
               with color = (draw-style self :axis-color)
               for p in (cdr points)
               for c in (list (x-text-of self) (y-text-of self) (z-text-of self)) do
-              (wb:canvas-draw-line bw (car o) (cadr o) 
+              (wb::canvas-draw-line bw (car o) (cadr o) 
                                    (car p ) (cadr p) 
                                    :operation operation 
                                    :color color
                                    :width 1)
               (if labels?
-                (wb:canvas-draw-string bw c :font font
+                (wb::canvas-draw-string bw c :font font
                                        :color color))
               )))
 
@@ -488,11 +488,11 @@
               with o = (first points) 
               for p in (cdr points)
               for c in (list (x-text-of self) (y-text-of self) (z-text-of self)) do
-              (wb:canvas-erase-line  bw (car o) (cadr o) 
+              (wb::canvas-erase-line  bw (car o) (cadr o) 
                                     (car p ) (cadr p) :operation :boole-andc1
                                     :width 1 )
               (when labels?
-                (wb:canvas-erase-string bw c  :font font ))
+                (wb::canvas-erase-string bw c  :font font ))
               ) ) )
 
 (defmethod draw-tripod-labels ((self rotating-cloud) 
@@ -507,8 +507,8 @@
               with color = (draw-style self :axis-color)
               for p in (cdr points)
               for c in (list (x-text-of self) (y-text-of self) (z-text-of self)) do
-              (wb:canvas-move-to bw (car p ) (cadr p) )
-              (wb:canvas-draw-string bw c :font font :color color))))
+              (wb::canvas-move-to bw (car p ) (cadr p) )
+              (wb::canvas-draw-string bw c :font font :color color))))
 
 (defmethod erase-tripod-labels ((self rotating-cloud) 
                         &key viewport  )
@@ -520,8 +520,8 @@
               with font = (draw-style self :font)
               for p in (cdr points)
               for c in (list (x-text-of self) (y-text-of self) (z-text-of self)) do
-              (wb:canvas-move-to bw (car p ) (cadr p) )
-              (wb:canvas-erase-string bw c :font font ))))
+              (wb::canvas-move-to bw (car p ) (cadr p) )
+              (wb::canvas-erase-string bw c :font font ))))
 
 
 
@@ -534,6 +534,7 @@
 (defmethod styles-to-subs ((self rotating-cloud) ) 
   (list :highlight? :fill? :size :color ))
 
+#| 26SEP2023 the method immediately below is to be retained email from rwo 26SEP2023
 (defmethod get-rotation-menu-items ((self  rotating-cloud) )
   
   `(("Start" (set-rotation ))
@@ -542,7 +543,7 @@
     ("Font" nil "" :sub-items ,(font-menu-items))
     ("-" nil)
     ))
-
+|#
 
 
 (defmethod get-rotation-menu-items ((self  rotating-cloud) )
@@ -564,8 +565,8 @@
 (defmethod update-menu-items :before ((self rotating-cloud) 
                                       (slot-name (eql 'middle-menu)))
   (let* ((m (slot-value self slot-name)))
-    (wb:check-menu-item m "Axes" (draw-axis-p self ))
-    (wb:check-menu-item m "Labels" (draw-label-p self ))))
+    (wb::check-menu-item m "Axes" (draw-axis-p self ))
+    (wb::check-menu-item m "Labels" (draw-label-p self ))))
     
 
 

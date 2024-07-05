@@ -60,6 +60,7 @@
 (defmethod list-legal-justifications ((self justified-line))
   (list :left :right :left-right :bottom :top :top-bottom))  
 
+#| Already in views/views-generl/view-ops.lsp .. email from rwo 25SEP2023
 (defmethod identify-view ((self view) 
                           &key viewport )
   (setq viewport (or viewport (car (viewports-of self))))
@@ -72,6 +73,7 @@
                          s (subview-location-string  parent self)
                          )))
     (quail-print s)))
+    |#
 
 (defmethod orientation-of ((self justified-line))
   (case (justification-of self)
@@ -316,7 +318,7 @@
     (case new
       (:larger (+  old inc)) 
       (:smaller (-  old inc))
-      (:prompt (wb:prompt-user :type 'number 
+      (:prompt (wb:prompt-user :result-type 'number 
                                :read-type :eval
                                :prompt-string 
                                (format nil "Change size from ~A" old)))
@@ -644,7 +646,7 @@
           (case region
             (:prompt
              (apply #'make-region
-                    (wb:prompt-user :type 'list :read-type :read
+                    (wb:prompt-user :result-type 'list :read-type :read
                                     :prompt-string "(left right bottom top)")))
             (:original (original-bounds self :draw? t) nil)
             (:compute (bounds-of-selected self))

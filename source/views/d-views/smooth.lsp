@@ -73,7 +73,7 @@
   
   (if draw? (erase-view self))
   (if (null new-fn)
-    (setf new-fn (wb::prompt-user :type t
+    (setf new-fn (wb::prompt-user :result-type t
                                   :read-type :read
                                   :prompt-string "Enter new smooth function")))
   (setf (fit-fn-of self) (get-function new-fn))
@@ -86,7 +86,7 @@
   
   (if draw? (erase-view self))
   (if (null new-par)
-    (setf new-par (wb::prompt-user :type t
+    (setf new-par (wb::prompt-user :result-type t
                                    :read-type :eval
                                    :prompt-string "Enter new smoothing parameter")))
   (setf (smooth-par-of self) new-par)
@@ -110,7 +110,7 @@
 (defmethod smooth-par-of ((self smooth-mixin))
   (or (slot-value self 'smooth-par)
       (setf (slot-value self 'smooth-par)
-            (wb::prompt-user :type t
+            (wb::prompt-user :result-type t
                              :read-type :eval
                              :prompt-string "Enter smoothing parameter"))))
  

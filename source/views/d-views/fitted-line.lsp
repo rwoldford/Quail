@@ -101,7 +101,7 @@
 
 
 (defmethod new-variable ((self fitted-line) &key )
-  (declare (ignore self))
+  (declare (ignorable self)) ;(declare (ignore self)) ; 29JUL2023
   (call-next-method))
 
 (defmethod new-variable :before  ((self fitted-line) &key )
@@ -111,7 +111,7 @@
 
 
 (defmethod new-case-status ((self fitted-line)  cases status  &key )
-  (declare (ignore cases status))
+  (declare (ignorable cases status)) ;(declare (ignore cases status)) ; 29JUL2023
   (compute-slope&intercept self)
   (compute-line-endpoints self)
   )
@@ -131,7 +131,7 @@
   
   (if draw? (erase-view self))
   (if (null new-fn)
-    (setf new-fn (wb::prompt-user :type  t
+    (setf new-fn (wb::prompt-user :result-type  t
                                   :read-type :read
                                   :prompt-string "Enter new line function")))
   (setf (fit-fn-of self) (get-function new-fn))

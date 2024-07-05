@@ -329,7 +329,7 @@
                                    :viewport-coords? nil
                                    :draw-rate draw-rate))
             
-            (wb:mapply-rotation! rot (rotation-of self) :integer? nil)
+            (wb::mapply-rotation! rot (rotation-of self) :integer? nil)
             (setf (plot-coords-cache-of self) nil)
           
             (adjust-subviews self )
@@ -478,3 +478,4 @@
   (loop for sv in (subviews-of self) append
         (loop for s in (subviews-of sv)
         collect (draw-style (drawing-style-of s) style :default default)))))
+

@@ -150,7 +150,7 @@
           (case region
             (:prompt
              (apply #'make-region
-                    (wb:prompt-user :type 'list :read-type :read
+                    (wb:prompt-user :result-type 'list :read-type :read
                                     :prompt-string "(min max)")))
             (:original (original-bounds self :draw? t) nil)
             (:compute (bounds-of-selected self))
@@ -432,7 +432,7 @@ Also all nil colors should be replaced by default canvas color.
     (case new
       (:fatter (1+ (cdr pair)))
       (:thinner (1- (cdr pair)))
-      (:prompt (wb:prompt-user :type 'number 
+      (:prompt (wb:prompt-user :result-type 'number 
                                        :read-type :eval
                                        :prompt-string 
                                        (format nil "Change size from ~A" (cdr pair))))

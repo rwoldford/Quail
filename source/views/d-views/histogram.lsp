@@ -325,7 +325,7 @@
 
 (defmethod set-nbins ((self histogram-view)   &key  nbins (draw? t))
   (if (null nbins)
-    (setq nbins (wb:prompt-user :type 'number :read-type :eval
+    (setq nbins (wb:prompt-user :result-type 'number :read-type :eval
                                 :prompt-string "Enter a positive integer")))
   
   (with-constrained-extents self 
@@ -338,7 +338,7 @@
 (defmethod set-break-points ((self histogram-view)   &key  break-points (draw? t))
   (if (null break-points)
     (setq break-points 
-          (wb:prompt-user :type 'list :read-type :read
+          (wb:prompt-user :result-type 'list :read-type :read
                           :prompt-string "Enter a list of break points")))
   (with-constrained-extents self 
     draw?
