@@ -119,7 +119,7 @@
   (if (eq scale :prompt)
     (setq scale
           (get-function
-           (wb::prompt-user :type  t
+           (wb::prompt-user :result-type  t
                             :read-type :read
                             :prompt-string "Enter scaling function, applied to each view"))))
   (if justification
@@ -400,7 +400,7 @@
   (if (eq scale :prompt)
     (setq scale
           (get-function
-           (wb::prompt-user :type  t
+           (wb::prompt-user :result-type  t
                             :read-type :read
                             :prompt-string "Enter scaling function, applied to each view"))))
   

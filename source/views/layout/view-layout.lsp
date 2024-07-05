@@ -262,11 +262,11 @@
 
 (defmethod view-layout-position-subviews ((self view-layout)
                                    &key  positions bounding-region)
- (flet ((plistp(arg)
-          (and (listp arg)
-               (evenp (length arg))
-               (loop for key in arg by #'cddr
-                     always (keywordp key)))))
+ ;(flet ((plistp(arg)   ; 04SEP2023 and next 4 lines
+ ;         (and (listp arg)
+ ;              (evenp (length arg))
+ ;              (loop for key in arg by #'cddr
+ ;                    always (keywordp key)))))
   
   (constrain-bounds self)
   (let ((subs (layout-views-of self))
@@ -298,7 +298,8 @@
       (if (and (positions-of self) (null bounding-region))
         (set-bounding-region self :region (compute-containing-bounding-region self)))
       ))
-  ))
+  ;) ; 04SEP2023
+ )
 
 
 

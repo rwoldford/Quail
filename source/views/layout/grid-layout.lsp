@@ -129,7 +129,7 @@
           (if (or (and rows (listp rows)) (= (nrows-of self) 1))
             0
             (wb:prompt-user 
-             :type 'number 
+             :result-type 'number 
              :read-type :eval
              :prompt-string (format nil "Vertical gap, as a fraction of height?")))))
   (if (eq gap-x :prompt)
@@ -137,7 +137,7 @@
           (if (or (and cols (listp cols)) (= (ncols-of self) 1))
             0
             (wb:prompt-user 
-             :type 'number 
+             :result-type 'number 
              :read-type :eval
              :prompt-string (format nil "Horizontal gap, as a fraction of width?"))))))
 
