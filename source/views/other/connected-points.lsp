@@ -174,9 +174,9 @@
   (if (null endpoints)
     (setf endpoints 
           (list
-           (wb::prompt-user :type 'list :read-type :read
+           (wb::prompt-user :result-type 'list :read-type :read
                                  :prompt-string "Enter first point as list")
-           (wb::prompt-user :type 'list :read-type :read
+           (wb::prompt-user :result-type 'list :read-type :read
                                  :prompt-string "Enter second point as list"))))
   (setf (lines-coords-of self) endpoints)
   (init-position-subviews self)
@@ -194,13 +194,13 @@
 
 
 
+;;; Following was in views/d-views/rotating-lines.lsp 
 
-
-(defmethod subsubview-styles ((self rotating-line-segments)  style &optional default)
-  (when (typep (car (subviews-of self)) 'connected-points)
-  (loop for sv in (subviews-of self) append
-        (loop for s in (subviews-of sv)
-        collect (draw-style (drawing-style-of s) style :default default)))))
+;(defmethod subsubview-styles ((self rotating-line-segments)  style &optional default)
+;  (when (typep (car (subviews-of self)) 'connected-points)
+;  (loop for sv in (subviews-of self) append
+;        (loop for s in (subviews-of sv)
+;        collect (draw-style (drawing-style-of s) style :default default)))))
 
 
 
