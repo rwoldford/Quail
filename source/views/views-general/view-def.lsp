@@ -313,7 +313,7 @@
                   do
                   (setq region
                         (apply #'make-region 
-                         (wb:prompt-user :type 'list :read-type :read
+                         (wb:prompt-user :result-type 'list :read-type :read
                                          :prompt-string
                                          (format nil "Enter bounds for ~S, (left right bottom top)" self))))
                   finally (return region)))))
@@ -351,7 +351,7 @@
                      (push locn subview-locns))))))
 
 (defmethod delete-subview ((self view) subview)
-  (declare (ignore self subview))
+  (declare (ignorable self subview)) ;(declare (ignore self subview)); 29JUL2023
   )
 
 ;;;================================================================================

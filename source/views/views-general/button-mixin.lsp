@@ -585,7 +585,7 @@
   ;; checked with the result of menu-properties and a new menu is created
   ;; if the properties differ
   
-  (declare (ignore slot-name))
+  (declare (ignorable slot-name)) ;(declare (ignore slot-name)) ; 29JUL2023
   )  
 
 
@@ -596,7 +596,7 @@
   ;; most middle menus use color/b+w depending on whether color is available
   ;; and being used
   
-  (declare (ignore slot-name))
+  (declare (ignorable slot-name)) ;(declare (ignore slot-name)) ; 29JUL2023
   (append (call-next-method) (list (cons :use-color (wb:color-device-p)))))
 
 
@@ -611,7 +611,8 @@
 
 
 (defmethod update-menu-items ((self button-mixin)  slot-name)
-  (declare (ignore slot-name)))
+  (declare (ignorable slot-name)) ;(declare (ignore slot-name)) ; 29JUL2023
+  )
 
 
 

@@ -64,7 +64,7 @@
 
 
 (defun make-view-constructor-doc-string(default-class)
-  (declare (ignore default-args))
+  ;(declare (ignore default-args)) 10MAR2022 gwb probably a cut+paste
   (format nil 
           "This function constructs and returns a ~A."
           default-class ))

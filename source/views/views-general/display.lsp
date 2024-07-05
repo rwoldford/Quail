@@ -36,7 +36,7 @@
 
 
 
-(eval-when (eval load)
+(eval-when (:execute :load-toplevel) ;(eval load) 10MAR2022 gwb
   (qk::add-mixin-to-quail-object 'displayable-mixin))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

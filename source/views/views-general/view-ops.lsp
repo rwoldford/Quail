@@ -686,11 +686,11 @@
 
 
 (defmethod prompt-position (self &optional ignore)
-  (declare (ignore  self ignore))
+  (declare (ignorable self ignore)) ;(declare (ignore  self ignore)) ; 29JUL2023
   (make-2d-position 10 (- (wb:screen-height) 30)))
 
 (defmethod prompt-position ((self view) &optional viewport)
-  (declare (ignore  self ))
+  (declare (ignorable self)) ;(declare (ignore  self )) ; 29JUL2023
   (if viewport
     (let ((vp (screen-location viewport)))
       (make-2d-position (left-of vp) (top-of vp)))
@@ -773,7 +773,7 @@
           (case region
             (:prompt
              (apply #'make-region
-                    (wb:prompt-user :type 'list :read-type :read
+                    (wb:prompt-user :result-type 'list :read-type :read
                                     :prompt-string "(left right bottom top)")))
             (:original (original-bounds self :draw? t) nil )
             (t nil))))

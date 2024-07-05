@@ -85,7 +85,7 @@
 
 
 (defmethod new-style-value (style-name new  pair)
-  (declare (ignore pair style-name))
+  (declare (ignorable pair style-name)) ;(declare (ignore pair style-name)) ; 29JUL2023
   new)
 
 (defmethod new-style-value ((style-name (eql :size)) new pair)
@@ -107,7 +107,7 @@
     (case new
       (:fatter (1+ (cdr pair)))
       (:thinner (1- (cdr pair)))
-      (:prompt (wb:prompt-user :type 'number 
+      (:prompt (wb:prompt-user :result-type 'number 
                                        :read-type :eval
                                        :prompt-string 
                                        (format nil "Change size from ~A" (cdr pair))))
@@ -118,12 +118,12 @@
 
 
 (defmethod new-style-value (style-name (new (eql :toggle)) pair) 
-  (declare (ignore style-name))
+  (declare (ignorable style-name)) ;(declare (ignore style-name)) ;; 29JUL2023
   (not (cdr pair)))
 
 
 (defmethod new-style-value ((style-name (eql :highlight?)) new pair)
-  (declare (ignore style-name))
+  (declare (ignorable style-name)) ;(declare (ignore style-name)) ; 29JUL2023
   (case new
           (:toggle (not (cdr pair)))
           (t new)))
@@ -135,13 +135,14 @@
     (t new)))
 
 (defmethod new-style-value ((style-name (eql :color)) new pair)
-  (declare (ignore pair))
+  (declare (ignorable pair)) ;(declare (ignore pair)) ; 29JUL2023
   (if (eq new :prompt)
     (wb:prompt-user-for-color)
     new))
 
 (defmethod prompt-for-style (style)
-  :prompt)
+  (declare (ignorable style))
+  T)
 
 (defmethod prompt-for-style ((style-name (eql :color)))
   (wb:prompt-user-for-color))
@@ -149,7 +150,7 @@
 (defmethod prompt-for-style ((style-name (eql :font)))
   (wb:prompt-user
    :prompt-string "Enter the new font size (1 to 127): "
-   :type 'integer
+   :result-type 'integer
    :read-type :eval))
 
 
