@@ -246,7 +246,7 @@
    (let (xc yc rad)
      (declare  (ignorable rad))
     (with-point-symbol-center&radius self viewport xc yc rad 
-     (wb:plot-glyph-at xc yc  (draw-style self :symbol)  (window-of viewport) ))))
+     (wb::plot-glyph-at xc yc  (draw-style self :symbol)  (window-of viewport) ))))
 
 (defmethod draw-point-symbol ((self point-symbol)
                               (symbol (eql :box))

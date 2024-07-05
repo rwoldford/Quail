@@ -102,12 +102,12 @@
            pl pr pb pt)
       (if (eql m :prompt)
         (setf (slope-of self)
-              (setf m (wb::prompt-user :type t
+              (setf m (wb::prompt-user :result-type t
                                  :read-type :eval
                                  :prompt-string "Enter new slope"))))
       (if (eql c :prompt)
         (setf (intercept-of self)
-              (setf c (wb::prompt-user :type t
+              (setf c (wb::prompt-user :result-type t
                                  :read-type :eval
                                  :prompt-string "Enter new intercept"))))
       
@@ -151,7 +151,7 @@
 
 (defmethod set-line-slope ((self line) &key value (draw? t))
   (if (null value)
-    (setf value (wb::prompt-user :type t
+    (setf value (wb::prompt-user :result-type t
                                  :read-type :eval
                                  :prompt-string "Enter new slope")))
   (if  (not (numberp value))
@@ -176,7 +176,7 @@
 (defmethod set-line-intercept ((self line) &key value (draw? t))
   (if draw? (erase-view self))
   (if (null value)
-    (setf value (wb::prompt-user :type 'number
+    (setf value (wb::prompt-user :result-type 'number
                                  :read-type :eval
                                  :prompt-string "Enter new intercept")))
   (setf (intercept-of self) value)
@@ -218,7 +218,7 @@
              (setf (intercept-of self)
                    (setq locn 
                          (cond ((eql locn :prompt)
-                                (wb::prompt-user :type t
+                                (wb::prompt-user :result-type t
                                  :read-type :eval
                                  :prompt-string "Enter new y intercept"))
                                ((null locn)
@@ -230,7 +230,7 @@
              (setf (intercept-of self)
                    (setq locn 
                          (cond ((eql locn :prompt)
-                                (wb::prompt-user :type t
+                                (wb::prompt-user :result-type t
                                  :read-type :eval
                                  :prompt-string "Enter new x intercept"))
                                ((null locn)

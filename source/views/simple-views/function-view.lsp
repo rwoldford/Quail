@@ -121,7 +121,7 @@
 
 (defmethod function-of :before ((self function-view))
   (if (eq :prompt (slot-value self 'function))
-    (let ((f (wb::prompt-user :type  t
+    (let ((f (wb::prompt-user :result-type  t
                               :prompt-string "Enter function"
                               :read-type :read)))
       (setf (slot-value self 'function)
@@ -136,7 +136,7 @@
   
   (if draw? (erase-view self))
   (if (null value)
-    (setf value (wb::prompt-user :type t ;;(or 'symbol)
+    (setf value (wb::prompt-user :result-type t ;;(or 'symbol)
                                  :prompt-string "Enter new function"
                                  :read-type :read)))
   (setf (function-of self) value)
@@ -148,7 +148,7 @@
   
   (if draw? (erase-view self))
   (if (null value)
-    (setf value (wb::prompt-user :type 'integer
+    (setf value (wb::prompt-user :result-type 'integer
                                  :prompt-string "Enter number of segments"
                                  :read-type :eval)))
   (setf (nlines-of self) value)
@@ -166,7 +166,7 @@
 
 
 (defmethod make-layer-view ((self function-view) (layer symbol) &rest args)
-     (apply #'view :type layer :draw? nil :domain (domain-of self) args))
+     (apply #'view :result-type layer :draw? nil :domain (domain-of self) args))
          
 
 (defmethod use-x-axis-p ((self function-view))

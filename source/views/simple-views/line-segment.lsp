@@ -98,9 +98,9 @@
   (if (null endpoints)
     (setf endpoints 
           (list
-           (wb::prompt-user :type 'list :read-type :read
+           (wb::prompt-user :result-type 'list :read-type :read
                                  :prompt-string "Enter first point as list")
-           (wb::prompt-user :type 'list :read-type :read
+           (wb::prompt-user :result-type 'list :read-type :read
                                  :prompt-string "Enter second point as list"))))
   (setf (lines-coords-of self) endpoints)
   (if draw? (draw-view self)))

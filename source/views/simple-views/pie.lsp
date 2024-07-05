@@ -43,11 +43,13 @@
   (if batches (setf (viewed-object-of self) batches))
   (unless weights (setf (weights-of self) #'(lambda(b) (length (list-cases b))))))
 
+#| 25SEP2023 There is another such method at line 210 email from rwo 25SEP2023
 (defmethod fix-viewports ((self pie) &key viewport ) 
   (let ((size (slot-value self 'view-size))) 
    (if (numberp size) (loop for vp in (if viewport 
                       (list viewport) (viewports-of self) )
           do (set-viewport-size vp size)))))
+|#
 
 (defmethod set-pie-colors ((self pie) colors )
   (with-update-style-cache

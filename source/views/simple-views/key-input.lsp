@@ -94,23 +94,23 @@
 
 (defmethod start-input ((self key-input-view) viewport)
   "Does nothing"
-  (declare (ignore self viewport))
+  (declare (ignorable setf viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
   )
 
 (defmethod start-input :before ((self key-input-view) viewport)
   "Ensures that the input mode is turned on before anything else happens."
-  (declare (ignore viewport))
+  (declare (ignorable viewport)) ;(declare (ignore viewport)) ; 29JUL2023
   (setf (input-mode-p self) T))
 
 (defmethod stop-input ((self key-input-view) viewport)
   "Does nothing"
-  (declare (ignore self viewport))
+  (declare (ignorable setf viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
   NIL
   )
 
 (defmethod stop-input :after ((self key-input-view) viewport)
   "Ensures that the input mode is turned off after all else is done."
-  (declare (ignore viewport))
+  (declare (ignorable viewport)) ;(declare (ignore viewport)) ; 29JUL2023
   (setf (input-mode-p self) NIL))
 
 (defmethod refocus-input ((self key-input-view) viewport
@@ -123,12 +123,12 @@
      (push (cons viewport position) (input-positions self))))
 
 (defmethod end-event-input-p ((view key-input-view) (event T))
-  (declare (ignore view event))
+  (declare (ignorable view event)) ;(declare (ignore view event)) ; 29JUL2023
   NIL)
 
 (defmethod end-event-input-p
-           ((view key-input-view) (event (eql wb:*escape-key-event*)))
-  (declare (ignore view event))
+           ((view key-input-view) (event (eql wb:+escape-key-event+))) ;(eql wb:*escape-key-event*))) 23FEB2022 gwb
+  (declare (ignorable view event)) ;(declare (ignore view event)) ;29JUL2023
   T)
 
 

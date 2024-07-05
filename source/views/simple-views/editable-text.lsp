@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;                               editable-text.lisp
+;;;                               editable-text.lsp
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -264,20 +264,28 @@
 (defmethod start-input ((self editable-text-view) viewport)
   (draw-input-mark self viewport))
 
+;;; the next method replaces the 3 block-commented out below it 29SEP2023  gwb
 (defmethod end-event-input-p ((view editable-text-view) (event T))
-  (declare (ignore view event))
+  (declare (ignorable view event))
+  (cond ((eql event wb:+enter-key-event+) T)
+        ((eql event wb:+escape-key-event+) T)
+        (T nil)))
+  
+#|
+(defmethod end-event-input-p ((view editable-text-view) (event T)) ;T)) 18SEP2023
+  (declare (ignorable view event)) ;(declare (ignore view event)) ;29JUL2023
   NIL)
 
 (defmethod end-event-input-p
-           ((view editable-text-view) (event (eql wb:*enter-key-event*)))
-  (declare (ignore view event))
+           ((view editable-text-view) (event (eql wb:+enter-key-event+))) ;wb:*enter-key-event*))) 23FEB2022 gwb
+  (declare (ignorable view event)) ;(declare (ignore view event)) ;29JUL2023
   T)
 
 (defmethod end-event-input-p
-           ((view editable-text-view) (event (eql wb:*escape-key-event*)))
-  (declare (ignore view event))
+           ((view editable-text-view) (event (eql wb:+escape-key-event+))) ;wb:*escape-key-event*))) 23FEB2022 gwb
+  (declare (ignorable view event)) ;(declare (ignore view event)) ; 28JUL2023
   T)
-
+|#
 
 
 (defmethod refocus-input ((self editable-text-view) viewport
@@ -492,7 +500,7 @@
               ;; Deletion of previous character must be treated differently from
               ;; simply adding characters.
               ;;
-              (if (member char (list wb:*rubout-event* wb:*delete-event*))
+              (if (member char (list wb:+rubout-event+ wb:+delete-event+)) ;wb:*rubout-event* wb:*delete-event*)) 23FEB2022 gwb
                 (cond
                  ((null last-index)
                   ;; Nothing is here, delete is bogus.

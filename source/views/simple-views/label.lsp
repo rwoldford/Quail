@@ -75,7 +75,7 @@
     ;;(format *quail-query-io* "~&New text for ~S :" self)
     ;;(setq text (string (read *quail-query-io*))))
     (erase-view self)
-    (setq text (wb:prompt-user :type 'string
+    (setq text (wb:prompt-user :result-type 'string
                                :prompt-string "Enter text")))
   (if text (setf (text-of self) text))
   )

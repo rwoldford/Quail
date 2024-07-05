@@ -60,7 +60,7 @@
 (defmethod (setf numerical-value-of) (new-value (self numerical-label))
   
   (when (eq new-value :prompt)
-    (setq new-value (wb:prompt-user :type 'number
+    (setq new-value (wb:prompt-user :result-type 'number
                                     :prompt-string "Enter numerical value")))
   (let ((drawn? (viewports-of self)))
     (when (numberp new-value)
@@ -87,8 +87,8 @@
       (if drawn? (draw-view self))
       )
      ((wb::prompt-t-or-f
-       (format NIL "New value (~s) for format is not a string. ~&~
-                    Would you like to construct one now?" new-value))
+       (format NIL "New value (~s) for format is not a string. ~& 
+                    Would you like to construct one now?" new-value)) ;;; spce added after ~&  12MAR2022  gwb
       (set-numerical-format self NIL :draw? drawn?)
       ))))
 
@@ -123,7 +123,7 @@
       (cond
        ((string-equal format-type "Lisp format directive")
         (setf format
-              (wb:prompt-user :type 'string :read-type :eval
+              (wb:prompt-user :result-type 'string :read-type :eval
                               :prompt-string 
                               (format nil "Format directive string:")
                               :left (2d-position-x pos)
@@ -139,7 +139,7 @@
                  ("Pad character" )
                  )
                :prompt-text (format NIL
-                                    "Fixed-format floating point. ~%~
+                                    "Fixed-format floating point. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -181,7 +181,7 @@
                  ("Exponent character" )
                  )
                :prompt-text (format NIL
-                                    "Exponential floating point. ~%~
+                                    "Exponential floating point. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -222,7 +222,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Decimal. ~%~
+                                    "Decimal. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -261,7 +261,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Binary. ~%~
+                                    "Binary. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -300,7 +300,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Octal. ~%~
+                                    "Octal. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -339,7 +339,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Hexadecimal. ~%~
+                                    "Hexadecimal. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -380,7 +380,7 @@
                  ("Interval between commas" )
                  )
                :prompt-text (format NIL
-                                    "Radix. ~%~
+                                    "Radix. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -420,7 +420,7 @@
                  ("Pad character" )
                  )
                :prompt-text (format NIL
-                                    "Dollars floating point. ~%~
+                                    "Dollars floating point. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -454,7 +454,7 @@
                  ("Exponent character" )
                  )
                :prompt-text (format NIL
-                                    "General floating point. ~%~
+                                    "General floating point. ~%
                                      Fill in values as appropriate:")
                ))
         (loop for pair in format-type
@@ -487,7 +487,7 @@
         )
        (T
         (setf format
-              (wb:prompt-user :type 'string :read-type :eval
+              (wb:prompt-user :result-type 'string :read-type :eval
                               :prompt-string 
                               (format nil "Format directive string:")
                               :left (2d-position-x pos)
