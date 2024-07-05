@@ -259,7 +259,7 @@
 
 (defgeneric functions-of (d-view))
  
-(defgeneric coord-strings (d-view))
+;(defgeneric coord-strings (d-view)) defined at line 168
 
 ;;;----------------------------------------------------------------------------------
 

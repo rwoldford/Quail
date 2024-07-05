@@ -248,7 +248,7 @@
 (defmethod change-variable  ((self d-view) &rest args
                                          &key (draw? t ) function )
   (when (eq function :prompt)
-    (setq function (wb::prompt-user :type  t
+    (setq function (wb::prompt-user :result-type  t
                                     :prompt-string "Enter function"
                                     :read-type :read))
     
@@ -273,11 +273,11 @@
                                  (x-transform :none) (y-transform :none) 
                                  (draw? t) (link? t))
   (if (eq x-function :prompt)
-    (setq x-function (wb::prompt-user :type  t
+    (setq x-function (wb::prompt-user :result-type  t
                            :prompt-string "Enter X function"
                            :read-type :read)))
   (if (eq y-function :prompt)
-    (setq y-function (wb::prompt-user :type  t
+    (setq y-function (wb::prompt-user :result-type  t
                            :prompt-string "Enter Y function"
                            :read-type :read)))
   (let ((new-x? (or x x-function (not (eq :none x-transform))))
@@ -340,7 +340,7 @@
 (defmethod change-variable ((self 1d-view) &rest args
                             &key var function (transform :none) (draw? t) (link? t) )
    (if (eq function :prompt)
-    (setq function (wb::prompt-user :type  t
+    (setq function (wb::prompt-user :result-type  t
                            :prompt-string "Enter function"
                            :read-type :read)))
    (let ((axis (axis-of-orientation self))
