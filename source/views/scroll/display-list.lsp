@@ -285,6 +285,7 @@
 (defmethod construct-sub-views  ((self batch-display-list) &rest args
                                  &key 
                                   batches by labels  order-levels )
+  (declare (ignorable labels)) ; 04SEP2023
   (if (or by batches)
     (let (( subsets (remove nil (get-batches :by by :batches batches :dataset (dataset-of self) 
                                              :cases (cases-of self)
