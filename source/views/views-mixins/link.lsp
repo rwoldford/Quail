@@ -150,7 +150,7 @@
 ;;; Added do-nothing primary FEB 02,1998
 (defmethod set-highlight-style  ((self linkable-mixin) hi-val
                                  &key (draw-links? t) element  (draw? t) (erase? draw?))
-   (declare (ignore self hi-val draw-links? element  erase?))
+   (declare (ignorable self hi-val draw-links? element erase?)) ;(declare (ignore self hi-val draw-links? element  erase?)) ;29JUL2023
    (call-next-method))
 
 

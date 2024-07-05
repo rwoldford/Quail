@@ -112,10 +112,15 @@
           (line-segment-intersectp r b r tp x2 y2 x3 y3)
           (line-segment-intersectp r b r tp x y x3 y3)
           
-          (line-segment-intersectp t tp l tp x y x1 y1)
-          (line-segment-intersectp t tp l tp x2 y2 x1 y1)
-          (line-segment-intersectp t tp l tp x2 y2 x3 y3)
-          (line-segment-intersectp t tp l tp x y x3 y3)
+          ;(line-segment-intersectp t tp l tp x y x1 y1)
+          ;(line-segment-intersectp t tp l tp x2 y2 x1 y1) ;;; 08MAR2022 gwb
+          ;(line-segment-intersectp t tp l tp x2 y2 x3 y3)
+          ;(line-segment-intersectp t tp l tp x y x3 y3)
+
+          (line-segment-intersectp r tp l tp x y x1 y1)
+          (line-segment-intersectp r tp l tp x2 y2 x1 y1)
+          (line-segment-intersectp r tp l tp x2 y2 x3 y3)
+          (line-segment-intersectp r tp l tp x y x3 y3)
         
           (line-segment-intersectp l tp l b x y x1 y1)
           (line-segment-intersectp l tp l b x2 y2 x1 y1)
@@ -218,12 +223,13 @@
         
         ))))
 
-(defmethod set-brush-angle ((self angled-brush) angle)
-     (setf (brush-angle self) angle)
-    (set-brush-cache-pars self))
+;; Already defined at line 143 in identical code - chose the earlier one GWB 07SEP2023
+;(defmethod set-brush-angle ((self angled-brush) angle)
+;     (setf (brush-angle self) angle)
+;    (set-brush-cache-pars self))
 
 
-(defmethod reshape-brush ((self brushable-view-mixin) 
+(defmethod reshape-brush ((self angled-brush) ;brushable-view-mixin) 07SEP2023
                           &key viewport width height)
   
   (let ((brush (brush-of self)) )

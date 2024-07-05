@@ -475,7 +475,7 @@
 
 
 
-(defclass pass-draws-to-subviews () ())
+;(defclass pass-draws-to-subviews () ()) ;; already at line 59 20SEP2023
 
 
 (defmethod styles-to-subs ((self pass-draws-to-subviews) ) 
@@ -605,7 +605,7 @@
       (case new
               (:larger (+  old inc)) 
               (:smaller (-  old inc))
-              (:prompt (wb:prompt-user :type 'number 
+              (:prompt (wb:prompt-user :result-type 'number 
                                        :read-type :eval
                                        :prompt-string 
                                        (format nil "Change size from ~A" old)))
@@ -685,7 +685,7 @@
       (case new
               (:larger (+  old inc)) 
               (:smaller (-  old inc))
-              (:prompt (wb:prompt-user :type 'number 
+              (:prompt (wb:prompt-user :result-type 'number 
                                        :read-type :eval
                                        :prompt-string 
                                        (format nil "Change width from ~A" old)))
@@ -698,7 +698,7 @@
         (case new
               (:larger (+  old inc)) 
               (:smaller (-  old inc))
-              (:prompt (wb:prompt-user :type 'number 
+              (:prompt (wb:prompt-user :result-type 'number 
                                        :read-type :eval
                                        :prompt-string 
                                        (format nil "Change height from ~A" old)))
