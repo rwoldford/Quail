@@ -324,6 +324,7 @@
     (apply plot-local args))
   )
 
+#|
 (let ((plot-local (make-view-constructor-fn '2d-plot 
                                             :default-interior 'lines)))
   (setf (get 'lines-plot 'view-class) '2d-plot)
@@ -351,7 +352,8 @@
     (scat-mat :function))"
     (declare (ignore data x y))
     (apply plot-local args))
-  )  
+  )
+|#  
 
 (let ((plot-local (make-view-constructor-fn '2d-plot 
                                             :default-interior 'simple-lines)))

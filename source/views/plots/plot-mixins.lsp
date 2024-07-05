@@ -128,10 +128,10 @@
                 (case value
                   (:larger (* 1.5 old))
                   (:smaller (* 0.67 old))
-                  (t (wb:prompt-user :type 'number :read-type :eval
+                  (t (wb:prompt-user :result-type 'number :read-type :eval
                                      :prompt-string
                                      (format nil "Change ~A from ~S" parameter old))))
-                (wb:prompt-user :type 'number :read-type :eval
+                (wb:prompt-user :result-type 'number :read-type :eval
                                 :prompt-string (format nil "Change ~A from ~S" parameter old)))))
       (setf (getf pars parameter) value)
       (if recompute? (reposition-view self))))

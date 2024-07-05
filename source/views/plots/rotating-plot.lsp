@@ -67,7 +67,7 @@
 ;;;----------------------------------------------------------------------------------
 (defun rotate-controls ( &rest args &key (x-text "X") target (y-text "Y") (z-text "Z") (draw? nil)
                               &allow-other-keys)
-  (declare (ignore args))
+  ;(declare (ignore args))
   (let ((r
          (make-instance 'rotate-controls :x-text x-text 
                         :y-text y-text 

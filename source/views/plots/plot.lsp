@@ -687,7 +687,7 @@
   (when viewport
     (if draw? (erase-view self :viewport viewport))
     (let*  ((iv (interior-view-of self))
-          (vp-iv (select-viewport iv viewport))
+          ;(vp-iv (select-viewport iv viewport)) ; 30JUL2023
             (tr (select-map-to-viewport self viewport))
             (max-vp (apply-transform tr (subview-position-region self)))
             
