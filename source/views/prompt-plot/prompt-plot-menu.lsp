@@ -70,7 +70,7 @@
                    (when *selected-views*
                      (push 
                       (let ((s (list-plot-cases *selected-views*))
-                            (name (wb:prompt-user :type 'symbol
+                            (name (wb:prompt-user :result-type 'symbol
                                             :read-type :read
                                             :prompt-string "Enter name")))
                       (list name
@@ -146,7 +146,7 @@
                                      (if subs
                                        (grid-layout :subviews subs :draw? t)
                                        (grid-layout :draw? t :nsubviews 
-                                                    (wb:prompt-user :type 'number :read-type :eval
+                                                    (wb:prompt-user :result-type 'number :read-type :eval
                                 :prompt-string "Enter number of subviews")
                                    )))))
                  ("View Layout" (view-layout :nsubviews 0 :draw? t))
@@ -172,14 +172,14 @@
                   ("Unlink views" (unlink-top-views))
                   ("New link table" ,#'(lambda(ignore)
                                          (declare (ignore ignore))
-                                         (let ((f (wb::prompt-user :type  t
+                                         (let ((f (wb::prompt-user :result-type  t
                                                                    :prompt-string "Enter a link test function"
                                                                    :read-type :read))
                                                name
                                                new)
                                                                
                                                     (setq new (make-link-table :test (get-function f)))
-                                                    (setq name (wb:prompt-user :type 'symbol
+                                                    (setq name (wb:prompt-user :result-type 'symbol
                                                                                :read-type :read
                                                                                :initial-string (link-table-name-of new)
                                                                                :prompt-string "Name of table"))
