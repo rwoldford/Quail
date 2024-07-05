@@ -33,7 +33,7 @@
                               (viewed-object NIL viewed-object?)
                               (ncols 5)
                               &allow-other-keys)
-   (declare (ignore thing keyword-args viewed-object ncols))
+   (declare (ignorable thing keyword-args viewed-object ncols)) ;(declare (ignore thing keyword-args viewed-object ncols)) ; 30JUL2023
    (call-next-method))
 
 
