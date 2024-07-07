@@ -21,7 +21,8 @@
   "Returns the smallest divisor of the integer n that is ~
    greater than the value of the keyword argument from (default 2)."
   (declare (integer n)
-           (optimize (speed 3)))
+           (optimize (speed 3)
+                     ))
   (if (and (integerp n) (> n 0))
     (if (= n 1)
       1
@@ -41,14 +42,16 @@
 (defun dividesp (a b)
   "Tests whether the integer a divides the integer b."
   (declare (type integer a b)
-           (optimize (speed 3)))
+           (optimize (speed 3) 
+                     ))
   (= (mod b a) 0))
 
 
 (defun factor (n)
   "Returns a list of the prime factors of the integer n."
   (declare (type integer n)
-           (optimize (speed 3)))
+           (optimize (speed 3) 
+                     ))
   (cond ((= 0 n) '())
         ((= 1 n) '())
         ((< n 0) (let ((result (factor (abs n))))
