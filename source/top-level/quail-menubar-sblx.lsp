@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;                          quail-menubar-pc.lsp                               
+;;;                          quail-menubar-sblx.lsp                               
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -17,9 +17,11 @@
 ;;;--------------------------------------------------------------------------------
 ;;; See also Q/Q/S/Top-Level/quail-menubar-pc-log.lsp
 (in-package :quail)
+
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(*quail-menubar* add-menu-in-quail-menubar remove-menu-from-quail-menubar
           install-quail-menubar
           )))
+
 #| Replaced March 25 1998
 ;; Nov 11+ 1997 redefined *q-mnb* to be cg::*lisp-menu-bar*
 (defvar *quail-menubar*
@@ -30,12 +32,14 @@
 |#
 (defvar *quail-menubar* NIL
   "The default menubar put up for the Quail system.")
-#|   06JUL2023   not used in this file!
+
 (defvar *system-default-menubar-items*
   (cg::menu-items wb::*system-default-menubar*)
   "The default menubar items of the system.")
-  |#
+
+
 ;; Added 042098 gwb
+
 (defun add-menu-in-quail-menubar (menu)
    "Adds the menu to Quail's menubar. ~
    if it is not already there. Adjusts the width of the menubar if necessary.~
@@ -52,6 +56,7 @@
         (install-quail-menubar)
         (add-menu-in-quail-menubar menu))
       ))
+
 (defun remove-menu-from-quail-menubar (menu)
    "Removes the menu from Quail's menubar. ~
     if it is there. Adjusts the width of the menubar after removal.
@@ -64,16 +69,18 @@
          (warn "To get the default one back type ~%(install-default-quail-menubar). ")
          (install-quail-menubar)))
  )
+
+
 ;; Nov 11+ changed wb::*sy-def-mnb-its* to *sy-def-mnb-its*
 ;; since that variable is defined at the top of this file!
 (defun install-default-quail-menubar ()
   "Creates and installs the default top level Quail menubar."
   (declare (special *quail-menubar* wb::*system-default-menubar*))
-     #|
+  ;;   #|
   (when (and *quail-menubar* (cg::streamp *quail-menubar*))
     (cg::close *quail-menubar*)
     (cg::close (cg::parent *quail-menubar*)))
-    |#
+  ;;   |#
   (when (or (null wb::*system-default-menubar*)
             ;;             (typep wb::*system-default-menubar* 'cg::closed-stream)
             (not (cg::open-stream-p (cg::parent wb::*system-default-menubar*)))
@@ -96,13 +103,14 @@
   (add-restore-lisp-functions
     #'wb::set-system-default-menubar
     #'q::install-default-quail-menubar))
+
 ;;;
 ;;;  Spot to get rid of pop-up menus when a view-window is closed
 ;;;
- (excl::without-package-locks
-   (defmethod cg::device-close :around ((w vw::view-window) abort)
+
+(defmethod cg::device-close :around ((w vw::view-window) abort)
    (declare (ignore abort))
-   (let ((vps-vws (vw::viewports-and-views-of w)) ;(viewports-and-views-of w)) ; 30JUL2030
+   (let ((vps-vws (viewports-and-views-of w))
          vws
          (result (call-next-method)))
       (when vps-vws
@@ -123,11 +131,11 @@
                (wb::release-menu-space (slot-value a-view m))
                (setf (slot-value a-view m) NIL))
              (when (slot-exists-p a-view 'vw::subviews)
-                (loop for sv in (vw::subviews-of a-view) ;(subviews-of a-view) ; 30JUL2023
+                (loop for sv in (subviews-of a-view)
                   do (doit sv))))
             )
            (loop for vw in vws do (doit vw)))
          )
       result)
    )
-)
+

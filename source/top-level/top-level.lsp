@@ -53,14 +53,14 @@
   (setup-legal-top-level-loop-functions))
 
 (defun top-level-loop-p (fun)
-  "T if the function is a legal top-level loop function, ~
+  "T if the function is a legal top-level loop function,
    NIL otherwise."
   (declare (special *legal-top-level-loop-functions*))
   (find fun *legal-top-level-loop-functions*))
 
 
 (defun install-legal-top-level-loop (fun)
-  "Installs the argument as a legal top-level loop function.  ~
+  "Installs the argument as a legal top-level loop function.
    Need only be done once."
   (declare (special *legal-top-level-loop-functions*))
   (if (not (top-level-loop-p fun))
@@ -91,7 +91,7 @@
 
 
 (defun pop-to-top-level ()
-  "Pops the next pending levels off the stack of top-level loop functions  ~
+  "Pops the next pending levels off the stack of top-level loop functions
    until the system top-level loop function is reached."
   (declare
    (special *pending-top-levels*
@@ -200,7 +200,7 @@
   (if (quail-running-p) (decf *quail-levels* 1)))
 
 (defun reset-quail-level ()
-  "Resets the counter of quail top-level loop functions pending to ~
+  "Resets the counter of quail top-level loop functions pending to
    its original value."
   (declare (special *quail-levels*))
   (setf *quail-levels* 0))
@@ -212,7 +212,7 @@
 ;;;
 
 (defvar *quail-top-level-commands* NIL
-  "A hash table containing the commands that are special to the ~
+  "A hash table containing the commands that are special to the
    quail top-level loop.")
 
 
@@ -273,9 +273,9 @@
   (declare (special *quail-top-level-commands*
                     *quail-terminal-io*))
   (format *quail-terminal-io*
-          "~&~%~
-           Besides any legal LISP expression, Quail provides a collection of ~%~
-           top-level commands.  These are usually keywords. ~%~
+          "~&~%
+           Besides any legal LISP expression, Quail provides a collection of ~%
+           top-level commands.  These are usually keywords. ~%
            Currently available quail top-level commands are: ~2%"
           )
   (maphash
@@ -305,15 +305,15 @@
        (command-name command-fn
         &optional (doc-string "No documentation available."))
   
-  "Adds a command to Quail's set of top-level commands.  ~
-   First argument is a symbol representing the command name  ~
-   (typically a keyword symbol); second is a function of no arguments ~
-   to be funcalled when the command is executed.  ~
+  "Adds a command to Quail's set of top-level commands.
+   First argument is a symbol representing the command name
+   (typically a keyword symbol); second is a function of no arguments
+   to be funcalled when the command is executed.
    Optionally, a documentation string may be given."
   
   (declare (special *quail-top-level-commands*))
   (if (quail-command-p command-name)
-    (if (quail-yes-or-no-p "The command ~s already exists.  ~%~
+    (if (quail-yes-or-no-p "The command ~s already exists.  ~%
                             Replace it anyway?" command-name)
       (setf (gethash command-name *quail-top-level-commands*)
             (list command-fn doc-string)))
@@ -322,14 +322,14 @@
 
 
 (defun delete-quail-command (command-name)
-  "Removes the Quail top-level command named by the argument.  ~
+  "Removes the Quail top-level command named by the argument.
    Returns T if command was present, NIL otherwise."
   (declare (special *quail-top-level-commands*))
   (remhash command-name *quail-top-level-commands*))
 
 
 (defun do-quail-command (command-name)
-  "Executes the named top-level Quail command if it exists.  ~
+  "Executes the named top-level Quail command if it exists.
    Error otherwise."
   (declare (special *quail-top-level-commands*))
   (multiple-value-bind (command-fn-info exists?)
@@ -376,13 +376,13 @@
   (add-quail-command   'help
                        #'(lambda ()
                            (format *quail-terminal-io*
-                                   "With the exception of ? all quail toplevel commands ~
-                                    are keyword symbols.  ~&~
-                                    That is, the first character is a colon.~&~
-                                    If you would like general help information type :help.  ~&~
-                                    If you would only like to see the set of available quail toplevel commands ~
-                                    type ?.  ~%~
-                                    N.B. This message will appear only once.  ~&~
+                                   "With the exception of ? all quail toplevel commands
+                                    are keyword symbols.  ~&
+                                    That is, the first character is a colon.~&
+                                    If you would like general help information type :help.  ~&
+                                    If you would only like to see the set of available quail toplevel commands
+                                    type ?.  ~%
+                                    N.B. This message will appear only once.  ~&
                                     From now on you must use :help or ?.")
                            (delete-quail-command 'help)
                            (show-quail-commands))
@@ -425,7 +425,7 @@
 
 (defun eval-print (&optional (stream *quail-terminal-io*)
                              &aux result)
-  "Evaluates and prints the form supplied.  Output to stream, ~
+  "Evaluates and prints the form supplied.  Output to stream,
    if supplied, otherwise to *quail-terminal-io*."
   (declare
    (special *quail-terminal-io*
@@ -455,7 +455,7 @@
 
 
 (defun quail-top-level-eval-current-form ()
-  "Evaluates and prints the value of the current form (the value of the ~
+  "Evaluates and prints the value of the current form (the value of the
    - symbol).  Accepts quail commands as well."
   (declare (special -))
   (if (quail-command-p -)
@@ -508,9 +508,9 @@
   (declare (special *package* *quail-terminal-io* *quail-levels*))
   (if (zerop *quail-levels*)
     (format *quail-terminal-io*
-            "~%Welcome to ~a! ~%~%~
-             Several keyword commands are available at Quail's top-level loop.  ~&~
-             To see these, type ? at the Quail prompt.  ~&~
+            "~%Welcome to ~a! ~%
+             Several keyword commands are available at Quail's top-level loop.  ~&
+             To see these, type ? at the Quail prompt.  ~&
              If you exit Quail, you can always reinvoke it by typing (quail). ~%"
             (qk::quail-release)))
   (increment-quail-level)

@@ -40,7 +40,7 @@
                           (top-level *system-top-level-loop-function*))
   "Installs the top-level function, if provided.  Default ~
    is the one supplied with the system."
-  (declare (special *system-top-level-loop-function*))
+  (declare (special *system-top-level-loop-function*) (ignore top-level))
   (inform-user "New top level functions cannot be installed yet in ~
                 this system.")
   ;;(ccl:%set-toplevel top-level)
