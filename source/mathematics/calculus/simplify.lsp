@@ -169,7 +169,7 @@
 
 (defun flatten-sum (expression)
   (flet
-    ((constant-p (x) (qk::extnump x))
+    (;(constant-p (x) (qk::extnump x))
      (sum-p (x) (and (listp x) (eq '+ (car x)))))
     (let ((arg-list (rest expression)))
       (if arg-list
@@ -205,7 +205,7 @@
 
 (defun flatten-product (expression)
   (flet
-    ((constant-p (x) (qk::extnump x))
+    (;(constant-p (x) (qk::extnump x))
      (product-p (x) (and (listp x) (eq '* (car x)))))
     (let ((arg-list (rest expression)))
       (if arg-list
@@ -404,9 +404,10 @@
   )
 
 (defun simplify-division (expression)
-  (flet
-    ((constant-p (x) (qk::extnump x))
-     (quotient-p (x) (and (listp x) (eq '/ (car x)))))
+  ;(flet
+    ;(;(constant-p (x) (qk::extnump x))
+     ;(quotient-p (x) (and (listp x) (eq '/ (car x))))
+  ;   )
     (let ((arg-list (rest expression)))
       (if arg-list
         (if (= 1 (length arg-list))
@@ -414,15 +415,16 @@
           (list '/ (first arg-list)
                 (simplify (cons '* (rest arg-list)))))
         expression)
-      ))
+      )
+    ;)
   )
 
 (defun simplify (expression)
   (labels
-    ((constant-p (x) (qk::extnump x))
-     (variable-p (x) (symbolp x))
-     (same-variable-p (x y)
-       (and (variable-p x) (variable-p y) (eq x y)))
+    (;(constant-p (x) (qk::extnump x))
+     ;(variable-p (x) (symbolp x))
+     ;(same-variable-p (x y)
+     ;  (and (variable-p x) (variable-p y) (eq x y)))
      (sum-p (x) (and (listp x) (eq '+ (car x))))
      (difference-p (x) (and (listp x) (eq '- (car x))))
      (product-p (x) (and (listp x) (eq '* (car x))))

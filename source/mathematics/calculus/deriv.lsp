@@ -123,7 +123,7 @@
      (power (p) (caddr p))
      (exponent (x) (cadr x))
      (log-arg (x) (cadr x))
-     (log-base (x) (third x))
+     ;(log-base (x) (third x))
      (lambda-arglist (x) (cadr x))
      (lambda-contents (x) (caddr x))
      
@@ -261,10 +261,10 @@
 
      (make-cos (x) (if (qk::extnump x) (cos x) (list 'cos x)))
      (make-sin (x) (if (qk::extnump x) (sin x) (list 'sin x)))
-     (make-tan (x) (if (qk::extnump x) (tan x) (list 'tan x)))
+     ;(make-tan (x) (if (qk::extnump x) (tan x) (list 'tan x)))
      (make-cosh (x) (if (qk::extnump x) (cosh x) (list 'cosh x)))
      (make-sinh (x) (if (qk::extnump x) (sinh x) (list 'sinh x)))
-     (make-tanh (x) (if (qk::extnump x) (tanh x) (list 'tanh x)))
+     ;(make-tanh (x) (if (qk::extnump x) (tanh x) (list 'tanh x)))
      
      (make-lambda (var-list alg-expr) (list 'lambda var-list alg-expr))
      
