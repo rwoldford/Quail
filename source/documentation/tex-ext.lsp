@@ -23,7 +23,7 @@
 
 
 (defvar tex-doc-style "quail"
-  "The name of the TeX style file containing the TeX style extensions ~
+  "The name of the TeX style file containing the TeX style extensions ~%
    for the documentation system.")
 ;;;--------------------------------------------------------------------------
 ;;;
@@ -35,8 +35,8 @@
                              &key (left nil left?)
                              (middle nil middle?)
                              (right nil right?))
-  "Writes the TeX commands which produce a boxed header ~
-   with left left-justified horizontally, middle centred, and right ~
+  "Writes the TeX commands which produce a boxed header ~%
+   with left left-justified horizontally, middle centred, and right ~%
    right-justified."
   
   (format destination "~&\\headerbox{")
@@ -56,13 +56,13 @@
 (defun write-tex-doc-paragraph (destination
                                 &key (title nil title?)
                                 (body nil body?))
-  "Writes the TeX commands which produce a document paragraph ~
+  "Writes the TeX commands which produce a document paragraph %
    having title title and contents body."
   
-  (format destination "~& ~%~
+  (format destination "~& ~%~%
                        {\\bf ")
   (if title?    (write-tex-value destination title))
-  (format destination "}~%~
+  (format destination "}~%~%
                        ~%")
   (if body?  (write-tex-value destination
                               (if (stringp body) (format NIL body) body)))
@@ -77,21 +77,21 @@
 
 (defun write-tex-begin-hang-par (destination
                                  &key (title nil title?))
-  "Writes the TeX commands to destination that are necessary to begin ~
-   a hanging paragraph.  If title is given this is emphasised ~
+  "Writes the TeX commands to destination that are necessary to begin ~%
+   a hanging paragraph.  If title is given this is emphasised ~%
    as the first word in the paragraph."
   
   (format destination "~&\\beginhang")
   (when title?
     (format destination "~&{\\bf ")
     (write-tex-value destination title)
-    (format destination "}~
+    (format destination "}~%
                          \\hspace{2em}")))
 
 (defun write-tex-end-hang-par (destination)
-  "Writes the TeX commands to destination that are necessary to end ~
+  "Writes the TeX commands to destination that are necessary to end ~%
    a hanging paragraph."
-  (format destination "~& ~%~
+  (format destination "~& ~%
                        \\endhang"))
 
 
@@ -120,7 +120,7 @@
 (defun write-tex-titled-list (destination
                               &key (title nil title?)
                               (items nil items?))
-  "Writes the TeX commands necessary to produce a titled list ~
+  "Writes the TeX commands necessary to produce a titled list ~%
    of items."
   (if title?
     (write-tex-begin-titled-list destination :title title)
@@ -137,7 +137,7 @@
 (defun write-tex-titled-alist (destination
                                &key (title nil title?)
                                (items nil items?))
-  "Writes the TeX commands necessary to produce a titled list ~
+  "Writes the TeX commands necessary to produce a titled list ~%
    of items."
   (if title?
     (write-tex-begin-titled-list destination :title title)
@@ -159,7 +159,7 @@
                               &key
                               (title nil title?)
                               (items nil items?))
-  "Writes the TeX commands necessary to produce a titled list ~
+  "Writes the TeX commands necessary to produce a titled list ~%
    of items."
   (if title?
     (write-tex-begin-titled-list destination :title title)
@@ -194,7 +194,7 @@
 (defun write-tex-doc-examples (destination
                             &key (title "Examples")
                             (examples nil))
-  "Produce a help document string for examples ~
+  "Produce a help document string for examples ~%
    having title title and examples examples."
   (cond
    ((and (assoc :root examples) (assoc :text examples))

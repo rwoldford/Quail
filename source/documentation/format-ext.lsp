@@ -276,7 +276,7 @@
   (format-end-titled-alist destination)
   )
 
-
+#| duplicate de below
 (defun format-arg-element (destination
                            &key (title NIL title?)
                                 (items NIL items?)
@@ -302,6 +302,8 @@
           )
     (format destination "~%")
     ))
+    
+    |#
 
 (defun format-arg-element (destination
                            &key (title NIL title?)

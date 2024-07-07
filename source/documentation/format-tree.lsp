@@ -73,7 +73,9 @@
                             (read s NIL NIL))
                      (result nil (push token result)))
                     ((null token) (nreverse result))
-                  ())))))
+                  ;()
+                  )
+                ))))
       #|
       #'(lambda (node)
           #'(lambda ()

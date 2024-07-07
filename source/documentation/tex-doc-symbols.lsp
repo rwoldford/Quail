@@ -57,7 +57,7 @@
     (let
       ((ofile-fun (if (functionp *user-tex-out-path-function*)
                     *user-tex-out-path-function*
-                    #'mk::doc-tex-path-name)))
+                    #'doc-tex-path-name)))
       (loop for type in types do
             (with-open-file
               (ofile (funcall ofile-fun sym type)
@@ -107,7 +107,7 @@
   ;;
   (if types
     (loop for type in types do
-          (format destination "~&\\include{~a}" (mk::doc-file-name sym type)))))
+          (format destination "~&\\include{~a}" (doc-file-name sym type)))))
 
 
 

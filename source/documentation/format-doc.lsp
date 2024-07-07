@@ -681,41 +681,41 @@
 
 (defmethod format-doc (destination (a-d argument-documentation))
   (with-accessors 
-    ((&required &required)
-     (&rest &rest)
-     (&key &key)
-     (&optional &optional)
-     (&aux &aux)
-     (&allow-other-keys &allow-other-keys))
+    ((required-args required-args)
+     (rest-args rest-args)
+     (key-args key-args)
+     (optional-args optional-args)
+     (aux-args aux-args)
+     (allow-other-keys-args allow-other-keys-args))
     
     a-d
     
     (format-begin-titled-list destination :title "Arguments")
     
-    (when &required
+    (when required-args
       (format-arg-element destination
                           :title "Required"
-                          :items &required))
-    (when &rest
+                          :items required-args))
+    (when rest-args
       (format-arg-element destination
-                          :title "&rest"
-                          :items &rest))
-    (when &key
+                          :title "rest-args"
+                          :items rest-args))
+    (when key-args
       (format-arg-element destination
-                          :title "&key"
-                          :items &key))
-    (when &optional
+                          :title "key-args"
+                          :items key-args))
+    (when optional-args
       (format-arg-element destination
-                          :title "&optional"
-                          :items &optional))
-    (when &aux
+                          :title "optional-args"
+                          :items optional-args))
+    (when aux-args
       (format-arg-element destination
-                          :title "&aux"
-                          :items &aux))
-    (when &allow-other-keys
+                          :title "aux-args"
+                          :items aux-args))
+    (when allow-other-keys-args
       (format-arg-element destination
-                          :title "&allow-other-keys"
-                          :items &allow-other-keys))
+                          :title "allow-other-keys-args"
+                          :items allow-other-keys-args))
     
     (format destination  "~%")))
 

@@ -34,9 +34,18 @@
                    (:see-also quail-doc-classes quail-doc-types)  "))
 
 ;;; Add do-nothing FEB 04 1998
-(defmethod make-doc  (thing type)
-   (declare (ignore thing type))
-   (call-next-method))
+;(defmethod make-doc  (thing type)
+;   (declare (ignorable thing type)) ;(declare (ignore thing type)) ; 30JUL2023
+;   (call-next-method))
+
+
+(defmethod make-doc ((thing T) (type T))
+    (make-instance (quail-doc-class type)
+             :name (string-downcase (format NIL"~s" thing))
+             :document 
+             (interpret-quail-documentation (documenation thing 'type)) ;(documentation thing)) 05SEP2023
+             )
+    )
 
 (defmethod make-doc :around (thing type)
   (if (quail-doc-class type)
@@ -46,15 +55,6 @@
         type thing)))
 
 
-
-(defmethod make-doc ((thing T) (type T))
-    (make-instance (quail-doc-class type)
-             :name (string-downcase (format NIL"~s" thing))
-             :document 
-             (interpret-quail-documentation (documentation thing)))
-    )
-
-
 (defmethod make-doc ((thing symbol) type)
   (let* ((doc-class (quail-doc-class type))
          (doc-type (cl-type type))
@@ -62,7 +62,8 @@
           (interpret-quail-documentation
            (if doc-type
              (documentation thing doc-type)
-             (documentation thing))))
+             (documentation thing 'type) ;(documentation thing) ; 05SEP2023
+             )))
          )
     (make-instance doc-class
            :name (string-downcase (format NIL "~s" thing))
@@ -88,7 +89,7 @@
   )
 
 (defmethod make-doc ((thing symbol) (type (eql :method)))
-  (declare (ignore type))
+  (declare (ignorable type)) ;(declare (ignore type)) ; 30JUL2023
   (make-doc (cons thing (collect-methods thing))
             :methods))
 
@@ -310,21 +311,21 @@
              NIL)
             (T (equalp (string x)
                        (string y)))))
-         (complete-annotated-arglist (arglist commented-arglist &key test)
+         (complete-annotated-arglist (arglist commented-arglist key-args test)
            (let ((result nil))
              (dolist (item arglist (nreverse result))
                (push (or (find item commented-arglist :test test) item)
                      result)))))
-    (with-slots (&required &optional &rest &aux &key &allow-other-keys &body) me
+    (with-slots (required-args optional-args rest-args aux-args key-args allow-other-keys-args body-args) me
       (let (
             ;;
-            (lam-required (mapcar #'list (cdr (assoc '&required lambda-list))))
-            (lam-rest (mapcar #'list (cdr (assoc '&rest lambda-list))))
-            (lam-key (mapcar #'list (cdr (assoc '&key lambda-list))))
-            (lam-optional (mapcar #'list (cdr (assoc '&optional lambda-list))))
-            (lam-aux (mapcar #'list (cdr (assoc '&aux lambda-list))))
-            (lam-body (mapcar #'list (cdr (assoc '&body lambda-list))))
-            (lam-allow-other-keys (cdr (assoc '&allow-other-keys lambda-list)))
+            (lam-required (mapcar #'list (cdr (assoc 'required-args lambda-list))))
+            (lam-rest (mapcar #'list (cdr (assoc 'rest-args lambda-list))))
+            (lam-key (mapcar #'list (cdr (assoc 'key-args lambda-list))))
+            (lam-optional (mapcar #'list (cdr (assoc 'optional-args lambda-list))))
+            (lam-aux (mapcar #'list (cdr (assoc 'aux-args lambda-list))))
+            (lam-body (mapcar #'list (cdr (assoc 'body-args lambda-list))))
+            (lam-allow-other-keys (cdr (assoc 'allow-other-keys-args lambda-list)))
             ;;
             (user-required (get-required-arg document))
             (user-rest (get-rest-arg document))
@@ -334,25 +335,25 @@
             (user-body (get-body-arg document))
             ;;
             )
-        (setf &required (complete-annotated-arglist
+        (setf required-args (complete-annotated-arglist
                          lam-required user-required 
                          :test #'(lambda (x y) (eqname (car x) (car y)))))
-        (setf &rest (complete-annotated-arglist
+        (setf rest-args (complete-annotated-arglist
                      lam-rest user-rest
                      :test #'(lambda (x y) (eqname (car x) (car y)))))  
-        (setf &key (complete-annotated-arglist 
+        (setf key-args (complete-annotated-arglist 
                     lam-key user-key
                     :test #'(lambda (x y) (eqname (car x) (car y)))))
-        (setf &optional (complete-annotated-arglist 
+        (setf optional-args (complete-annotated-arglist 
                          lam-optional user-optional
                          :test #'(lambda (x y) (eqname (car x) (car y)))))
-        (setf &aux (complete-annotated-arglist 
+        (setf aux-args (complete-annotated-arglist 
                     lam-aux user-aux
                     :test #'(lambda (x y) (eqname (car x) (car y)))))
-        (setf &body (complete-annotated-arglist 
+        (setf body-args (complete-annotated-arglist 
                      lam-body user-body
                      :test #'(lambda (x y) (eqname (car x) (car y)))));;
-        (setf &allow-other-keys lam-allow-other-keys)
+        (setf allow-other-keys-args lam-allow-other-keys)
         )))
   me)
   

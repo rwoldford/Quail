@@ -51,7 +51,7 @@
     (let
       ((ofile-fun (if (functionp *user-doc-out-path-function*)
                     *user-doc-out-path-function*
-                    #'mk::doc-auto-path-name)))
+                    #'doc-auto-path-name)))
       
       (loop for type in types do
             (with-open-file (ofile (funcall ofile-fun sym type)

@@ -120,7 +120,7 @@
   
   (unless path
     (unless name (setf name "sub-topic-list"))
-    (setf path (mk::doc-current-symbols-path-name name :directory directory)))
+    (setf path (doc-current-symbols-path-name name :directory directory)))
   
   (with-open-file (ofile path
                          :direction :output 
@@ -146,7 +146,7 @@
 
   (unless path
     (unless name (setf name "sub-topic-list"))
-    (setf path (mk::doc-current-symbols-path-name name :directory directory)))
+    (setf path (doc-current-symbols-path-name name :directory directory)))
 
   (with-open-file (ofile path
                          :direction :input 

@@ -21,7 +21,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(help-display)))
 
 (defgeneric help-display (thing &optional help-type)
-  (:documentation "Displays in an interactive window ~
+  (:documentation "Displays in an interactive window ~%
                    help information of type help-type on thing."))
 
 ;;;--------------------------------------------------------------------------
@@ -59,13 +59,13 @@
 ;;;--------------------------------------------------------------------------
 
 (defmethod help-display ((items list) &optional (help-type NIL))
-  "If help-type is non-NIL, then help is called repeatedly on the items ~
-   in the list with the given help-type.  If help-type is NIL and there ~
-   are exactly two items in the items list and the second item is a legitimate ~
-   doc-type, then the ~
-   second item in the list is taken to be the help type.  ~
-   Otherwise help is called ~
-   on each item in the list with no type specified.  ~
+  "If help-type is non-NIL, then help is called repeatedly on the items ~%
+   in the list with the given help-type.  If help-type is NIL and there ~%
+   are exactly two items in the items list and the second item is a legitimate ~%
+   doc-type, then the ~%
+   second item in the list is taken to be the help type.  ~%
+   Otherwise help is called ~%
+   on each item in the list with no type specified.  ~%
    (:see-also doc-type-p quail-doc-types)"
   (cond
    (help-type
@@ -112,8 +112,8 @@
                           :prompt-text
                           (format
                            NIL
-                           "Help is available on ~s for the following types:~%~
-                            Please specify which one you would like (or :NONE to cancel ~
+                           "Help is available on ~s for the following types:~%~%
+                            Please specify which one you would like (or :NONE to cancel ~%
                             request). "
                            sym)
                           )))

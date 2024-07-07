@@ -21,18 +21,18 @@
 
 (defun generate-subtopics (&key package symbol-list types
                             (sorted-topics? T))
-  "Constructs a list of list pairs suitable as sub-topics to a topic-documentation ~
-   object.  The elements of the list are ~
-   determined by the keyword parameters :package, :symbol-list, and :types.  ~
-   If no sub-topics are found to be appropriate, then no topic is generated.  ~
-   The package specifies the package where the symbols are to be found;  if ~
-   missing the symbols are taken where found. Then all documentable uses ~
-   of all external symbols of the package are given as sub-topics.  ~
-   The keyword :symbol-list is a list of the symbols to appear as sub-topics; ~
-   if missing all external symbols of the package argument are used.  ~
-   The keyword :types is a list of the ~
-   type of symbol usage to be documented (e.g. '(function macro class)); ~
-   if missing, all documentable uses of each symbol are used.  ~
+  "Constructs a list of list pairs suitable as sub-topics to a topic-documentation ~%
+   object.  The elements of the list are ~%
+   determined by the keyword parameters :package, :symbol-list, and :types.  ~%
+   If no sub-topics are found to be appropriate, then no topic is generated.  ~%
+   The package specifies the package where the symbols are to be found;  if ~%
+   missing the symbols are taken where found. Then all documentable uses ~%
+   of all external symbols of the package are given as sub-topics.  ~%
+   The keyword :symbol-list is a list of the symbols to appear as sub-topics; ~%
+   if missing all external symbols of the package argument are used.  ~%
+   The keyword :types is a list of the ~%
+   type of symbol usage to be documented (e.g. '(function macro class)); ~%
+   if missing, all documentable uses of each symbol are used.  ~%
    Returns the list of subtopics."
   (let (sub-topics)
     (flet
@@ -94,22 +94,22 @@
 
 (defun generate-topic (name &key package symbol-list types (prompt? T)
                             (sorted-topics? T))
-  "Constructs a topic documentation called name containing sub-topics as ~
-   determined by the keyword parameters :package, :symbol-list, and :types.  ~
-   If no sub-topics are found to be appropriate, then no topic is generated.  ~
-   The package specifies the package where the symbols are to be found;  if ~
-   missing the symbols are taken where found. Then all documentable uses ~
-   of all external symbols of the package are given as sub-topics.  ~
-   The package of the topic-documentation is package or the current package ~
-   if package is not given.  ~
-   The keyword :symbol-list is a list of the symbols to appear as sub-topics; ~
-   if missing all external symbols of the package argument are used.  ~
-   The keyword :types is a list of the ~
-   type of symbol usage to be documented (e.g. '(function macro class)); ~
-   if missing, all documentable uses of each symbol are used.  ~
-   Returns multiple values: the topic-documentation object and the ~
+  "Constructs a topic documentation called name containing sub-topics as ~%
+   determined by the keyword parameters :package, :symbol-list, and :types.  ~%
+   If no sub-topics are found to be appropriate, then no topic is generated.  ~%
+   The package specifies the package where the symbols are to be found;  if ~%
+   missing the symbols are taken where found. Then all documentable uses ~%
+   of all external symbols of the package are given as sub-topics.  ~%
+   The package of the topic-documentation is package or the current package ~%
+   if package is not given.  ~%
+   The keyword :symbol-list is a list of the symbols to appear as sub-topics; ~%
+   if missing all external symbols of the package argument are used.  ~%
+   The keyword :types is a list of the ~%
+   type of symbol usage to be documented (e.g. '(function macro class)); ~%
+   if missing, all documentable uses of each symbol are used.  ~%
+   Returns multiple values: the topic-documentation object and the ~%
    list of subtopics."
-  (declare (special *package*))
+  ;(declare (special *package*)) ;; violates lock on common-lisp package 19MAR2022  gwb
   (let (sub-topics result)
     (setf sub-topics
           (generate-subtopics :package package
@@ -191,7 +191,7 @@
   (let ((package-name (package-name package)))
     (if (eq type :all)
       (format nil 
-              "The package ~a.  Like all other packages, this is an ~
+              "The package ~a.  Like all other packages, this is an ~%
                internally consistent collection of symbols."
               package-name)
       (format 
@@ -210,11 +210,11 @@
                                 &key
                                 (type :all)
                                 (interned-package *package*))
-  (declare (special *package*))
+  ; (declare (special *package*))  ;; violates lock on common-lisp package 19MAR2022 gwb
   
   ;; Error checking
   (if (not (member type *package-topics*))
-    (quail-error "Sorry, don't know how to build topic documentation for ~
+    (quail-error "Sorry, don't know how to build topic documentation for ~%
                   this type: ~s" type))
   
   

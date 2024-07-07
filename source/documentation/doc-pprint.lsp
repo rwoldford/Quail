@@ -34,4 +34,4 @@
   )
 |#
 
-(defmacro doc-pprint (&rest args)
+(defmacro doc-pprint (&rest args))

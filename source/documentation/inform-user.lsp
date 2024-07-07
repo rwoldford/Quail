@@ -40,6 +40,8 @@
   (:documentation "An empty class to distinguish the information window from other ~
                    view-windows.  This is especially convenient when closing all ~
                    view-windows of a particular type."))
+;;; added 28FEB2024 in response to error on right-click highlighted points in THE plot under full Allegro
+#+:aclpc(acl-mop::finalize-inheritance (find-class 'vw::info-window))
 
 (defun info-window ()
   "Returns the information window. Creates it if it didn't already exist."

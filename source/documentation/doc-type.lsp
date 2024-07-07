@@ -117,9 +117,9 @@
    (:examples ~
    (:files ~
    (Starting documentation ~
-   q:Examples;Documentation;documentation-example.lisp) ~
+   q:examples;documentation;documentation-example.lisp) ~
    (Extending the documentation system ~
-   q:Examples;Documentation;defining-new-doc-objects.lisp) ~
+   q:examples;documentation;defining-new-doc-objects.lisp) ~
    ))"
   (unless *quail-doc-type-to-doc-class* (init-doc-type-to-doc-class))
   (let ((result NIL))

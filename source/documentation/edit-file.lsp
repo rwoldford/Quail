@@ -23,8 +23,9 @@
 (defun edit-file (&optional pathname)
   "Opens an edit window.  If pathname is given, it opens ~
    the window to edit the file named by pathname."
-   (let ((fname (mk::force-to-pathname pathname)))
+   (let ((fname (qk::force-to-pathname pathname))) ;(force-to-pathname pathname)))
   (cond
    ((null fname) (ed))
    ((probe-file fname) (ed fname))
-   (T (inform-user (format NIL "~%Sorry ~s was not found." fname))))))
+   (T (vw::inform-user (format NIL "~%Sorry ~s was not found." fname)) ;(inform-user (format NIL "~%Sorry ~s was not found." fname))
+      ))))

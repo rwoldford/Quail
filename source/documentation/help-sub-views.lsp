@@ -22,9 +22,9 @@
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(help-sub-views)))
 
 (defgeneric help-sub-views (documentation-object &key type)
-  (:documentation "Returns a list of views containing the information ~
-                   in the documentation object. ~
-                   Type may be used to determine the type of subviews to be ~
+  (:documentation "Returns a list of views containing the information ~%
+                   in the documentation object. ~%
+                   Type may be used to determine the type of subviews to be ~%
                    constructed.  Typically it is ignored."))
 
 ;;;--------------------------------------------------------------------------
@@ -840,56 +840,56 @@
 (defmethod help-sub-views ((a-d qk::argument-documentation) &key type)
   (declare (ignore type))
   (with-accessors 
-    ((&required qk::&required)
-     (&rest qk::&rest)
-     (&key qk::&key)
-     (&optional qk::&optional)
-     (&aux qk::&aux)
-     (&body qk::&body)
-     (&allow-other-keys qk::&allow-other-keys))
+    ((required-args qk::required-args)
+     (rest-args qk::rest-args)
+     (key-args qk::key-args)
+     (optional-args qk::optional-args)
+     (aux-args qk::aux-args)
+     (body-args qk::body-args)
+     (allow-other-keys-args qk::allow-other-keys-args))
     
     a-d
     (let ((body "None."))
       
-      (when (or &required &rest &key &body
-              &optional &aux &allow-other-keys)
+      (when (or required-args rest-args key-args body-args
+              optional-args aux-args allow-other-keys-args)
         (setf body
               (with-output-to-string (destination)
-                (when &required
+                (when required-args
                   (qk::format-arg-element destination
                                           :line-size 1000
                                           :title "Required"
-                                          :items &required))
-                (when &rest
+                                          :items required-args))
+                (when rest-args
                   (qk::format-arg-element destination
                                           :line-size 1000
                                           :title "Rest"
-                                          :items &rest))
-                (when &key
+                                          :items rest-args))
+                (when key-args
                   (qk::format-arg-element destination
                                           :line-size 1000
                                           :title "Key"
-                                          :items &key))
-                (when &optional
+                                          :items key-args))
+                (when optional-args
                   (qk::format-arg-element destination
                                           :line-size 1000
                                           :title "Optional"
-                                          :items &optional))
-                (when &aux
+                                          :items optional-args))
+                (when aux-args
                   (qk::format-arg-element destination
                                           :line-size 1000
                                           :title "Auxilliary"
-                                          :items &aux))
-                (when &body
+                                          :items aux-args))
+                (when body-args
                   (qk::format-arg-element destination
-                                          :line-size 1000
+                                          :line-args-size 1000
                                           :title "Body"
-                                          :items &body))
-                (when &allow-other-keys
+                                          :items body-args))
+                (when allow-other-keys-args
                   (qk::format-arg-element destination
                                           :line-size 1000
-                                          :title "&allow-other-keys"
-                                          :items &allow-other-keys)))))
+                                          :title "allow-other-keys"
+                                          :items allow-other-keys-args)))))
       (make-view-paragraph :title "Arguments" :body body)
       )))
   
@@ -1270,7 +1270,7 @@
                 )
                (make-view-paragraph
                 :title "Class slots"
-                :body (format NIL "No class slots are defined for ~
+                :body (format NIL "No class slots are defined for ~%
                                    the class ~a."
                               (string-downcase (class-name class)))
                 )
@@ -1311,7 +1311,7 @@
                 )
                (make-view-paragraph
                 :title "Instance slots"
-                :body (format NIL "No instance slots are defined for ~
+                :body (format NIL "No instance slots are defined for ~%
                                    the class ~a."
                               (string-downcase
                                (format NIL "~s"
@@ -1354,7 +1354,7 @@
                 )
                (make-view-paragraph
                 :title "Direct class slots"
-                :body (format NIL "No class slots are defined directly on ~
+                :body (format NIL "No class slots are defined directly on ~%
                                    the class ~a."
                               (string-downcase
                                (format NIL "s"
@@ -1397,7 +1397,7 @@
                 )
                (make-view-paragraph
                 :title "Direct instance slots"
-                :body (format NIL "No instance slots are defined directly on ~
+                :body (format NIL "No instance slots are defined directly on ~%
                                    the class ~a."
                               (string-downcase
                                (format NIL "s"

@@ -53,11 +53,11 @@
           ;; The default quail doc path functions
           (if (eq doc-type :topic)
             ;; topics are symbols that may not yet be in any package
-            (list #'mk::doc-general-topics-path-name
-                  #'mk::doc-path-name
-                  #'mk::doc-auto-path-name)
-            (list #'mk::doc-path-name
-                  #'mk::doc-auto-path-name)))
+            (list #'doc-general-topics-path-name
+                  #'doc-path-name
+                  #'doc-auto-path-name)
+            (list #'doc-path-name
+                  #'doc-auto-path-name)))
          (file-functions
           (if (and *user-doc-path-functions*
                    (listp *user-doc-path-functions*))

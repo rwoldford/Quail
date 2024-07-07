@@ -31,25 +31,25 @@
 
 (defvar *help-in-windows*
   NIL
-  "Boolean value T or NIL. If non-NIL the help function uses ~
-   windows to produce help information.  If NIL, help is displayed directly ~
+  "Boolean value T or NIL. If non-NIL the help function uses ~%
+   windows to produce help information.  If NIL, help is displayed directly ~%
    in the listener.")
 
 (defun help (&optional (thing nil thing?) (help-type NIL))
-  "Quail's online help function.  Gives help documentation ~
-   on its optional argument (typically a symbol).  ~
-   A second optional argument allows the user to identify the help-type.  ~
-   If more than one type of help is available, the user is ~
-   prompted for a choice.  ~
-   Try (help 'Quail :topic) for example.  ~
-   Help returns no value. ~
-   (:optional ~
-    (:arg thing nil A symbol or documentation object.) ~
-    (:arg help-type NIL The help type you want on thing.  For example ~
-                        :function or :macro or :constant.  If NIL and ~
-                        more than one type is available on that symbol, ~
-                        then you will be asked to choose one.)) ~
-   (:see-also help-types  *help-in-windows* (documentation :topic)) ~
+  "Quail's online help function.  Gives help documentation ~%
+   on its optional argument (typically a symbol).  ~%
+   A second optional argument allows the user to identify the help-type.  ~%
+   If more than one type of help is available, the user is ~%
+   prompted for a choice.  ~%
+   Try (help 'Quail :topic) for example.  ~%
+   Help returns no value. ~%
+   (:optional ~%
+    (:arg thing nil A symbol or documentation object.) ~%
+    (:arg help-type NIL The help type you want on thing.  For example ~%
+                        :function or :macro or :constant.  If NIL and ~%
+                        more than one type is available on that symbol, ~%
+                        then you will be asked to choose one.)) ~%
+   (:see-also help-types  *help-in-windows* (documentation :topic)) ~%
    (:returns No value.)"
   (declare (special *help-in-windows*))
   (if thing?
@@ -62,26 +62,26 @@
         (help-object thing)))
     (let ((selected-help
            (quail-query
-            "Help is available on many symbols.  ~%~
-             If you want help on the help function just enter help. ~%~
+            "Help is available on many symbols.  ~%
+             If you want help on the help function just enter help. ~%
              Otherwise enter the symbol ~
-             (or list of symbols) on which you would like help.  ~%~%~
+             (or list of symbols) on which you would like help.  ~%~%
              Enter symbol now:  ")))
       (help selected-help)))
   (values))
 
 (defun help-types  (sym &optional package)
-  "Returns the list of help types for this symbol in the package ~
-   (if specified).  ~
+  "Returns the list of help types for this symbol in the package ~%
+   (if specified).  ~%
    For example as a variable, a class name, a function, a macro, et cetera."
   (documentable-uses sym package))
 
 (defgeneric help-object (thing &optional help-type)
-  (:documentation "Produces help description for its argument.  ~
-                   If the optional argument help-type is given, it produces ~
-                   the description of the symbol for that help-type.  ~
-                   Otherwise it produces documentation on the available help-type ~
-                   of the first argument.   If more than one help-type is ~
+  (:documentation "Produces help description for its argument.  ~%
+                   If the optional argument help-type is given, it produces ~%
+                   the description of the symbol for that help-type.  ~%
+                   Otherwise it produces documentation on the available help-type ~%
+                   of the first argument.   If more than one help-type is ~%
                    available, the user is asked to choose one."))
 
 
@@ -159,8 +159,8 @@
         (let
           ((selected-help-type
             (quail-query
-             "Help is available on ~s for the following types: ~{~& ~s ~}. ~%~
-              Please specify which one you would like (or :NONE to cancel ~
+             "Help is available on ~s for the following types: ~{~& ~s ~}. ~%
+              Please specify which one you would like (or :NONE to cancel ~%
               request).~%>> "
              sym
              help-types)))
@@ -174,8 +174,8 @@
                 (help-object doc-object)
                 ;; else
                 (vw::inform-user (format NIL 
-                                        "Sorry, the symbol - ~s ~
-                                         - has no help available for ~
+                                        "Sorry, the symbol - ~s ~%
+                                         - has no help available for ~%
                                          help-type ~s."
                                         sym selected-help-type))))
             ;; else do nothing

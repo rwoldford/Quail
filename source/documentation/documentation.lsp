@@ -272,25 +272,25 @@
 ;;;---------------------------------------------------------------------------
 
 (defclass argument-documentation ()
-  ((&required :accessor &required
+  ((required-args :accessor required-args
               :initarg :&required 
               :initform NIL)
-   (&optional :accessor &optional 
+   (optional-args :accessor optional-args 
               :initarg :&optional 
               :initform NIL)
-   (&rest :accessor &rest
+   (rest-args :accessor rest-args
           :initarg :&rest
           :initform NIL)
-   (&aux :accessor &aux
+   (aux-args :accessor aux-args
          :initarg :&aux 
          :initform  NIL)
-   (&key :accessor &key 
+   (key-args :accessor key-args 
          :initarg :&key 
          :initform NIL)
-   (&body :accessor &body 
+   (body-args :accessor body-args 
           :initarg :&body 
           :initform NIL)
-   (&allow-other-keys :accessor &allow-other-keys
+   (allow-other-keys-args :accessor allow-other-keys-args
                       :initarg :&allow-other-keys 
                       :initform NIL)
    )
@@ -299,20 +299,20 @@
 
 (defun arg-info-p (arg-doc)
   (with-accessors 
-    ((&required qk::&required)
-     (&rest qk::&rest)
-     (&key qk::&key)
-     (&optional qk::&optional)
-     (&aux qk::&aux)
-     (&body qk::&body)
-     (&allow-other-keys qk::&allow-other-keys))
+    ((required-args qk::required-args)
+     (rest-args qk::rest-args)
+     (key-args qk::key-args)
+     (optional-args qk::optional-args)
+     (aux-args qk::aux-args)
+     (body-args qk::body-args)
+     (allow-other-keys-args qk::allow-other-keys-args))
     
     arg-doc
     (if
-      (or &required &rest &key &body
-          &optional &aux &allow-other-keys)
-      (let* ((arg-lists (list &required &rest &key &body
-                              &optional &aux &allow-other-keys))
+      (or required-args rest-args key-args body-args
+          optional-args aux-args allow-other-keys-args)
+      (let* ((arg-lists (list required-args rest-args key-args body-args
+                              optional-args aux-args allow-other-keys-args))
              (n (- (length arg-lists) 1)))
         (do*  ((i 0 (+ i 1))
                (items (elt arg-lists i)

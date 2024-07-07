@@ -23,17 +23,17 @@
           view-doc-index)))
 
 (defun view-doc-index (&key package pathname)
-  "Produces a display of the list of symbols found in the file ~
-   given by the pathname.  If no pathname is specified, then the index ~
+  "Produces a display of the list of symbols found in the file ~%
+   given by the pathname.  If no pathname is specified, then the index ~%
    file for the given package is examined."
   (cond
    ((and package pathname)
-    (quail-error "VIEW-DOC-INDEX -- Must supply package ~
+    (quail-error "VIEW-DOC-INDEX -- Must supply package ~%
                   or pathname, not both."))
    (package
-    (setf pathname (mk::doc-index-filename :package package)))
+    (setf pathname (doc-index-filename :package package)))
    ((null pathname)
-    (quail-error "VIEW-DOC-INDEX -- Must supply one of package ~
+    (quail-error "VIEW-DOC-INDEX -- Must supply one of package ~%
                   or pathname.")
     )
    )
@@ -46,11 +46,11 @@
                       "As a help window. (longer)")
                     :prompt-text
                     (format NIL
-                            "Choose one.~%~
+                            "Choose one.~%~%
                              A help window will take more resources.")))
       (q:edit-file pathname))
      (T
-      (vw:inform-user (format NIL "This may take a little while ~%~
+      (vw:inform-user (format NIL "This may take a little while ~%~%
                                   as these indices are very long."))
       (q::help
        (make-instance
@@ -68,8 +68,8 @@
       )
      )
     (vw:inform-user (format NIL
-                           "Sorry, can't find the index. ~%~
-                            You might try recreating it with ~%~
+                           "Sorry, can't find the index. ~%~%
+                            You might try recreating it with ~%~%
                             ~%~5T(make-sorted-documentation-index :package ~s)"
                            (or package :quail)))
     )
@@ -109,11 +109,11 @@
 
     
 (defun make-documentation-index (&key package symbol-list)
-  "Constructs documentation index for all external symbols ~
-   or for those specified in the optional list argument. ~
-   The result is stored in the doc-index file in the documentation ~
+  "Constructs documentation index for all external symbols ~%
+   or for those specified in the optional list argument. ~%
+   The result is stored in the doc-index file in the documentation ~%
    directory."
-  (with-open-file (ofile (mk::doc-index-filename :package package)
+  (with-open-file (ofile (doc-index-filename :package package)
                          :direction :output 
                          :if-exists :supersede
                          :if-does-not-exist :create)
@@ -137,12 +137,12 @@
       (if package
         (do-external-symbols (sym package)
           (process-symbol sym ofile package))
-        (error "Must specify at least one of SYMBOL-LIST and PACKAGE ~
+        (error "Must specify at least one of SYMBOL-LIST and PACKAGE ~%
                 -- MAKE-DOCUMENTATION-INDEX")))
     ))
 
 (defun sort-doc (&key package (symbol-list ()))
-  (let ((filename (mk::doc-index-filename :package package)))
+  (let ((filename (doc-index-filename :package package)))
     (with-open-file (ifile filename
                            :direction :input
                            :if-does-not-exist nil)
@@ -168,7 +168,7 @@
         (format ofile "~5TIndex file of symbols")
         )
       (format ofile "~&;;;")
-      (format ofile "~5TAll symbols sorted in alphabetical order ~
+      (format ofile "~5TAll symbols sorted in alphabetical order ~%
                      and stored in a list.")
       (format ofile "~&;;;")
       (format ofile "~5T~a" (current-date))
@@ -191,11 +191,11 @@
   )
 
 (defun make-sorted-documentation-index (&key package (symbol-list ()))
-  "Constructs documentation index for all external symbols ~
-   or for those specified in the optional list argument. ~
-   Symbols are sorted first by name  ~
-   and then by name within use (class, function, etc.).  ~
-   The result is stored in a doc-index file in the documentation ~
+  "Constructs documentation index for all external symbols ~%
+   or for those specified in the optional list argument. ~%
+   Symbols are sorted first by name  ~%
+   and then by name within use (class, function, etc.).  ~%
+   The result is stored in a doc-index file in the documentation ~%
    indices directory for that package."
   (make-documentation-index :package package :symbol-list symbol-list)
   (sort-doc :package package)

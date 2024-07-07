@@ -31,9 +31,9 @@
               pn)))
         
 (defun files-in-quail ()
-  (loop for system in mk::*quail-systems*
+  (loop for system in cl-user::*quail-systems* ;*quail-systems* ; 30JUL2023
         append
-        (let ((files (mk::files-in-system system)))
+        (let ((files (files-in-system system)))
           (loop for fs in files
                 collect (list (rest (pathname-directory fs))
                               (pathname-name fs)
@@ -174,7 +174,7 @@
   (loop for info in topic-info-list do
         (with-open-file (ofile (if full-pathname
                                  full-pathname
-                                 (mk::doc-auto-topics-path-name outfile))
+                                 (doc-auto-topics-path-name outfile))
                                :direction :output 
                                :if-exists :append
                                :if-does-not-exist :create)
@@ -191,7 +191,7 @@
   (let
     ((ofile-fun (if (functionp *user-doc-out-path-function*)
                   *user-doc-out-path-function*
-                  #'mk::doc-auto-path-name))
+                  #'doc-auto-path-name))
      sub-topics
      name)
     (loop for topic in topics-list do

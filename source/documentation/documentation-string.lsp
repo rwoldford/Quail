@@ -86,7 +86,8 @@
                        (read s NIL NIL))
                 (result nil (push token result)))
                ((null token) (nreverse result))
-             ())))
+             ()
+             )))
        #+(not :aclpc) (setf (readtable-case *readtable*) read-case)
        ))))
 

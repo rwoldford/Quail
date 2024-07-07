@@ -207,10 +207,10 @@
   (let*
     ((ofile-fun (if (functionp *user-doc-out-path-function*)
                   *user-doc-out-path-function*
-                  #'mk::doc-auto-path-name))
+                  #'doc-auto-path-name))
      (the-package (find-package package))
-     (package-use-list (package-use-list package))
-     (package-used-by-list (package-used-by-list package))
+     ;(package-use-list (package-use-list package)) ; 30JUL2023
+     ;(package-used-by-list (package-used-by-list package)) ; 30JUL2023
      symbol-package)
     (with-open-file (ifile filename
                            :direction :input)
