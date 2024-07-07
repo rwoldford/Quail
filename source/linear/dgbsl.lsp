@@ -9,7 +9,7 @@
   (declare (type fixnum n))
   (declare (type fixnum lda))
   ;; (declare (type (simple-array double-float (* *)) abd))
-  (prog ((t_ 0.0) (nm1 0) (m 0) (lm 0) (lb 0) (la 0) (l 0)
+  (prog ((t_ 0.0d0) (nm1 0) (m 0) (lm 0) (lb 0) (la 0) (l 0)
          (kb 0) (k 0))
         (declare (type fixnum k))
         (declare (type fixnum kb))

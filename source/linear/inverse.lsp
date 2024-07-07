@@ -223,7 +223,7 @@
 
 ;;; Add do-nothing primary FEB 04 1998
 (defmethod request-inverse-evaluation  ((self inverse))
-   (declare (ignore self))
+   (declare (ignorable self)) ;(declare (ignore self)) ; 31JUL2023
    (call-next-method))
 
 (defmethod request-inverse-evaluation :around ((self inverse))
@@ -273,7 +273,7 @@
 
 ;;; Add do-nothing primary FEB 04 1998
 (defmethod fill-unbound-slots  ((self inverse-matrix))
-   (declare (ignore self))
+   (declare (ignorable self)) ;(declare (ignore self)) ; 31JUL2023
    (call-next-method))
 
 (defmethod fill-unbound-slots :after ((self inverse-matrix))

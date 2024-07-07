@@ -8,8 +8,8 @@
   (declare (type fixnum n))
   (declare (type fixnum lda))
   ;; (declare (type (simple-array double-float (* *)) abd))
-  (prog ((t_ 0.0) (wkm 0.0) (wk 0.0) (ek 0.0) (ynorm 0.0) (sm 0.0)
-         (s 0.0) (anorm 0.0) (mu 0) (lm 0) (lb 0) (la 0) (l 0) (kp1 0) (kb 0)
+  (prog ((t_ 0.0d0) (wkm 0.0d0) (wk 0.0d0) (ek 0.0d0) (ynorm 0.0d0) (sm 0.0d0)
+         (s 0.0d0) (anorm 0.0d0) (mu 0) (lm 0) (lb 0) (la 0) (l 0) (kp1 0) (kb 0)
          (k 0) (j2 0) (j 0) (i 0))
         (declare (type fixnum i))
         (declare (type fixnum j))
@@ -154,7 +154,7 @@
                              (fref z k)
                              (dabs (fref abd i j))))))
                label20))
-        (setf anorm 0.0)
+        (setf anorm 0.0d0)
         (fdo (j 1 (+ j 1))
              ((> j n) nil)
              (tagbody (setf anorm (dmax1 anorm (fref z j)))))
@@ -173,7 +173,7 @@
         ;; 
         ;;         solve trans(r)*w = e
         ;; 
-        (setf ek 1.0)
+        (setf ek 1.0d0)
         (fdo (j 1 (+ j 1))
              ((> j n) nil)
              (tagbody (setf (fref z j) 0.0)))
@@ -220,7 +220,7 @@
                                            (fref z j)
                                            (* t_ (fref abd i j))))))
               label90 label100 (setf (fref z k) wk)))
-        (setf s (f2cl/ 1.0 (dasum-hook n z 1)))
+        (setf s (f2cl/ 1.0d0 (dasum-hook n z 1)))
         (dscal-hook n s z 1)
         ;; 
         ;;         solve  r*y = w
@@ -239,10 +239,10 @@
                       (setf lb (- k lm))
                       (setf t_ (- (fref z k)))
                       (daxpy-hook lm t_ (vec-ref abd la k) 1 (vec-ref z lb) 1)))
-        (setf s (f2cl/ 1.0 (dasum-hook n z 1)))
+        (setf s (f2cl/ 1.0d0 (dasum-hook n z 1)))
         (dscal-hook n s z 1)
         ;; 
-        (setf ynorm 1.0)
+        (setf ynorm 1.0d0)
         ;; 
         ;;         solve trans(r)*v = y
         ;; 
@@ -261,7 +261,7 @@
                       (setf ynorm (* s ynorm))
              label140 (setf (fref z k)
                             (f2cl/ (fref z k) (fref abd (1+ m) k)))))
-        (setf s (f2cl/ 1.0 (dasum-hook n z 1)))
+        (setf s (f2cl/ 1.0d0 (dasum-hook n z 1)))
         (dscal-hook n s z 1)
         (setf ynorm (* s ynorm))
         ;; 
@@ -283,11 +283,11 @@
                       (setf t_ (- (fref z k)))
                       (daxpy-hook lm t_ (vec-ref abd la k) 1 (vec-ref z lb) 1)))
         ;;         make znorm = 1.0
-        (setf s (f2cl/ 1.0 (dasum-hook n z 1)))
+        (setf s (f2cl/ 1.0d0 (dasum-hook n z 1)))
         (dscal-hook n s z 1)
         (setf ynorm (* s ynorm))
         ;; 
-        (if (/= anorm 0.0)
+        (if (/= anorm 0.0d0)
           (setf rcond (f2cl/ ynorm anorm))
-          (setf rcond 0.0))
+          (setf rcond 0.0d0))
   label180 (return (values abd lda n m rcond z info))))

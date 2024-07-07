@@ -6,7 +6,7 @@
   (declare (type fixnum n))
   (declare (type fixnum lda))
   ;; (declare (type (simple-array double-float (* *)) abd))
-  (prog ((s 0.0) (i 0))
+  (prog ((s 0.0d0) (i 0))
         (declare (type fixnum i))
         (declare (type double-float s))
         ;; 
@@ -50,7 +50,7 @@
         ;; 
         (setf (fref det 1) 1.0)
         (setf (fref det 2) 0.0)
-        (setf s 10.0)
+        (setf s 10.0d0)
         (fdo (i 1 (1+ i))
              ((> i n) nil)
              (tagbody (setf (fref det 1)

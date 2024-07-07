@@ -6,7 +6,7 @@
   (declare (type fixnum n))
   (declare (type fixnum lda))
   ;;(declare (type (simple-array double-float (* *)) a))
-  (prog ((t_ 0.0) (nm1 0) (l 0) (kp1 0) (k 0) (j 0))
+  (prog ((t_ 0.0d0) (nm1 0) (l 0) (kp1 0) (k 0) (j 0))
     (declare (type fixnum j))
     (declare (type fixnum k))
     (declare (type fixnum kp1))

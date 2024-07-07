@@ -9,8 +9,8 @@
   (declare (type fixnum n))
   (declare (type fixnum lda))
   ;; (declare (type (simple-array double-float (* *)) abd))
-  (prog ((wkm 0.0) (wk 0.0) (t_ 0.0) (ek 0.0) (ynorm 0.0)
-         (sm 0.0) (s 0.0) (anorm 0.0) (mm 0) (m 0) (lz 0) (lm 0)
+  (prog ((wkm 0.0d0) (wk 0.0d0) (t_ 0.0d0) (ek 0.0d0) (ynorm 0.0d0)
+         (sm 0.0d0) (s 0.0d0) (anorm 0.0d0) (mm 0d0) (m 0) (lz 0) (lm 0)
          (la 0) (l 0) (kp1 0) (kb 0) (k 0) (ju 0) (j 0) (info 0) (is 0))
         (declare (type fixnum is))
         (declare (type fixnum info))
@@ -153,7 +153,7 @@
         ;; 
         ;;      compute 1-norm of a
         ;; 
-        (setf anorm 0.0)
+        (setf anorm 0.0d0)
         (setf l (1+ ml))
         (setf is (+ l mu))
         (fdo (j 1 (1+ j))
@@ -177,7 +177,7 @@
         ;; 
         ;;      solve trans(u)*w = e
         ;; 
-        (setf ek 1.0)
+        (setf ek 1.0d0)
         (fdo (j 1 (1+ j)) ((> j n) nil)
              (tagbody (setf (fref z j) 0.0)))
         (setf m (+ ml mu 1))
@@ -202,8 +202,8 @@
                       (setf wk (f2cl/ wk (fref abd m k)))
                       (setf wkm (f2cl/ wkm (fref abd m k)))
                       (go label50)
-              label40 (setf wk 1.0)
-                      (setf wkm 1.0)
+              label40 (setf wk 1.0d0)
+                      (setf wkm 1.0d0)
               label50 (setf kp1 (1+ k))
                       (setf ju (min0 (max0 ju (+ mu (fref ipvt k))) n))
                       (setf mm m)
@@ -235,7 +235,7 @@
                                            (fref z j)
                                            (* t_ (fref abd mm j))))))
               label80 label90 (setf (fref z k) wk)))
-        (setf s (f2cl/ 1.0 (dasum-hook n z 1)))
+        (setf s (f2cl/ 1.0d0 (dasum-hook n z 1)))
         (dscal-hook n s z 1)
         ;; 
         ;;      solve trans(l)*y = w
@@ -256,10 +256,10 @@
                       (setf t_ (fref z l))
                       (setf (fref z l) (fref z k))
                       (setf (fref z k) t_)))
-        (setf s (f2cl/ 1.0 (dasum-hook n z 1)))
+        (setf s (f2cl/ 1.0d0 (dasum-hook n z 1)))
         (dscal-hook n s z 1)
         ;; 
-        (setf ynorm 1.0)
+        (setf ynorm 1.0d0)
         ;; 
         ;;      solve l*v = y
         ;; 
@@ -274,11 +274,11 @@
                           (daxpy-hook lm t_ (vec-ref abd (1+ m) k) 1
                              (fref z (1+ k)) 1))
                       (if (<= (dabs (fref z k)) 1.0) (go label130))
-                      (setf s (f2cl/ 1.0 (dabs (fref z k))))
+                      (setf s (f2cl/ 1.0d0 (dabs (fref z k))))
                       (dscal-hook n s z 1)
                       (setf ynorm (* s ynorm))
               label130))
-        (setf s (f2cl/ 1.0 (dasum-hook n z 1)))
+        (setf s (f2cl/ 1.0d0 (dasum-hook n z 1)))
         (dscal-hook n s z 1)
         (setf ynorm (* s ynorm))
         ;; 
@@ -301,12 +301,12 @@
                       (setf t_ (- (fref z k)))
                       (daxpy-hook lm t_ (vec-ref abd la k) 1 (vec-ref z lz) 1)))
         ;;      make znorm = 1.0
-        (setf s (f2cl/ 1.0 (dasum-hook n z 1)))
+        (setf s (f2cl/ 1.0d0 (dasum-hook n z 1)))
         (dscal-hook n s z 1)
         (setf ynorm (* s ynorm))
         ;; 
-        (if (/= anorm 0.0)
+        (if (/= anorm 0.0d0)
           (setf rcond (f2cl/ ynorm anorm))
-          (setf rcond 0.0))
+          (setf rcond 0.0d0))
         (return (values abd lda n ml mu ipvt rcond z))))
 

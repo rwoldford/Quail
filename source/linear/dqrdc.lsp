@@ -9,16 +9,17 @@
   (declare (type fixnum n))
   (declare (type fixnum ldx))
   ;;(declare (type (simple-array double-float (* *)) x))
-  (prog ((t_ 0.0) (jj 0) (pu 0) (pl 0) (maxj 0) (lup 0) (lp1 0) (l 0) (jp 0)
-         (j 0) (tt 0.0) (maxnrm 0.0) (nrmxl 0.0) (swapj nil) (negj nil))
+  (prog ((t_ 0.0d0) (jj 0) (pu 0) (pl 0) (maxj 0) (lup 0) (lp1 0) (l 0) (jp 0)
+         (j 0) (tt 0.0d0) (maxnrm 0.0d0) (nrmxl 0.0d0) (swapj nil) (negj nil))
+         ;(dnrm2 0.0d0) (ddot 0.0d0)) ; 31JUL2023
         (declare (type fixnum jj))
         (declare (type t negj))
         (declare (type t swapj))
-        (declare (type double-float ddot))
+        ;(declare (type double-float ddot))
         (declare (type double-float nrmxl))
         (declare (type double-float t_))
         (declare (type double-float maxnrm))
-        (declare (type double-float dnrm2))
+        ;(declare (type double-float dnrm2))
         (declare (type double-float tt))
         (declare (type fixnum j))
         (declare (type fixnum jp))
@@ -66,7 +67,7 @@
         (fdo (l 1 (+ l 1))
              ((> l lup) nil)
              (tagbody (if (or (< l pl) (>= l pu)) (go label120))
-                      (setf maxnrm 0.0)
+                      (setf maxnrm 0.0d0)
                       (setf maxj l)
                       (fdo (j l (+ j 1))
                            ((> j pu) nil)
@@ -85,7 +86,7 @@
               label110 label120 (setf (fref qraux l) 0.0)
                       (if (= l n) (go label190))
                       (setf nrmxl (dnrm2-hook (+ (- n l) 1) (vec-ref x l l) 1))
-                      (if (= nrmxl 0.0) (go label180))
+                      (if (= nrmxl 0.0d0) (go label180))
                       (if (/= (fref x l l) 0.0)
                           (setf nrmxl (dsign nrmxl (fref x l l))))
                       (dscal-hook (+ (- n l) 1) (f2cl/ 1.0 nrmxl) (vec-ref x l l)
@@ -117,20 +118,20 @@
                                               (dabs (fref x l j))
                                               (fref qraux j))
                                              2)))
-                                    (setf tt (dmax1 tt 0.0))
+                                    (setf tt (dmax1 tt 0.0d0))
                                     (setf t_ tt)
                                     (setf tt
                                           (+
-                                           1.0
+                                           1.0d0
                                            (*
-                                            0.05
+                                            0.05d0
                                             tt
                                             (expt
                                              (f2cl/
                                               (fref qraux j)
                                               (fref work j))
                                              2))))
-                                    (if (= tt 1.0) (go label130))
+                                    (if (= tt 1.0d0) (go label130))
                                     (setf (fref qraux j) (* (fref qraux j) (dsqrt t_)))
                                     (go label140)
                             label130 (setf (fref qraux j)

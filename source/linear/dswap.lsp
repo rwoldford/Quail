@@ -6,7 +6,7 @@
   (declare (type fixnum incx))
   ;;(declare (type (simple-array double-float (*)) dx))
   (declare (type fixnum n))
-  (prog ((dtemp 0.0) (mp1 0) (m 0) (iy 0) (ix 0) (i 0))
+  (prog ((dtemp 0.0d0) (mp1 0) (m 0) (iy 0) (ix 0) (i 0))
     (declare (type fixnum i))
     (declare (type fixnum ix))
     (declare (type fixnum iy))

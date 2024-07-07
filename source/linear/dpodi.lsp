@@ -6,8 +6,8 @@
   (declare (type fixnum n))
   (declare (type fixnum lda))
   ;;(declare (type (simple-array double-float (* *)) a))
-  (prog ((t_ 0.0) (s 0.0) (kp1 0) (k 0) (jm1 0) (j 0) (i 0))
-    (declare (type single-float t_))
+  (prog ((t_ 0.0d0) (s 0.0d0) (kp1 0) (k 0) (jm1 0) (j 0) (i 0))
+    ;(declare (type single-float t_)) ;double-float declaration below
     (declare (type fixnum i))
     (declare (type fixnum j))
     (declare (type fixnum jm1))
@@ -18,7 +18,7 @@
     (if (= (f2cl/ job 10) 0) (go label70))
     (setf (fref det 1) 1.0)
     (setf (fref det 2) 0.0)
-    (setf s 10.0)
+    (setf s 10.0d0)
     (fdo (i 1 (+ i 1))
          ((> i n) nil)
          (tagbody 

@@ -26,7 +26,7 @@
                   ))
 
 (defmethod determinant ((X identity-matrix))
-  (declare (ignore X))
+  (declare (ignorable X)) ;(declare (ignore X)) ; 31JUL2023
   1)
 
 (defmethod determinant ((X inverse-matrix))

@@ -9,7 +9,7 @@
   (declare (type fixnum lda))
   ;;(declare (type (simple-array double-float (* *)) a))
   (prog ((maxl 0) (L 0) (kp1 0) (km1 0) (kb 0) (k 0) (jt 0) (jp 0) (j 0)
-         (plp1 0) (pl 0) (pu 0) (temp 0.0) (maxdia 0.0) (negk nil) (swapk nil))
+         (plp1 0) (pl 0) (pu 0) (temp 0.0d0) (maxdia 0.0d0) (negk nil) (swapk nil))
         (declare (type t swapk))
         (declare (type t negk))
         (declare (type double-float maxdia))

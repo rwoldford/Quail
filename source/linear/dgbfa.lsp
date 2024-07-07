@@ -8,7 +8,7 @@
   (declare (type fixnum n))
   (declare (type fixnum lda))
   ;; (declare (type (simple-array double-float (* *)) abd))
-  (prog ((t_ 0.0) (nm1 0) (mm 0) (m 0) (lm 0) (l 0) (kp1 0) (k 0)
+  (prog ((t_ 0.0d0) (nm1 0) (mm 0) (m 0) (lm 0) (l 0) (kp1 0) (k 0)
          (j1 0) (j0 0) (jz 0) (ju 0) (j 0) (i0 0) (i 0))
         (declare (type fixnum i))
         (declare (type fixnum i0))
@@ -164,7 +164,7 @@ label30 (setf jz j1)
               label60 ;; 
                       ;;            compute multipliers
                       ;; 
-                      (setf t_ (f2cl/ -1.0 (fref abd m k)))
+                      (setf t_ (f2cl/ -1.0d0 (fref abd m k)))
                       (dscal-hook lm t_ (vec-ref abd (1+ m) k) 1)
                       ;; 
                       ;;            row elimination with column indexing

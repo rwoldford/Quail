@@ -66,3 +66,5 @@
 (defclass matrix (decomposition-mixin num-array)
   ())
 
+#+:aclpc(acl-mop::finalize-inheritance (find-class 'qk::matrix))
+

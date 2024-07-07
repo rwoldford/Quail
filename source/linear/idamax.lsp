@@ -4,7 +4,7 @@
   (declare (type fixnum incx))
   ;;(declare (type (simple-array double-float (*)) dx))
   (declare (type fixnum n))
-  (prog ((idamax 0) (dmax 0.0) (ix 0) (i 0))
+  (prog ((idamax 0) (dmax 0.0d0) (ix 0) (i 0))
         (declare (type fixnum i))
         (declare (type fixnum ix))
         (declare (type double-float dmax))
