@@ -115,7 +115,7 @@
                                              (eql NaN)
                                              number))
                               (value number) &key start)
-  (declare (ignore start value))
+  (declare (ignorable start value)) ;(declare (ignore start value)) ; 31JUL2023
   distribution)
 
 (defmethod-multi quantile-at ((distribution (sequence array dimensioned-ref-object))

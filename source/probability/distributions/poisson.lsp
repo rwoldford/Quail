@@ -34,13 +34,13 @@
 )
 
 (defmethod (setf upper-bound-of) (new-value (dist poisson-dist))
-  (declare (ignore dist))
+  (declare (ignorable dist)) ;(declare (ignore dist)) ; 31JUL2023
   (unless (= new-value infinity)
     (quail-error "Upper bound of a Poisson must be +infinity.  It cannot ~
                   be reset to ~s" new-value)))
 
 (defmethod (setf lower-bound-of) (new-value (dist poisson-dist))
-  (declare (ignore dist))
+  (declare (ignorable dist)) ;(declare (ignore dist)) ; 31JUL2023
   (unless (= new-value 0)
     (quail-error "Lower bound of a Poisson must be 0.  It cannot ~
                   be reset to ~s" new-value)))

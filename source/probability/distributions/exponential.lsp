@@ -38,7 +38,7 @@
   )
 
 (defmethod (setf shape-of) (new-value (who exponential-dist))
-  (declare (ignore new-value who))
+  (declare (ignorable new-value who)) ;(declare (ignore new-value who)) ; 31JUL2023
   (quail-error "Sorry, can't change the shape parameter for the exponential.  ~
                 Instead, consider changing its class to gamma first.")
   )

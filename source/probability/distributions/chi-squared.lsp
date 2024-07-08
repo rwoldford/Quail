@@ -55,19 +55,19 @@
   0)
 
 (defmethod (setf lower-bound-of) (new-value (dist chi-squared))
-  (declare (ignore dist))
+  (declare (ignorable dist)) ;(declare (ignore dist)) ; 31JUL2023
   (quail-error "~&(SETF LOWER-BOUND-OF):~&Chi-squared distributions have lower bound 0; ~
                 this cannot be changed to ~s."
                new-value))
 
 (defmethod (setf location-of) (new-value (dist chi-squared))
-  (declare (ignore dist))
+  (declare (ignorable dist)) ;(declare (ignore dist)) ;31JUL2023
   (quail-error "~&(SETF LOCATION-OF):~&Chi-squared distributions have location 0; ~
                 this cannot be changed to ~s."
                new-value))
 
 (defmethod (setf scale-of) (new-value (dist chi-squared))
-  (declare (ignore dist))
+  (declare (ignorable dist)) ;(declare (ignore dist)) ; 31JUL2023
   (quail-error "~&(SETF SCALE-OF):~&Chi-squared distributions are gammas with scale = 2.0; ~
                 this cannot be changed to ~s."
                new-value))

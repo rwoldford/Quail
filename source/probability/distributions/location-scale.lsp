@@ -125,11 +125,11 @@
      (upper-bound-of (standard-dist-of dist))))
 
 (defmethod (setf lower-bound-of) (new-value (dist location-scale-dist))
-  (declare (ignore new-value dist))
+  (declare (ignorable new-value dist)) ;(declare (ignore new-value dist)) ; 31JUL2023
   (quail-error "Cannot reset the lower bound of a location-scale-dist"))
 
 (defmethod (setf upper-bound-of) (new-value (dist location-scale-dist))
-  (declare (ignore new-value dist))
+  (declare (ignorable new-value dist)) ;(declare (ignore new-value dist)) ; 31JUL2023
   (quail-error "Cannot reset the upper bound of a location-scale-dist"))
 
 (defmethod initialize-instance :after ((dist location-scale-dist) &rest initargs)

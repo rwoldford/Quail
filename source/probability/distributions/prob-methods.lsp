@@ -96,7 +96,7 @@
   NaN)
 
 (defmethod cdf-at :around ((distribution T) (value (eql +infinity)))
-  (declare (ignore distribution value))
+  (declare (ignorable distribution value)) ;(declare (ignore distribution value)) ; 31JUL2023
   1)
 
 (defmethod cdf-at :around ((distribution T) (value (eql -infinity)))

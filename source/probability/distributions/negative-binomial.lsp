@@ -35,7 +35,7 @@
   (:documentation "The Negative Binomial distribution.")
   )
 
-(defmethod initialize-instance :after ((self binomial-dist)
+(defmethod initialize-instance :after ((self negative-binomial)
                                        &rest initargs
                                        &key (successes NIL))
   (declare (ignore initargs))
