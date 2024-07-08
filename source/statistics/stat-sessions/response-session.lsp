@@ -31,12 +31,13 @@
               (viewport NIL)
               &allow-other-keys)
   "Sets up a view from which a response model may be constructed."
+  (declare (ignore color)) ; 31JUL2023
   (unless (dataset-p data) (setf data (choose-dataset)))
   (unless title (setf title "Model session"))
   (let*
-    ((data-name (text-view :text "Dataset: "
-                           :draw? NIL
-                           :viewed-object data))
+    (;(data-name (text-view :text "Dataset: " ; 31JUL2023 never used 
+     ;                      :draw? NIL
+     ;                      :viewed-object data))
      (data-view (dataset-view :data data 
                               :draw? NIL
                               :viewed-object data
@@ -172,9 +173,9 @@
                 (wb::prompt-user
                  :prompt-string
                  (format NIL
-                         "Enter linear predictor (Wilkinson-Rogers notation). ~%~
-                          EG. A + B + C*D ~%~
-                          Enter variate labels containing blanks as strings. ~%~
+                         "Enter linear predictor (Wilkinson-Rogers notation). ~%
+                          EG. A + B + C*D ~%
+                          Enter variate labels containing blanks as strings. ~%
                           Enclose lisp function calls in {} as in { (log x) }")
                  :initial-string (get-text linear-predictor))
                 )
@@ -190,9 +191,9 @@
                 (wb::prompt-user
                  :prompt-string
                  (format NIL
-                         "Enter response variate. ~%~
-                          If blanks are part of the variate name, ~
-                          enter the name as a string. ~%~
+                         "Enter response variate. ~%
+                          If blanks are part of the variate name, ~%
+                          enter the name as a string. ~%
                           Enclose lisp function calls in {} as in { (log y) }")
                  :initial-string (get-text response))
                 )
@@ -212,9 +213,9 @@
                     (wb::prompt-user
                      :prompt-string
                      (format NIL
-                             "Enter response variate. ~%~
-                              If blanks are part of the variate name, ~
-                              enter the name as a string. ~%~
+                             "Enter response variate. ~%
+                              If blanks are part of the variate name, ~%
+                              enter the name as a string. ~%
                               Enclose lisp function calls in {} as in { (log y) }")
                      :initial-string (get-text response))
                     )
@@ -226,9 +227,9 @@
                     (wb::prompt-user
                      :prompt-string
                      (format NIL
-                             "Enter linear predictor (Wilkinson-Rogers notation). ~%~
-                              EG. A + B + C*D ~%~
-                              Enter variate labels containing blanks as strings. ~%~
+                             "Enter linear predictor (Wilkinson-Rogers notation). ~%
+                              EG. A + B + C*D ~%
+                              Enter variate labels containing blanks as strings. ~%
                               Enclose lisp function calls in {} as in { (log x) }")
                      :initial-string (get-text linear-predictor))
                     )
@@ -419,9 +420,9 @@
                 (wb::prompt-user
                  :prompt-string
                  (format NIL
-                         "Enter linear predictor (Wilkinson-Rogers notation). ~%~
-                          EG. A + B + C*D ~%~
-                          Enter variate labels containing blanks as strings. ~%~
+                         "Enter linear predictor (Wilkinson-Rogers notation). ~%
+                          EG. A + B + C*D ~%
+                          Enter variate labels containing blanks as strings. ~%
                           Enclose lisp function calls in {} as in { (log x) }")
                  :initial-string (get-text linear-predictor))
                 )
@@ -437,9 +438,9 @@
                 (wb::prompt-user
                  :prompt-string
                  (format NIL
-                         "Enter response variate. ~%~
-                          If blanks are part of the variate name, ~
-                          enter the name as a string. ~%~
+                         "Enter response variate. ~%
+                          If blanks are part of the variate name, ~%
+                          enter the name as a string. ~%
                           Enclose lisp function calls in {} as in { (log y) }")
                  :initial-string (get-text response))
                 )
@@ -459,9 +460,9 @@
                     (wb::prompt-user
                      :prompt-string
                      (format NIL
-                             "Enter response variate. ~%~
-                              If blanks are part of the variate name, ~
-                              enter the name as a string. ~%~
+                             "Enter response variate. ~%
+                              If blanks are part of the variate name, ~%
+                              enter the name as a string. ~%
                               Enclose lisp function calls in {} as in { (log y) }")
                      :initial-string (get-text response))
                     )
@@ -473,9 +474,9 @@
                     (wb::prompt-user
                      :prompt-string
                      (format NIL
-                             "Enter linear predictor (Wilkinson-Rogers notation). ~%~
-                              EG. A + B + C*D ~%~
-                              Enter variate labels containing blanks as strings. ~%~
+                             "Enter linear predictor (Wilkinson-Rogers notation). ~%
+                              EG. A + B + C*D ~%
+                              Enter variate labels containing blanks as strings. ~%
                               Enclose lisp function calls in {} as in { (log x) }")
                      :initial-string (get-text linear-predictor))
                     )
