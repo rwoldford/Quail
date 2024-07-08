@@ -9,7 +9,8 @@
    :df (equivalent degrees of freedom), ~
    which otherwise will be chosen by the fitting routine ~
    by cross-validation."
-  (declare (ignore operator-symbol formula operator-name ensured-args))
+  ;(declare (ignore operator-symbol formula operator-name ensured-args))
+  (declare (ignorable operator-symbol formula operator-name ensured-args))
   (error "Special formula operator s(...) has not yet ~
           been implemented.")
 )

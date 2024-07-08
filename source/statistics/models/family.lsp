@@ -84,7 +84,7 @@
        ;; (declare (special *families*))
        ;; this first defclass is certain to destroy previous versions 
        ;; this is necessary due to :initform weirdness
-       (defclass ,symbol () ())
+       ;(defclass ,symbol () ())
        (defclass ,symbol (family-object)
          ((name :allocation :class :reader name-of :initform (quote ,name))
           (variance-fn :allocation :class 
