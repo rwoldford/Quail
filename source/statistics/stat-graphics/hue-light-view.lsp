@@ -477,29 +477,29 @@
 |#
     (setf (left-fn-of help-button)
           #'(lambda ()
-              (let ((lightness-help (format NIL "To increase or decrease the range of ~
-                                                 lightness, click and drag the ends of the ~
-                                                 lightness slider in the left or right ~
-                                                 directions. ~%To change the singular hue ~
-                                                 value of the lightness range, click on one ~
-                                                 of the color chips. ~%The other chip ~
-                                                 gives the choice of any hue from the hue ~
-                                                 wheel. ~%A hue selection will immediately ~
-                                                 modify the colours in the lightness ~
+              (let ((lightness-help (format NIL "To increase or decrease the range of ~%
+                                                 lightness, click and drag the ends of the ~%
+                                                 lightness slider in the left or right ~%
+                                                 directions. ~%To change the singular hue ~%
+                                                 value of the lightness range, click on one ~%
+                                                 of the color chips. ~%The other chip ~%
+                                                 gives the choice of any hue from the hue ~%
+                                                 wheel. ~%A hue selection will immediately ~%
+                                                 modify the colours in the lightness ~%
                                                  slider."))
-                    (hue-help (format NIL "To increase or decrease the range of hue, click ~
-                                           and drag the ends of the slider in the left or ~
-                                           right directions. ~%To change the singular ~
-                                           lightness level of the hue range, move the ~
-                                           lightness slider up and down. ~%A change in ~
-                                           lightness will immediately modify the colours ~
+                    (hue-help (format NIL "To increase or decrease the range of hue, click ~%
+                                           and drag the ends of the slider in the left or ~%
+                                           right directions. ~%To change the singular ~%
+                                           lightness level of the hue range, move the ~%
+                                           lightness slider up and down. ~%A change in ~%
+                                           lightness will immediately modify the colours ~%
                                            in the hue slider."))                   
-                    (hue-lightness-help (format NIL "To increase or decrease the range of ~
-                                                     hue, click and drag the ends of the ~
-                                                     hue slider in the left or right ~
-                                                     directions. ~%To increase or decrease ~
-                                                     the range of lightness, click and drag ~
-                                                     the ends of the lightness slider in ~
+                    (hue-lightness-help (format NIL "To increase or decrease the range of ~%
+                                                     hue, click and drag the ends of the ~%
+                                                     hue slider in the left or right ~%
+                                                     directions. ~%To increase or decrease ~%
+                                                     the range of lightness, click and drag ~%
+                                                     the ends of the lightness slider in ~%
                                                      the left or right directions.")))
                 (inform-user (case highlight-by
                                (:hue hue-help)
