@@ -14,10 +14,9 @@
 ;;;
 ;;;--------------------------------------------------------------------------------
 
-(in-package :make)
+(in-package :quail-kernel)
 
 (defun quail-release-file ()
   (merge-pathnames
-   #+:aclpc (translate-logical-pathname (mk::path-binary))
-   #-:aclpc (mk::path-binary)
+              (cl-user::path-quail) ;cl-user::*quail-init-directory*
    "release-info.lsp"))

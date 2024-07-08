@@ -60,16 +60,16 @@
                  (format nil "~s" year))))
 
 (defun get-quail-release-info ()
-  "Returns a list containing the current Quail release information: ~&~
+  "Returns a list containing the current Quail release information: ~&
    (version distribution date *quail-systems* *features*)."
-  (let ((fname (mk::quail-release-file)))
+  (let ((fname (qk::quail-release-file)))
     (if (probe-file fname)
       (with-open-file (ofile fname :direction :input)
         (read ofile)))))
 
 (defun put-quail-release-info (release-info)
   "Stores the given Quail release information."
-  (with-open-file (ofile (mk::quail-release-file)
+  (with-open-file (ofile (qk::quail-release-file)
                              :direction :output
                              :if-exists :supersede
                              :if-does-not-exist :create)
@@ -143,7 +143,7 @@
       (loop for package in packages-to-doc
             do
             (vw:inform-user
-             (format NIL "Creating documentation for all external symbols~
+             (format NIL "Creating documentation for all external symbols
                           of the package ~s."
                      package))
             (document-symbols :package package
@@ -182,7 +182,7 @@
    (:arg update? NIL Non-NIL if the release information is to be updated on file.)~
    )~
    "
-  (declare (special *features* mk::*quail-systems*))
+  (declare (special *features* cl-user::*quail-systems*))
   
   (auto-doc-release :auto-index? auto-index?
                     :auto-topics? auto-topics?
@@ -202,7 +202,7 @@
     
     (if update?
       (put-quail-release-info
-       (list  version distribution date mk::*quail-systems* *features*)))
+       (list  version distribution date cl-user::*quail-systems* *features*)))
     (setf vw::*info-window* NIL)
     (setf vw::*info-text* NIL)
     (save file)

@@ -49,7 +49,12 @@
 ;;;
 ;;;-------------------------------------------------------------------------------
 
-(make-synonym :old expt :new ** :warn nil)
+#+:aclpc-linux (excl:without-package-locks
+	(make-synonym :old expt :new ** :warn nil))
+#+:sbcl-linux (sb-ext:without-package-locks
+	(make-synonym :old expt :new ** :warn nil))
+
+#-(or :aclpc-linux :sbcl-linux) (make-synonym :old expt :new ** :warn nil)
 
 (make-synonym :old expt :new ^ :warn nil)
 
