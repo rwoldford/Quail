@@ -72,19 +72,33 @@
 ;;; We require this package to find lambda lists etc.
 ;;; Seemed to be automatically in Linux but not Mac.
 #+:sbcl (require "sb-introspect")
-
+;;; fix comp:*cltl1-compile-file-toplevel-compatibility-p* as per allegro documentation
+;;; so we are in ansi mode
+#+:aclpc-linux(setf comp:*cltl1-compile-file-toplevel-compatibility-p* nil)
 ;;;
 ;;;  Now get the correct name for the Common Lisp's user package
 ;;;  to be used for this file
 ;;;  DO NOT CHANGE THIS.
 ;;;
 
-#+:cl-2 (in-package :cl-user) 
+#+(and :cl-2 :aclpc-linux) (in-package :cl-user) ; 19 November 2019 
+#+(and :cl-2 :sbcl-linux) (in-package :clim-user)
+;;; I think, on 24JAN2022, that the above should be :cl-user NOT :clim-user
 #-:cl-2(in-package "USER")
-
-;
+#|
+;;; 15APR2024 Set the variables quail-speed and quail-safety which are used in forms such as
+;;; (declare (optimize (speed 3) (safety 0)))
+;;; to check on run-time errors
+;;; the original Q files affected had (speed 3) (safety 0)
+(defvar quail-speed 1) 
+(defvar quail-safety 1)
+(setf quail-speed (cg::ask-user-for-choice-from-list "Choose speed" (list 0 1 2 3)))
+(setf quail-safety (cg::ask-user-for-choice-from-list "Choose safety" (list 0 1 2 3)))
+(format t "~%quail-speed is ~d " quail-speed)
+(format t "~%quail-safety is ~d " quail-safety)
+|#
 ;;;   start with the directory from which quail-make.lsp (this file) was loaded:
-#+:cl-2(setf *quail-make-load-directory* (make-pathname :directory
+#+:cl-2(defvar *quail-make-load-directory* (make-pathname :directory
     (pathname-directory *load-truename*)))
 
 
@@ -117,8 +131,9 @@
 
 (pushnew :quail *features*)
 
-
-
+(defun path-quail()
+  "q:")
+;(format t "~%Just after pushnew :quail *features*")
 
 ;;;  With Quail located, "q:" is a logical-directory that
 ;;;  now refers to the Quail directory in Common Lisp,
@@ -182,7 +197,7 @@
          )
     (warn "Can't find Examples."))
   )
-
+;(format t "~%Just after examples")
 ;;;  That done, "eg" now refers to the Quail Examples directory in Common Lisp.
 ;;;
 ;;;;;;;;;;
@@ -209,7 +224,7 @@
                 #+:aclpc (list "*.*" "q:data;*.*")))
     (warn "Can't find Data."))
   )
-
+;(format t "~%Just after Data")
 ;;;  That done, "data" now refers to the Quail Data directory in Common Lisp.
 ;;;
 ;;;;;;;;;;
@@ -238,6 +253,7 @@
 ;;;  That done, "doc" now refers to the Quail Doc directory in Common Lisp.
 ;;;
 
+;(format t "~%Just after Doc")
 ;;;;;;;;;;
 ;;;
 ;;;    Define the lookup for the Quail-init file.
@@ -252,46 +268,53 @@
 
 ;;;  A variable to contain the Quail subsystems.  Set in quail.qmk.
 
-(defvar *quail-systems* NIL
-  "Collection of Quail systems loaded into the current Quail image.~%~
-   Defined in the file q:quail.qmk")
+;#+:sbcl(defvar *quail-systems* NIL  "Collection of Quail systems loaded into the current Quail image.~%~
+;   Defined in the file q:quail.qmk")
+;;;  Define the systems which make up Quail;;;
 
-;;;  Define the systems which make up Quail
-
-(setf *quail-systems* (list "quail-user"
-                            "initialization"
-                            ;; "analysis-map"
-                            ;;"browser" 15F2018
-                            "statistics"
-                            "probability"
-                            "mathematics"
-                            "linear"
-                            ;;"top-level"
-                            ;;"documentation"
+(defvar *quail-systems* (list ;"quail-user"
+                            ;"initialization"
+                            ;; "analyis-;map" :03NOV2019 ? gone somewhere else
+                            ;; "browser"; ;15F2018 ? gone somewhere else 
+                            ;"statistics"
+                            ;"probability"
+                            ;"mathematics"
+                            ;"linear"
+                            ;"top-level" ;; skipped - needs menus
+                            ;"documentation" ;; 19MAR2022 
                             ;; systems above this line use Quail package.
-                            "quail"
-                            ;;"views"
-                            ;;"window-basics"
-                            "new-math"
+                            ;"quail" ;; 19MAR2022
+                            ;"views" ;;first try 07MAR2022 - w-b is incomplete ; back off see quail-linux.log line 14383
+                            "window-basics" 
+                            "new-math"      
                             "quail-kernel"
-                            ))
+                            )
+  "Collection of Quail systems loaded into the current Quail image."
+  )
+;(format t "~%Just after defining *quail-systems*")
 
-
+;;; Make sure we can recompile if things break in w-b
+#+:sbcl(setf sb-ext::*on-package-variance* '(:warn (:window-basics :quail-kernel) :error T))
 ;;;  Do the make
 (format t "~%Starting the make")
 (loop for system in (reverse *quail-systems*)
-  do (when (or (string-equal system "quail-kernel") (string-equal system "initialization")) 
+  do 
+  (when (or (string-equal system "quail-kernel") (string-equal system "initialization")) 
   #+:sbcl(sb-ext:unlock-package :sb-mop)
   #+:sbcl(sb-ext:unlock-package :common-lisp))
+  ;#+:aclpc()
+  ;#+:aclpc()
   (asdf:clear-source-registry)
       (format t "~%Loading ~s " system)
       (asdf:load-system system)
   (when (or (string-equal system "quail-kernel")  (string-equal system "initialization"))
   #+:sbcl(sb-ext:lock-package :sb-mop)
-  #+:sbcl(sb-ext:lock-package :common-lisp))    
+  #+:sbcl(sb-ext:lock-package :common-lisp)
+  ;#+:aclpc()
+  ;#+:aclpc()
+  )    
       (format t "~% ~s loaded" system)
     )
 (format t "~%Quail Loaded")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;; End of File ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
