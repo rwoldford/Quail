@@ -28,7 +28,8 @@
 
 
 ;;; a new copy
-(define-application-frame quail-color-canvas (canvas)
+;(define-application-frame quail-color-canvas (canvas) ;24SEP2024
+(define-application-frame color-canvas (canvas) ;24SEP2024                             
   ((left :initarg :left :accessor left)
   	(bottom :initarg :bottom :accessor bottom)
     (height :initarg :height :accessor height)
@@ -40,12 +41,14 @@
     (pen-width :initarg :pen-width :accessor pen-width)
     (pen-operation :initarg :pen-operation :accessor pen-operation)
     (font :initarg :font :accessor font)
+    (region :initarg :region :accessor region-of ) 
+    (background-color :initarg :background-color :accessor background-of) 
     )
   (:menu-bar nil) ;quail-canvas-command-table) ;<- here
   (:panes
     (host-pane :application :scroll-bars T :width (width *application-frame*) :height (height *application-frame*)
-      :background *default-canvas-background-color* :foreground (pen-color *application-frame*)
-      :text-style (canvas-font-to-host-font (font *application-frame*)) :display-time nil)
+      :background (background-of *application-frame*) :foreground (pen-color *application-frame*)
+      :text-style (canvas-font-to-host-font (font *application-frame*)) :display-time nil) 
     )
   (:layouts
    (default
@@ -136,7 +139,7 @@
            (ignorable canvas-class))
   (format t "~%mcc-input pen-color is ~s " pen-color)
   (format t "~%mcc-input pen-width is ~s " pen-width)
-     (let ((frame (make-application-frame 'quail-color-canvas :pretty-name title 
+     (let ((frame (make-application-frame 'color-canvas :pretty-name title                                                                
       :left left
       :bottom (- (screen-height) bottom) 
       :width width
@@ -147,6 +150,8 @@
       :font font
       :canvas-keywords (list NIL)
       :color? T 
+      :region (make-region left bottom width height)
+      :background-color background-color 
       :&allow-other-keys T
       )))
   (sb-thread::make-thread (lambda () (run-frame-top-level frame)))
@@ -167,7 +172,8 @@
 
   ;;; gesture so that l-click on pane makes frame *current-canvas*
   (define-presentation-action do-change-canvas
-    (blank-area nil quail-color-canvas :gesture :select)
+    ;(blank-area nil quail-color-canvas :gesture :select)
+    (blank-area nil color-canvas :gesture :select)
     (object)
   (with-application-frame (frame)
     (update-ccqc frame)
