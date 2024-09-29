@@ -85,6 +85,17 @@
   (multiple-value-bind (l r b tp) (wb:canvas-bounds w)
     (setf (bounds-of (region-of w)) (list l r b tp))))
 
+;;; 2 added forms 27SEP2024 to allow for mcclim's defining things in window-basics, and its definition
+;;;  of a region, while set-bounds is in views, with its separate defintion of a region
+#+:sbcl-linux(defun wb-to-vw (wb-region)
+      "Input: a window-basics region such as #(10 20 30 40)
+       Output: a matching views region #(REGION 10 20 30 40)"
+      (vector 'region (svref wb-region 0) (svref wb-region 1) (svref wb-region 2) (svref wb-region 3)))
+
+#+:sbcl-linux(defmethod set-bounds ((w wb::color-canvas))
+               (multiple-value-bind (l r b tp) (wb::canvas-bounds w)
+                                    (setf (bounds-of (wb-to-vw (wb::region-of w))) (list l r b tp))))
+
 ;;;========================================================================
 
 
@@ -250,14 +261,19 @@
                          :left left
                          :bottom bottom 
                          :width (1+ (- right left))
-                         :background-color background-color
+                         :background-color (or background-color
+                                      wb::*default-canvas-background-color*);background-color
                          :height (1+ (- top bottom))
                          canvas-keywords)
                   (apply #'wb:make-canvas
                          :canvas-class view-window-class
                          :title title
-                         :background-color background-color
-                         canvas-keywords))))
+                         :background-color (or background-color
+                                      wb::*default-canvas-background-color*);background-color
+                         canvas-keywords)
+                  )
+                )
+        )
     
     (wb:set-left-button-fn canvas #'*view-left-button-fn*)
     (wb:set-middle-button-fn canvas #'*view-middle-button-fn*)
