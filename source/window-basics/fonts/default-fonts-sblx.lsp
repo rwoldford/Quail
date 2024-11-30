@@ -22,17 +22,6 @@
            *help-lisp-font* *help-normal-title-font* *help-small-title-font*
            *help-lisp-title-font*)))
 
-;;; Most of the :name values should be faces, I think
-;;; Thus times <-> times\ new\ roman
-;;; courier <-> courier but helvetica <-?-> ms\ sans\ serif
-;;; swiss is the name of a FAMILY
-;;; See p7-8 of Volume 2 of ACLPC2.0
-
-;;; for small things we could use small\ fonts
-
-;;; and the sizes should be the ;;nn values
-;;; For now only the sizes have been done
-
 (defparameter *very-small-graphics-font*
    (canvas-make-font :name :sans-serif;(cons :modern :times\ new\ roman) 
     :size :very-small :style :roman) ;;11)
