@@ -460,155 +460,117 @@ Returns a region."
    (select-screen-rect width height limit-region)))
 
 (defun select-canvas-rect (canvas &optional (width 0) (height 0)
-                                             limit-region)
-     "Mouse-selects a rectangle on the canvas by selecting in canvas and ~
-sweeping out the region to be selected.  ~
-The rectangle selected is confined to limit-region ~
-which defaults to the boundary of the canvas. ~
-Returns the region information as ~
-multiple values (left bottom width height) in canvas ~
-coordinates."
-     (declare (special *gray-shade* :boole-xor cg::invert))
-  (loop until (mouse-down-p ))
+                                  limit-region)
+  "Mouse-selects a rectangle on the canvas by selecting in canvas and ~
+  sweeping out the region to be selected.  ~
+  The rectangle selected is confined to limit-region ~
+  which defaults to the boundary of the canvas. ~
+  Returns the region information as ~
+  multiple values (left bottom width height) in canvas ~
+  coordinates."
+  (declare (special *gray-shade* :boole-xor cg::invert))
+  ;(loop until (mouse-down-p )) WHAT IS THIS HERE FOR ??
   (format t "~%Data from select-canvas-rect:") ;06FEB2015
   ;;+ See above about wrapper
   (cg::with-device-context (hdc (cg::screen cg::*system*))
-    (let* ((anchor-point NIL)
-           (original-mouse-position NIL) ;07FEB2015
-           (final-mouse-position NIL) ;07FEB2015
-           (old-mouse NIL)
-           (new-mouse NIL)
-           (left NIL)
-           (top NIL)
-           (drawable  (cg::frame-child canvas))
-           )
-         (flet ((host-mouse-position ()
-                   (let ((pos (cg::cursor-position drawable)))
-                       (list (cg::position-x pos) (cg::position-y pos))))
-                )
-           (format t "~%host-mouse-position is ~s " (host-mouse-position)) ;06FEB2015
-           (setq limit-region (or limit-region (canvas-region canvas)))
-           (format t "~%limit-region is ~s " limit-region) ;06FEB2015
-           (setf old-mouse (host-mouse-position))
-           (setf anchor-point
-                   (list
-                     (max (- (first old-mouse) width)
-                         (region-left limit-region))
-                     (max (- (second old-mouse) height)
-                         (canvas-to-host-y canvas
-                            (region-top limit-region)))
-                    ))
-           (format t "~%anchor-point is ~s " anchor-point) ;06FEB2015
-           (setf new-mouse (copy-tree old-mouse))
-           (setf left (first anchor-point))
-           (setf top (second anchor-point))
-           (setf original-mouse-position (host-mouse-position)) ;07FEB2015
-           (format t "~%original-mouse-position is ~s " original-mouse-position)
-            (with-focused-canvas canvas
-             (cg::with-paint-operation 
-                 ;(drawable cg::invert) 19oct05
-                 (drawable cg::po-invert) ;19oct05
-               ;        (with-pen-values canvas *gray-shade* 1 :boole-xor
-               ;; draw the rectangle
-               (cg::draw-box drawable 
-                (cg::make-box left top (+ left width) (+ top height))
-                )
-               (loop
-                 (unless (mouse-down-p ) (return))    ;return when the mouse lets up
-                 (unless (equal old-mouse new-mouse)
-                      ;; erase rectangle
-                      (cg::draw-box drawable 
-                       (cg::make-box left top (+ left width) (+ top height))
-                       )
-                      ;; update to get new one
-                      (cond
-                                ((> (first new-mouse) (first anchor-point))
-                                 (setf left (first anchor-point))  
-                                 (setf width (- (first new-mouse) left)))
-                                (T
-                                   (setf left (first new-mouse))
-                                   (setf width (- (first anchor-point) left))))
-                      (cond
-                                ((> (second new-mouse) (second anchor-point))
-                                 (setf top (second anchor-point))  
-                                 (setf height (- (second new-mouse) top)))
-                                (T
-                                   (setf top (second new-mouse))
-                                   (setf height (- (second anchor-point) top))))
-                      ;; draw it
-                   (cg::draw-box drawable 
-                                 (cg::make-box left top (+ left width) (+ top height))
-                                 )
-                      ;; slow down
-                      ;;(sleep 1/60)
-                      ;; update iteration
-                      (setq old-mouse new-mouse))
-                 (setq new-mouse (host-mouse-position))
-                 )
-               (setf final-mouse-position (host-mouse-position)) ;07FEB2015
-               (format t "~% final-mouse-position is ~s " final-mouse-position)
-               ;; Finally erase it.
-               (cg::draw-box drawable
-                (cg::make-box left top (+ left width) (+ top height))
-                )
-               );;end (with-pen-values
-              );; end (with-focused-canvas
-           (format t "~% Values to be returned: ") ;06FEB2015
-           (format t "~%left is ~d " left) ;06FEB2015
-           (format t "~%top is ~d " (min (second anchor-point) (second original-mouse-position) (second final-mouse-position))) ;07FEB2015
-           ;(format t "~% (- (canvas-to-host-y canvas top) height) is ~d " (- (canvas-to-host-y canvas top) height)) ;06FEB2015
-           (format t "~%width is ~d " width) ;06FEB2015
-           (format t "~%height is ~d " height) ;06FEB2015
-           (format t "~%host-mouse-position is now ~s " (host-mouse-position)) ;06FEB2015
-           (values (min (first anchor-point) (first original-mouse-position) (first final-mouse-position)) ; 07FEB22015left
-                   (min (second anchor-point) (second original-mouse-position) (second final-mouse-position))
-              ; 07FEB2015(- (canvas-to-host-y canvas top) height)
-                   ;;(+ top height)
-                   (cond ((and ( > (first final-mouse-position) (first original-mouse-position))
-                               (> (second final-mouse-position) (second original-mouse-position))
-                               )
-                          (- (first final-mouse-position) (min (first anchor-point) (first original-mouse-position)))
-                          )
-                         ((and (< (first final-mouse-position) (first original-mouse-position))
-                               (> (second final-mouse-position) (second original-mouse-position))
-                               )
-                          (- (max (first anchor-point) (first original-mouse-position)) (first final-mouse-position)))
-                         ((and (< (first final-mouse-position) (first original-mouse-position))
-                               (< (second final-mouse-position) (second original-mouse-position))
-                               )
-                          (- (max (first anchor-point) (first original-mouse-position)) (first final-mouse-position)))
-                         ((and (> (first final-mouse-position) (first original-mouse-position))
-                               (< (second final-mouse-position) (second original-mouse-position))
-                               )
-                          (- (first final-mouse-position) (min (first anchor-point) (first original-mouse-position)) )
-                          )
-                         T);; end width
-                   (cond ((and ( > (first final-mouse-position) (first original-mouse-position))
-                               (> (second final-mouse-position) (second original-mouse-position))
-                               )
-                          (- (second final-mouse-position) (min (second anchor-point) (second original-mouse-position)))
-                          )
-                         ((and (< (first final-mouse-position) (first original-mouse-position))
-                               (> (second final-mouse-position) (second original-mouse-position))
-                               )
-                          (- (second final-mouse-position) (min (second anchor-point) (second original-mouse-position)))
-                          )
-                         ((and (< (first final-mouse-position) (first original-mouse-position))
-                               (< (second final-mouse-position) (second original-mouse-position))
-                               )
-                          (- (max (second anchor-point) (second original-mouse-position)) (second final-mouse-position)))
-                         ((and (> (first final-mouse-position) (first original-mouse-position))
-                               (< (second final-mouse-position) (second original-mouse-position))
-                               )
-                          (- (max (second anchor-point) (second original-mouse-position)) (second final-mouse-position))
-                          )
-                         T);; end height
-                   ;width height ;07FEB2015
-                   )
-           );; end (flet ((host-mouse-position
-       );; end (let* ((anchor-point
-    ) ;; end wrapper
-     );; end (defun select-canvas-rect
+                           (let* ((anchor-point NIL)
+                                  (original-mouse-position NIL) ;07FEB2015
+                                  (final-mouse-position NIL) ;07FEB2015
+                                  (old-mouse NIL)
+                                  (new-mouse NIL)
+                                  (left NIL)
+                                  (top NIL)
+                                  (drawable  (cg::frame-child canvas))
+                                  )
+                             (flet ((host-mouse-position ()
+                                                         (let ((pos (cg::cursor-position drawable)))
+                                                           (list (cg::position-x pos) (cg::position-y pos))))
+                                    )
+                                   (format t "~%host-mouse-position is ~s " (host-mouse-position)) ;06FEB2015
+                                   (setq limit-region (or limit-region (canvas-region canvas)))
+                                   (format t "~%limit-region is ~s " limit-region) ;06FEB2015
+                                   (setf old-mouse (host-mouse-position))
+                                   (setf anchor-point
+                                         (list
+                                           (max (- (first old-mouse) width)
+                                                (region-left limit-region))
+                                           (max (- (second old-mouse) height)
+                                                (canvas-to-host-y canvas
+                                                                  (region-top limit-region)))
+                                           ))
+                                   (format t "~%anchor-point is ~s " anchor-point) ;06FEB2015
+                                   (setf new-mouse (copy-tree old-mouse))
+                                   (setf left (first anchor-point))
+                                   (setf top (second anchor-point))
+                                   (setf original-mouse-position (host-mouse-position)) ;07FEB2015
+                                   (format t "~%original-mouse-position is ~s " original-mouse-position)
+                                   (with-focused-canvas canvas
+                                                        (cg::with-paint-operation 
+                                                          ;(drawable cg::invert) 19oct05
+                                                          (drawable cg::po-invert) ;19oct05
+                                                          ;        (with-pen-values canvas *gray-shade* 1 :boole-xor
+                                                          ;; draw the rectangle
+                                                          (cg::draw-box drawable 
+                                                                        (cg::make-box left top (+ left width) (+ top height))
+                                                                        )
+                                                          (loop ;; if old-mouse = new-mouse erase the rectangle
+                                                            (if (equal old-mouse new-mouse)
+                                                                (cg::draw-box drawable
+                                                                              (cg::make-box left top (+ left width) (+ top height))))
+                                                            (unless (mouse-down-p ) (return))    ;return when the mouse lets up
+                                                            (unless (equal old-mouse new-mouse)
+                                                              ;; erase rectangle
+                                                              (cg::draw-box drawable 
+                                                                            (cg::make-box left top (+ left width) (+ top height))
+                                                                            )
+                                                              ;; update to get new one
+                                                              (cond
+                                                                ((> (first new-mouse) (first anchor-point))
+                                                                 (setf left (first anchor-point))  
+                                                                 (setf width (- (first new-mouse) left)))
+                                                                (T
+                                                                  (setf left (first new-mouse))
+                                                                  (setf width (- (first anchor-point) left))))
+                                                              (cond
+                                                                ((> (second new-mouse) (second anchor-point))
+                                                                 (setf top (second anchor-point))  
+                                                                 (setf height (- (second new-mouse) top)))
+                                                                (T
+                                                                  (setf top (second new-mouse))
+                                                                  (setf height (- (second anchor-point) top))))
+                                                              ;; draw it
+                                                              (cg::draw-box drawable 
+                                                                            (cg::make-box left top (+ left width) (+ top height))
+                                                                            )
+                                                              ;; slow down
+                                                              ;(sleep 1/60) ; in 13sep2023 out 16se92023 
+                                                              ;; update iteration
+                                                              (setq old-mouse new-mouse)) ;; end (unless (equal old-mouse new-mouse))
+                                                            (setq new-mouse (host-mouse-position))
+                                                            ) ;; end (loop
+                                                          (setf final-mouse-position (host-mouse-position)) ;07FEB2015
+                                                          (format t "~% final-mouse-position is ~s " final-mouse-position)
+                                                          ;; Finally erase it.
+                                                          (cg::draw-box drawable
+                                                                        (cg::make-box left top (+ left width) (+ top height))
+                                                                        )
+                                                          );;end (with-paint-operation ;;;(with-pen-values <- not live now
+                                                        );; end (with-focused-canvas
+                                   (format t "~% Values to be returned: ") ;06FEB2015
+                                   (format t "~%left is ~d " left) ;06FEB2015
+                                   (format t "~%top is ~d " (min (second anchor-point) (second original-mouse-position) (second final-mouse-position))) ;07FEB2015
+                                   ;(format t "~% (- (canvas-to-host-y canvas top) height) is ~d " (- (canvas-to-host-y canvas top) height)) ;06FEB2015
+                                   (format t "~%width is ~d " width) ;06FEB2015
+                                   (format t "~%height is ~d " height) ;06FEB2015
+                                   (format t "~%host-mouse-position is now ~s " (host-mouse-position)) ;06FEB2015
+                                   (values left (- (canvas-to-host-y canvas top) height)
+                                           width height
+                                           
+                                           ) ;; end values
+                                   );; end (flet ((host-mouse-position
+                             );; end (let* ((anchor-point
+                           ) ;; end device-context wrapper
+  );; end (defun select-canvas-rect
 
 (defun select-screen-rect ( &optional (width 50) (height 50) limit-region)
      "Mouse-selects a rectangle on the screen by selecting a location on the~
@@ -781,3 +743,51 @@ size and location of the canvas which will be returned."
                          :height (- fix-y mouse-y ))))
     ) ;; end with-device-context
 )
+
+;;; A pile of code which was after (values in select-canvas-rect - not sure why
+#|
+                                           (min (first anchor-point) (first original-mouse-position) (first final-mouse-position)) ; 07FEB22015left
+                                           (min (second anchor-point) (second original-mouse-position) (second final-mouse-position))
+                                           ; 07FEB2015(- (canvas-to-host-y canvas top) height)
+                                           ;;(+ top height)
+                                           (cond ((and ( > (first final-mouse-position) (first original-mouse-position))
+                                           (> (second final-mouse-position) (second original-mouse-position))
+                                           )
+                                           (- (first final-mouse-position) (min (first anchor-point) (first original-mouse-position)))
+                                           )
+                                           ((and (< (first final-mouse-position) (first original-mouse-position))
+                                           (> (second final-mouse-position) (second original-mouse-position))
+                                           )
+                                           (- (max (first anchor-point) (first original-mouse-position)) (first final-mouse-position)))
+                                           ((and (< (first final-mouse-position) (first original-mouse-position))
+                                           (< (second final-mouse-position) (second original-mouse-position))
+                                           )
+                                           (- (max (first anchor-point) (first original-mouse-position)) (first final-mouse-position)))
+                                           ((and (> (first final-mouse-position) (first original-mouse-position))
+                                           (< (second final-mouse-position) (second original-mouse-position))
+                                           )
+                                           (- (first final-mouse-position) (min (first anchor-point) (first original-mouse-position)) )
+                                           )
+                                           T);; end width
+                                           (cond ((and ( > (first final-mouse-position) (first original-mouse-position))
+                                           (> (second final-mouse-position) (second original-mouse-position))
+                                           )
+                                           (- (second final-mouse-position) (min (second anchor-point) (second original-mouse-position)))
+                                           )
+                                           ((and (< (first final-mouse-position) (first original-mouse-position))
+                                           (> (second final-mouse-position) (second original-mouse-position))
+                                           )
+                                           (- (second final-mouse-position) (min (second anchor-point) (second original-mouse-position)))
+                                           )
+                                           ((and (< (first final-mouse-position) (first original-mouse-position))
+                                           (< (second final-mouse-position) (second original-mouse-position))
+                                           )
+                                           (- (max (second anchor-point) (second original-mouse-position)) (second final-mouse-position)))
+                                           ((and (> (first final-mouse-position) (first original-mouse-position))
+                                           (< (second final-mouse-position) (second original-mouse-position))
+                                           )
+                                           (- (max (second anchor-point) (second original-mouse-position)) (second final-mouse-position))
+                                           )
+                                           T);; end height
+                                           ;width height ;07FEB2015
+                                           |#
