@@ -98,7 +98,7 @@
 ;;;  Default screen positions for a canvas (modified 1995, jrm)
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-#| 26SEP2023 already defined in canvas/canvas.lsp
+; 26SEP2023 already defined in canvas/canvas.lsp - but it's not!!
 (defvar *default-canvas-region*
   (make-region *screen-left-margin* *screen-bottom-margin* 300 300)
   "Set to a default screen region where the canvas will appear.")
@@ -112,7 +112,7 @@
         screen."
        
   (setf *default-canvas-region*  (make-region left bottom width height)))
-|#  
+ 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
