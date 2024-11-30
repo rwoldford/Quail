@@ -65,39 +65,39 @@
 
 (defun subregion-p (larger smaller)
   (let ((large-left (region-left larger))
-	(large-bottom (region-bottom larger))
-	(small-left (region-left smaller))
-	(small-bottom (region-bottom smaller)))
+  (large-bottom (region-bottom larger))
+  (small-left (region-left smaller))
+  (small-bottom (region-bottom smaller)))
     (and (<= large-bottom
-	     small-bottom
-	     (+ small-bottom (region-height smaller))
-	     (+ large-bottom (region-height larger)))
-	 (<= large-left
-	     small-left
-	     (+ small-left (region-width smaller))
-	     (+ large-left (region-width larger))))))
+       small-bottom
+       (+ small-bottom (region-height smaller))
+       (+ large-bottom (region-height larger)))
+   (<= large-left
+       small-left
+       (+ small-left (region-width smaller))
+       (+ large-left (region-width larger))))))
 
 (defun intersect-regions (&rest regions)
   (assert (not (null regions)))
   (let ((left   most-negative-fixnum)
-	(bottom most-negative-fixnum)
+  (bottom most-negative-fixnum)
         (right  most-positive-fixnum)
-	(top most-positive-fixnum)
-	)
+  (top most-positive-fixnum)
+  )
     (dolist (region regions)
       (let ((r-left   (region-left   region))
-	    (r-bottom (region-bottom region))
-	    (r-right  (region-right  region))
-	    (r-top (region-top region)))
-	(when (> r-left   left)   (setq left   r-left))
-	(when (> r-bottom bottom) (setq bottom r-bottom))
-	(when (< r-right  right)  (setq right  r-right))
-	(when (< r-top top) (setq top r-top))))
+      (r-bottom (region-bottom region))
+      (r-right  (region-right  region))
+      (r-top (region-top region)))
+  (when (> r-left   left)   (setq left   r-left))
+  (when (> r-bottom bottom) (setq bottom r-bottom))
+  (when (< r-right  right)  (setq right  r-right))
+  (when (< r-top top) (setq top r-top))))
     (make-region left bottom (- right left -1) (- top bottom -1))))
 
 (defun inside-p (region position)
   (let ((left (region-left region))
-	(bottom (region-bottom region)))
+  (bottom (region-bottom region)))
     (and
       (<= left   (position-x position) (+ left   (region-width region)))
       (<= bottom (position-y position) (+ bottom (region-height region))))))
