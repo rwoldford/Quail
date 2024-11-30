@@ -374,7 +374,9 @@
                                    (height (canvas-height canvas))
                                    (times 2))
   (if (< times 1)
-    (quail-error "times must be greater than 0.  times = ~S " times))
+    ;(quail-error "times must be greater than 0.  times = ~S " times)
+    (qk::quail-error "times must be greater than 0. times = ~S " times) ;24NOV20224
+    )
   
   (loop for i from 1 to times do
         (canvas-invert canvas
