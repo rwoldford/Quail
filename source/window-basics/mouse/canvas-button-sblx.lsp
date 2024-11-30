@@ -23,7 +23,7 @@
 ;;; Now make button events function uniformly
 ;;;===================================================================
 
-(defmethod handle-event ((pane host-pane) (p-event pointer-button-press-event))
+(defmethod handle-event ((pane application-pane) (p-event pointer-button-press-event)) ;host-pane) (p-event pointer-button-press-event))
   (declare (ignore p-event)) ;; seems like we don't need it here?
   (let ((canvas (pane-frame pane)))
      (mouse-button-event-fn canvas (mouse-position canvas))
