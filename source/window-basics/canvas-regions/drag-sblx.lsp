@@ -495,6 +495,7 @@ coordinates."
            (new-mouse NIL)
            (left NIL)
            (top NIL)
+           (bottom (region-bottom (canvas-region canvas))) ;24NOV2024
            (draw-pt (screen-to-host-y (+ bottom height)))
            (drawable  (get-frame-pane canvas 'host-pane))
            )
