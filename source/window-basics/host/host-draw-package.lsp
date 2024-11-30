@@ -20,21 +20,21 @@
   ;#+:aclpc-linux (:use :common-lisp)
   (:use "COMMON-LISP")
   (:nicknames "H-DRAW")
-  (:IMPORT-FROM "QUAIL-KERNEL"
-                *QUAIL-RESTORE-LISP-FUNCTIONS*
-                *QUAIL-STANDARD-INPUT* 
-                *QUAIL-STANDARD-OUTPUT* 
-                *QUAIL-QUERY-IO*
-                *QUAIL-DEBUG-IO*
-                *QUAIL-ERROR-OUTPUT*
-                *QUAIL-TRACE-OUTPUT*
-                *QUAIL-TERMINAL-IO*
-                QUAIL-PRINT
-                QUAIL-ERROR
-                QUAIL-CERROR
-                QUAIL-QUERY
-                QUAIL-Y-OR-N-P 
-                QUAIL-YES-OR-NO-P)
+  ;(:IMPORT-FROM "QUAIL-KERNEL"
+  ;              *QUAIL-RESTORE-LISP-FUNCTIONS*
+  ;              *QUAIL-STANDARD-INPUT* 
+  ;              *QUAIL-STANDARD-OUTPUT* 
+  ;              *QUAIL-QUERY-IO*
+  ;              *QUAIL-DEBUG-IO*
+  ;              *QUAIL-ERROR-OUTPUT*
+  ;              *QUAIL-TRACE-OUTPUT*
+  ;              *QUAIL-TERMINAL-IO*
+  ;              QUAIL-PRINT
+  ;              QUAIL-ERROR
+  ;              QUAIL-CERROR
+  ;              QUAIL-QUERY
+  ;              QUAIL-Y-OR-N-P 
+  ;              QUAIL-YES-OR-NO-P)
   #+:ccl
   (:shadow
    "MAKE-POINT")
