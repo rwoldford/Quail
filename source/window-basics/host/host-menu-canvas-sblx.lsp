@@ -30,6 +30,64 @@
 	"Sets the height (pixels) of just the title strip of *system-default-menubar*."
 	(setf *system-default-menubar-base-height* height))
 
+;;; START From mcclim-code/test-quail-menubar.lsp
+(define-application-frame qmbar ()
+	()
+	(:menu-bar qmbar-command-table)
+	(:panes
+		(display :application))
+	(:layouts
+		(default display))
+	(:geometry :height (set-system-default-menubar-base-height))
+ )
+
+(define-qmbar-command com-quail ()
+	)
+
+(define-qmbar-command com-plots ()
+	)
+
+(define-qmbar-command com-extra-menus ()
+	)
+
+(define-qmbar-command com-inactive ()
+	)
+
+(make-command-table 'quail-command-table 
+	:errorp NIL
+	:menu '(("Inactive" :command com-inactive)))
+
+(make-command-table 'plots-command-table
+	:errorp nil
+	:menu '(("Inactive" :command com-inactive)))
+
+(make-command-table 'extra-menus-command-table
+	:errorp nil
+	:menu '(("Inactive" :command com-inactive)))
+
+(make-command-table 'qmbar-command-table
+	:errorp nil
+	:menu '(("Quail" :menu quail-command-table)
+		("Plots" :menu plots-command-table)
+		("Extra Menus" :menu extra-menus-command-table)))
+
+(defvar *system-default-menubar-thread-name* "QMB")
+
+(defun set-system-default-menubar-thread-name (&key (string "QMB"))
+	(setf *system-default-menubar-thread-name* string))
+
+(defun make-default-system-menubar (&key (thread-name *system-default-menubar-thread-name*))
+		;(flet ((run ()
+		(let ((frame (make-application-frame 'qmbar :pretty-name "QUAIL MENUBAR")))
+				;(setq *quail-menubar-window* frame)
+				(setq *system-default-menubar* frame)
+		;		(run-frame-top-level frame))))
+		;(sb-thread::make-thread #'run :name thread-name))
+  (sb-thread::make-thread (lambda () (run-frame-top-level frame)))
+  ))
+
+;;; END from mcclim-code/test-quail-menubar.lsp
+#|
 (define-application-frame QUAILMENUBAR ()
 	()
 	(:menu-bar QUAILMENUBAR-command-table)
@@ -81,6 +139,8 @@
 				(setq *system-default-menubar* frame)
 				(run-frame-top-level frame))))
 		(sb-thread::make-thread #'run :name thread-name)))
+  
+  |#
 
 (defvar *quail-window-base-height* NIL
 	"The height (pixels) of just the title strip of *quail-menubar-window*.")
@@ -108,6 +168,7 @@
 
 (defvar *system-default-menubar-thread* (thread-from-name *system-default-menubar-thread-name*))
 
+#|
 (defun command-table-items (frame-symbol)
 	"Get command table items from an application frame identified by frame-symbol"
 	(let (foo)
@@ -115,7 +176,30 @@
 			(lambda (elt) (push elt foo))
 			(clim-user::frame-command-table (clim-user::find-application-frame frame-symbol)))
 		(nreverse foo)))
+  |#
 
 (defvar *last-menubar* *system-default-menubar*
    "The list of elements of the last menubar.  To be updated ~
 and downdated as canvases are activated and deactivated.") 
+
+;;; Get the things on a command-table from symbol
+(defun command-table-items (frame-symbol)
+  "Get command table items from an application frame identified by frame-symbol"
+(let (foo)
+      (map-over-command-table-commands
+       (lambda (elt) (push elt foo))
+       (frame-command-table (find-application-frame frame-symbol))) ;; from CLIM 2 P201 [f-c-t], P178 [f-a-f] 'menutest
+      ;;; from define applicatio)n-frame itself
+       (nreverse foo)))
+
+;;; If the Canvas menu is not on *system-default-menubar* put Quail, Plots, Canvas menus there.
+#|
+(defmethod initialize-instance :after ((self host-menu-canvas)
+                                                           &rest initargs)
+     (declare (ignore initargs))
+     (unless (member 'com-canvas (command-table-items 'qmbar)) ;quailmenubar))
+       (execute-frame-command *system-default-menubar* '(com-change-menu-bar quailqpc-command-table)))
+     ;(if (title-menus-of self)
+     ;   (put-title-menus-on-menubar self))
+     )
+|#
