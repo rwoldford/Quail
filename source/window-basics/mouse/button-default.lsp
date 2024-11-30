@@ -104,15 +104,21 @@
 
 (defun default-ctrl-left-button-fn (canvas mouse-pos)
   (declare (ignore mouse-pos))
-  (quail-print (canvas-display canvas)))
+  ;(quail-print (canvas-display canvas))
+  (qk::quail-print (canvas-display canvas)) ;25NOV20204
+               )
 
 (defun default-ctrl-middle-button-fn (canvas mouse-pos)
   (declare (ignore canvas))
-  (quail-print mouse-pos))
+  ;(quail-print mouse-pos)
+  (qk::quail-print mouse-pos) ;25NOV2024
+  )
 
 (defun default-ctrl-right-button-fn (canvas mouse-pos)
   (declare (ignore mouse-pos))
-  (quail-print canvas))
+  ;(quail-print canvas)
+  (qk::quail-print canvas) ;25NOV2024
+  )
 
 ;;; No suggestion at all what shift button selection should do.
 ;;;
