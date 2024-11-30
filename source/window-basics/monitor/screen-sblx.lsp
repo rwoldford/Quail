@@ -14,29 +14,8 @@
 ;;;     
 ;;;----------------------------------------------------------------------------------
 (in-package :wb)
+
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(screen-width screen-height screen-x screen-y)))
-
-#|
-(defun screen-height ()
-  "Returns the height of the screen in pixels."
-  (declare (special *default-display*))
-  (xlib::screen-height
-   (xlib::display-default-screen
-    *default-display*)))
-
-;;; The closest approximations seen to be as follows
-;;; gwb feb 26, 1996 - check with rwo
-
-(defun screen-height ()
-   "Returns the height of the special variable *screen* in pixels. ~
-    the optional t is required to get result in pixels. ~
-    the functions used can be applied to any stream."
-   ;(declare (special (cg::screen cg::*system*)))
-   (let ((scrn (cg::screen cg::*system*)))
-    (cg::with-device-context (hdc scrn)
-      (cg::page-height (cg::screen cg::*system*) t))
-     ))
-|#
 
 (defun screen-height ()
    "Returns the height of the special variable *screen* in pixels. ~
@@ -45,25 +24,6 @@
    ;(declare (special (cg::screen cg::*system*)))
    (graft-height (find-graft))
    )
-
-#|
-(defun screen-width ()
-  "Returns the width of the screen in pixels."
-  (declare (special *default-display*))
-  (xlib::screen-width
-   (xlib::display-default-screen
-    *default-display*)))
-
-(defun screen-width ()
-   "Returns the width of the special variable *screen* in pixels. ~
-    The optional t is required to get the result in pixels. ~
-    the functions used can be applied to any stream."
-   ;(declare (special (cg::screen cg::*system*)))
-   (let ((scrn (cg::screen cg::*system*)))
-    (cg::with-device-context (hdc scrn)
-      (cg::page-width (cg::screen cg::*system*) t))
-   ))
-|#
 
 (defun screen-width ()
    "Returns the width of the special variable *screen* in pixels. ~
@@ -82,7 +42,7 @@
   in screen coordinates x L -> R, y T -> B."
        (transform-region (sheet-delta-transformation (frame-top-level-sheet canvas) (graft canvas))
                           (sheet-region (frame-top-level-sheet canvas))))
-
+ 
  (defun screen-x (canvas)
   "The x-coordinate of the bottom left of the EXTERIOR ~
   of canvas as a fixnum."
@@ -92,18 +52,3 @@
   "The y-coordinate of the bottom left of the EXTERIOR ~
   of the canvas as a fixnum."
  (host-to-screen-y (rectangle-max-y (exterior-frame-rect canvas))))
-
-
-#| 
-(defun screen-x (canvas)
-   "The x-coordinate of the bottom left of the EXTERIOR ~
-    of canvas as a fixnum."
-   (cg::box-left (cg::exterior canvas))) 
-
-
-;; Poach from -mcl
-(defun screen-y (canvas)
-   "The y-coordinate of the bottom left of the EXTERIOR ~
-    of canvas as a fixnum."
-  (host-to-screen-y (cg::box-bottom (cg::exterior canvas))))
-|#
