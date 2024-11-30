@@ -146,7 +146,9 @@
     (if toggle-pair
       (when (not (cdr toggle-pair))
         (setf (cdr toggle-pair) T))
-      (quail-error "~s not found in the include list." command-name))))
+      ;(quail-error "~s not found in the include list." command-name)
+      (qk::quail-error "~s not found in the include list." command-name) ;25NOV2024
+      )))
 
 (defun reset-includes (canvas)
   "This function resets all the 'included' attributes of each postscript command to NIL.
