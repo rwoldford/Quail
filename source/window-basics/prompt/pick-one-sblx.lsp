@@ -46,7 +46,7 @@
     (prompt-pane 
     (make-pane 'clim-stream-pane
      :height 30
-     :scroll-bars nil
+     ;:scroll-bars nil
            :display-time t
            :display-function #'(lambda (frame pane) (draw-text* pane (prompt-text *application-frame*)
             10 25 :ink +blue+ :text-size 18))
