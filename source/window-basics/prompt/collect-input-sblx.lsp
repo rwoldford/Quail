@@ -44,7 +44,7 @@
                       (select-text "select")
                       (cancel-text "cancel")
                       (stream *query-io*) (ow t))
-(declare (ignore columns item-print-function action-function select-text cancel-text))
+;(declare (ignore columns item-print-function action-function select-text cancel-text))
   (let* ((result-list ()))
            (dolist (x items)
             (accepting-values
