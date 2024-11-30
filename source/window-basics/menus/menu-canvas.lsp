@@ -358,7 +358,7 @@
       (cdr (assoc key m))
       m)))
 
-(defun install-title-menus (canvas
+#-:sbcl-linux(defun install-title-menus (canvas
                             &key
                             (title-left        "Information")
                             (title-middle      "Edit-display")
@@ -425,7 +425,7 @@
                    )"))
  ;; out 10SEP2020 ;; in 03OCT2020 ;; out 04OCT2023
  ;#|
-(defmethod initialize-instance :after ((canvas menu-canvas) 
+#-:sbcl-linux(defmethod initialize-instance :after ((canvas menu-canvas) 
                                        &key
                                        (title-left        "Information")
                                        (title-middle      "Edit-display")
