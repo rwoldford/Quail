@@ -37,7 +37,7 @@
              (:file "operations")
              (:file "positions")
              (:file "display-mode"))
-            )
+           )
 
    (:module "window-basics/host"
             :components
@@ -49,6 +49,7 @@
              #+:sbcl-linux(:file "scrolling-window-sblx")
              #+:aclpc-linux(:file "scrolling-window-pc")
              #+:sbcl-linux(:file "host-menu-canvas-sblx")
+            #+:sbcl-linux(:file"test-color-menu") ;; NEW 15OCT2024 to test replacement
              #+:aclpc-linux(:file "host-menu-canvas-pc")
              #+:sbcl-linux(:file "host-window-sblx")
              #+:aclpc-linux(:file "host-window-pc")
@@ -104,27 +105,28 @@
             #+:sbcl-linux(:file "bitmap-sblx") ;; stubbed 11MAR2022  gwb
              #+:aclpc-linux(:file "bitmap-pc")
              (:file "bitmap") ;; stubbed 11MAR2022  gwb
-             ;#+:sbcl-linux(:file "cursor-sblx")
-             #+:aclpc-linux(:file "cursor-pc")
+   ;          ;#+:sbcl-linux(:file "cursor-sblx")
+   ;          #+:aclpc-linux(:file "cursor-pc")
              (:file "shades")
              #+:sbcl-linux(:file "shades-sblx")
              #+:aclpc-linux(:file "shades-pc")
-             ;(:file "cursor")
+   ;          ;(:file "cursor")
              (:file "patterns")
              )
             :depends-on ("window-basics/pen" "window-basics/macros")
-            )
+           )
 
 
    (:module "window-basics/monitor"
-            :components
-            (#+:sbcl-linux(:file "screen-sblx")
+      :components
+      (#+:sbcl-linux(:file "screen-sblx")
              #+:aclpc-linux(:file "screen-pc")
              (:file "screen")
              #+:sbcl-linux(:file "device-sblx")
              #+:aclpc-linux(:file "device-pc")
-             (:file "device"))
-             )
+             (:file "device")
+   )
+      )
 
    (:module "window-basics/mouse"
             :components
@@ -144,7 +146,9 @@
              #+:aclpc-linux(:file "menu-canvas-pc")
              (:file "menu")
              #+:sbcl-linux(:file "menu-sblx") ;stub version 07MAR2022
-             #+:aclpc-linux(:file "menu-pc"))
+             #+:aclpc-linux(:file "menu-pc")
+             ;#+:sbcl-linux(:file "quail-plots-canvas-menus-sblx") ;NEW 01SEP2024
+             )
              )
 
    (:module "window-basics/prompt"
