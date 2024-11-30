@@ -119,8 +119,8 @@
   (format t "~%s-p-s v is ~s " v)
   (format t "~%s-p-s canvas is ~s " canvas)
   (format t "~%s-p-s is it a frame ? ~s " (clim:application-frame-p canvas))
-  (format t "~%s-p-s its host-pane pane is ~s " (clim:get-frame-pane canvas 'host-pane))
-  (let* ((its-pane (clim::get-frame-pane canvas 'host-pane)) ;,_ from 'wb::host-pane 09FE21
+  (format t "~%s-p-s its host-pane pane is ~s " (clim:get-frame-pane canvas 'wb::host-pane))
+  (let* ((its-pane (clim::get-frame-pane canvas 'wb::host-pane)) ;,_ from 'wb::host-pane 09FE21
       (its-line-style (clim:medium-line-style its-pane))
     (its-unit (clim:line-style-unit its-line-style))
     (its-dashes (clim:line-style-dashes its-line-style))
@@ -182,7 +182,7 @@
     (format t "~%s-p-c new-color is ~s " new-color)
     (format t "~%s-p-c canvas is ~s " canvas)
     (format t "~%s-p-c is canvas a frame ? ~s " (clim:application-frame-p canvas))
-    (format t "~%s-p-c does canvas have a host-pane ~s " (clim:get-frame-pane canvas 'host-pane))
+    (format t "~%s-p-c does canvas have a host-pane ~s " (clim:get-frame-pane canvas 'wb::host-pane))
     (setf (clim:medium-foreground mp)  new-color)))
 
 ;; move-to will depend on setting the position of the mouse.
