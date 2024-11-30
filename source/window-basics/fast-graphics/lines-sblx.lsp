@@ -309,6 +309,7 @@ Results with color background are undefined."
      (canvas-draw-axes canvas axes :width width :color color :erase? t))
 
 ;;;
+(proclaim '(sb-ext:maybe-inline canvas-move-axes)) ;17NOV2024
 (defun canvas-move-axes (canvas old-axes new-axes
                                            &key (width 1)  
                                            color 
