@@ -24,7 +24,7 @@
 
 (in-package :quail-kernel)
 
-(eval-when (:compile-toplevel :load-toplevel :execute) (export '(make-synonym)))
+(eval-when (:compile-toplevel :load-toplevel :execute) (export '(make-synonym alias _ ** ^)))
 
 ;;;----------------------------------------------------------------------------
 ;;;
@@ -68,3 +68,31 @@
        ,(format nil "~a is simply a synonym for ~a.  See make-synonym."
                 new old)
        (append (quote (,old)) args))))
+
+
+(make-synonym :old <- :new _ :warn nil)
+
+;;;----------------------------------------
+;;; 
+;;;  A synonym for make-synonym
+;;;
+
+(make-synonym :old make-synonym :new alias :warn nil)
+
+;;;-------------------------------------------------------------------------------
+;;;
+;;;  A method for exponentiation of numbers and a synonym.
+;;;  - a method is used since ref-arrays have the same method for exponentiation.
+;;;
+;;;-------------------------------------------------------------------------------
+
+#+:aclpc-linux (excl:without-package-locks
+  (make-synonym :old expt :new ** :warn nil))
+#+:sbcl-linux (sb-ext:without-package-locks
+  (make-synonym :old expt :new ** :warn nil))
+
+#-(or :aclpc-linux :sbcl-linux) (make-synonym :old expt :new ** :warn nil)
+
+(make-synonym :old expt :new ^ :warn nil)
+
+
