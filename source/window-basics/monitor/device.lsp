@@ -67,7 +67,9 @@
              (:grey-scale :gray-scale)
              )
            type))
-    (quail-error "Illegal device type: ~s." type)))
+    ;(quail-error "Illegal device type: ~s." type)
+    (qk::quail-error "Illegal device type: ~s" type) ;25NOV2024
+    ))
 
 (defun device-type ()
   "Returns the current device type."
