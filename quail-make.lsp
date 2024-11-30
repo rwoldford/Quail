@@ -52,12 +52,12 @@
 ;;;  DO NOT CHANGE THIS.
 ;;;
 
-#+(and :allegro :unix)(pushnew :aclunix *features*)
+;#+(and :allegro :unix)(pushnew :aclunix *features*)
 
-#+(and :allegro :mswindows)(pushnew :aclpc-mswin *features*)
-#+(and :linux  :allegro)(pushnew :aclpc-linux *features*)
-#+(and :target-mac :allegro)(pushnew :aclpc-mac *features*)
-#+(and (or :aclpc-linux :aclpc-mac :aclpc-mswin) :allegro)(pushnew :aclpc *features*)
+;#+(and :allegro :mswindows)(pushnew :aclpc-mswin *features*)
+;#+(and :linux  :allegro)(pushnew :aclpc-linux *features*)
+;#+(and :target-mac :allegro)(pushnew :aclpc-mac *features*)
+;#+(and (or :aclpc-linux :aclpc-mac :aclpc-mswin) :allegro)(pushnew :aclpc *features*)
 
 
 #+(and :sbcl :unix) (pushnew :sbcl-linux *features*)
@@ -74,34 +74,22 @@
 #+:sbcl (require "sb-introspect")
 ;;; fix comp:*cltl1-compile-file-toplevel-compatibility-p* as per allegro documentation
 ;;; so we are in ansi mode
-#+:aclpc-linux(setf comp:*cltl1-compile-file-toplevel-compatibility-p* nil)
+;#+:aclpc-linux(setf comp:*cltl1-compile-file-toplevel-compatibility-p* nil)
 ;;;
 ;;;  Now get the correct name for the Common Lisp's user package
 ;;;  to be used for this file
 ;;;  DO NOT CHANGE THIS.
 ;;;
 
-#+(and :cl-2 :aclpc-linux) (in-package :cl-user) ; 19 November 2019 
+;#+(and :cl-2 :aclpc-linux) (in-package :cl-user) ; 19 November 2019 
 #+(and :cl-2 :sbcl-linux) (in-package :clim-user)
-;;; I think, on 24JAN2022, that the above should be :cl-user NOT :clim-user
 #-:cl-2(in-package "USER")
-#|
-;;; 15APR2024 Set the variables quail-speed and quail-safety which are used in forms such as
-;;; (declare (optimize (speed 3) (safety 0)))
-;;; to check on run-time errors
-;;; the original Q files affected had (speed 3) (safety 0)
-(defvar quail-speed 1) 
-(defvar quail-safety 1)
-(setf quail-speed (cg::ask-user-for-choice-from-list "Choose speed" (list 0 1 2 3)))
-(setf quail-safety (cg::ask-user-for-choice-from-list "Choose safety" (list 0 1 2 3)))
-(format t "~%quail-speed is ~d " quail-speed)
-(format t "~%quail-safety is ~d " quail-safety)
-|#
+
 ;;;   start with the directory from which quail-make.lsp (this file) was loaded:
 #+:cl-2(defvar *quail-make-load-directory* (make-pathname :directory
     (pathname-directory *load-truename*)))
 
-
+(format t "~% *quail-make-load-directory* is ~s" *quail-make-load-directory*)
 ;;; Setup logical pathname for quail
 
 (defun set-up-quail (&key (base *quail-make-load-directory*))
@@ -165,6 +153,7 @@
 ;;; Need this from quail-make-1
 (defun lisp-ext (filename-string)
   (concatenate 'string filename-string "." "lsp"))
+
 ;;;;;;;;;;
 ;;;
 ;;; What follows should not need modification UNLESS
@@ -254,6 +243,7 @@
 ;;;
 
 ;(format t "~%Just after Doc")
+
 ;;;;;;;;;;
 ;;;
 ;;;    Define the lookup for the Quail-init file.
@@ -262,9 +252,9 @@
 (defvar *quail-init-directory* *quail-make-load-directory* 
   "This is where user-defined initialization instructions would be.")
 
-(defun quail-init-file ()
-   "Returns the pathname for the quail-init file."
-   (merge-pathnames *quail-make-load-directory* "Quail-init.lsp"))
+;(defun quail-init-file ()
+;   "Returns the pathname for the quail-init file."
+;   (merge-pathnames *quail-make-load-directory* "Quail-init.lsp"))
 
 ;;;  A variable to contain the Quail subsystems.  Set in quail.qmk.
 
@@ -272,6 +262,25 @@
 ;   Defined in the file q:quail.qmk")
 ;;;  Define the systems which make up Quail;;;
 
+(if (boundp '*quail-systems*)
+            (setf *quail-systems* 
+                  (list ;"quail-user"
+                        ;"initialization"
+                            ;; "analyis-;map" :03NOV2019 ? gone somewhere else
+                            ;; "browser"; ;15F2018 ? gone somewhere else 
+                            ;"statistics"
+                            ;"probability"
+                            ;"mathematics"
+                            ;"linear"
+                            ;"top-level" ;; skipped - needs menus
+                            ;"documentation" ;;; 19MAR2022 
+                            ;; systems above this line use Quail package.
+                            ;"quail" ;; 19MAR2022
+                            ;"views" ;;first try 07MAR2022 - w-b is incomplete ; back off see quail-linux.log line 14383
+                            "window-basics" 
+                            "new-math"      
+                            "quail-kernel"
+                            ))
 (defvar *quail-systems* (list ;"quail-user"
                             ;"initialization"
                             ;; "analyis-;map" :03NOV2019 ? gone somewhere else
@@ -288,9 +297,9 @@
                             "window-basics" 
                             "new-math"      
                             "quail-kernel"
-                            )
+                            ) (load "~/RESERVE/canvas-test-cases.lsp")
   "Collection of Quail systems loaded into the current Quail image."
-  )
+  ))
 ;(format t "~%Just after defining *quail-systems*")
 
 ;;; Make sure we can recompile if things break in w-b
