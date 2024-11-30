@@ -17,7 +17,7 @@
 (in-package :wb)
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(with-focused-canvas host-to-canvas-y)))
 
-(defvar display-mode-of)
+;(defvar display-mode-of)
 
 (defmacro with-focused-canvas (canvas &body body)
   "Executes the body with all drawing methods focused on the ~
