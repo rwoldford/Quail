@@ -45,8 +45,10 @@
   `(let ((display-mode ,display-mode))
      (cond
       ((eq :active display-mode)
+       (format t "~% In with-diaplay-mode :active clause")
        ,@forms)
       ((eq :postscript display-mode)
+       (format t "~% In with-display-mode :postscript clause")
        (let*
          ((canvas ,canvas)
           (old-mode (display-mode-of canvas))
@@ -69,7 +71,9 @@
          (setf (display-mode-of canvas) old-mode)
          result))
       |#
-      (T ,@forms)))
+      (T 
+        (format t "~% in with-display-mode T clause")
+        ,@forms)))
   )
 
 (defun get-printer-command (command-name)
