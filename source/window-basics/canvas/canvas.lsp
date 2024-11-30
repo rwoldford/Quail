@@ -22,6 +22,9 @@
 ;;;
 ;;;
 ;;;----------------------------------------------------------------------------------
+;;; This is ~/RESERVE/new-quail/window-basics/canvas/canvas.lsp
+;;; As part of a new-build
+
 
 
 (in-package :wb)
@@ -29,37 +32,6 @@
 (eval-when (:compile-toplevel :load-toplevel :execute) (export  '(*default-canvas-region* set-up-default-canvas-region *current-canvas*
            canvas canvas-p canvas-font)))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;  Default screen positions for a canvas
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defvar *default-canvas-region* (make-region 10 10 300 300)
-  "Set to a default screen region where the canvas will appear.")
-
-(defun set-up-default-canvas-region
-       (&optional (left 10) (bottom 10)
-                  (width 300) (height 300))
-       "Sets the default region where a new canvas will appear on the ~
-        screen."
-       
-  (setf *default-canvas-region*  (make-region left bottom width height)))
-
-
-
-(defvar *current-canvas*
-  NIL
-  "The identity of the active canvas.")
-
-;;;============================================================
-;;; Canvas - A CLOS Object
-;;;
-;;;
-;;; ... rwo
-;;;============================================================
-;;; host-window inherits from clim::standard-application-frame
 
 (defclass canvas (color-mixin
                   pen-mixin
@@ -75,8 +47,6 @@
   ()
    (:documentation
     "Canvas is a window on which one can draw."))
-
-
 
 (defun canvas-p (canvas)
   "Returns T if the argument is a canvas, NIL otherwise."
