@@ -49,7 +49,7 @@
              #+:sbcl-linux(:file "scrolling-window-sblx")
              #+:aclpc-linux(:file "scrolling-window-pc")
              #+:sbcl-linux(:file "host-menu-canvas-sblx")
-            #+:sbcl-linux(:file"test-color-menu") ;; NEW 15OCT2024 to test replacement
+            ;#+:sbcl-linux(:file"test-color-menu") ;; NEW 15OCT2024 to test replacement
              #+:aclpc-linux(:file "host-menu-canvas-pc")
              #+:sbcl-linux(:file "host-window-sblx")
              #+:aclpc-linux(:file "host-window-pc")
