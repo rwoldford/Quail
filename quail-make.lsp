@@ -276,7 +276,7 @@
                             ;"documentation" ;;; 19MAR2022 
                             ;; systems above this line use Quail package.
                             ;"quail" ;; 19MAR2022
-                            ;"views" ;;first try 07MAR2022 - w-b is incomplete ; back off see quail-linux.log line 14383
+                            "views" ;;first try 07MAR2022 - w-b is incomplete ; back off see quail-linux.log line 14383
                             "window-basics" 
                             "new-math"      
                             "quail-kernel"
@@ -297,7 +297,7 @@
                             "window-basics" 
                             "new-math"      
                             "quail-kernel"
-                            ) 
+                            )
   "Collection of Quail systems loaded into the current Quail image."
   ))
 ;(format t "~%Just after defining *quail-systems*")
