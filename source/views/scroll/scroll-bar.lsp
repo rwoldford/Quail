@@ -37,8 +37,6 @@
   (:default-initargs :min 0 :max 1 :step nil :orientation :vertical ))
 
 (defmethod construct-sub-views  ((self scroll-bar) &rest arg &key  max min orientation )
-  
-  
   (let* ((s (apply #'needle-slider 
                    :needle-size  10
                    :level (if (eq orientation :vertical) max  min)
@@ -58,7 +56,9 @@
     (setf (slider-of self) s)
     (setf (max-arrow-of self) amax)
     (setf (min-arrow-of self) amin)
-    (setf (subviews-of self) (list s amax amin))))
+    (setf (subviews-of self) (list s amax amin))
+    )
+  )
 
 
 
@@ -87,17 +87,15 @@
                           (1 (list l (+ l arrow-wid) b tp ))
                           (2 (list  (- r arrow-wid) r b tp))))))
               
-              (add-viewport sv sv-vp vp))))
+              (add-viewport sv sv-vp vp)))
+  )
 
 
 (defmethod reshape-sub-viewports ((self scroll-bar) viewport  
                                   &key new-location transform )
   (declare (ignore new-location transform))
-  (compute-sub-viewports self viewport))
-
-
-
-
+  (compute-sub-viewports self viewport)
+  )
 
 (defmethod slider-level-to-display-start ((self scroll-bar) display &optional viewport)
   (setq viewport (or viewport (which-viewport self)))
@@ -111,8 +109,8 @@
          (max-view (max-view-start display
                                    :axis axis 
                                    :viewport (select-viewport display parent-vp))))
-    (round (* prop max-view) )))
-
+    (round (* prop max-view) ))
+  )
 
 (defmethod scroll-views-to((self scroll-bar) level &key viewport)
   (declare (ignore viewport))
@@ -126,17 +124,15 @@
       (if (eq level :min)
         (set-slider-level slider 
                           :level (- (slider-level-of slider) (* 10 (slider-step-of slider))))))
-    
 
   (when (and views lf)
       (loop for v in views 
             for level = (slider-level-to-display-start self v )
             do
-            (apply lf v (if (eq axis :x) (list :x level)  (list :y level)))))))
+            (apply lf v (if (eq axis :x) (list :x level)  (list :y level))))))
+  )
                     
-
 (defmethod scroll-views((self scroll-bar) direction &key viewport)
-  
   (let ((lf (scroll-fn-of self))
         (slider (slider-of self))
         (views (scrolling-views-of self) )
@@ -147,19 +143,17 @@
                      (contains-p viewport (view-position (wb:mouse-position win)))
                      )
                      do
-          
           (if (eq direction :max)
             (set-slider-level slider 
                               :level (+ (slider-level-of slider) (* 10 (slider-step-of slider))))
             (if (eq direction :min)
               (set-slider-level slider 
                                 :level (- (slider-level-of slider) (* 10 (slider-step-of slider))))))
-          
-          
           (when (and views lf)
             (loop for v in views 
                   for level = (slider-level-to-display-start self v ) do
-                  (apply lf v (if (eq axis :x) (list :x level)  (list :y level))))))))
+                  (apply lf v (if (eq axis :x) (list :x level)  (list :y level)))))))
+  )
 
 
 (defmethod legal-subview-p ((self scroll-bar) view)
