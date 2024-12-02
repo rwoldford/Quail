@@ -98,7 +98,7 @@
   (max 1 new))
 
 (defmethod new-style-value ((style-name (eql :font)) new pair)
-  (if (wb:canvas-font-p new) new
+  (if (wb::canvas-font-p new) new
       (new-font-size (cdr pair) new)))
 
 (defmethod new-style-value ((style-name (eql :width)) new pair)
@@ -107,7 +107,7 @@
     (case new
       (:fatter (1+ (cdr pair)))
       (:thinner (1- (cdr pair)))
-      (:prompt (wb:prompt-user :result-type 'number 
+      (:prompt (wb::prompt-user :result-type 'number 
                                        :read-type :eval
                                        :prompt-string 
                                        (format nil "Change size from ~A" (cdr pair))))
@@ -137,7 +137,7 @@
 (defmethod new-style-value ((style-name (eql :color)) new pair)
   (declare (ignorable pair)) ;(declare (ignore pair)) ; 29JUL2023
   (if (eq new :prompt)
-    (wb:prompt-user-for-color)
+    (wb::prompt-user-for-color)
     new))
 
 (defmethod prompt-for-style (style)
@@ -145,10 +145,10 @@
   T)
 
 (defmethod prompt-for-style ((style-name (eql :color)))
-  (wb:prompt-user-for-color))
+  (wb::prompt-user-for-color))
 
 (defmethod prompt-for-style ((style-name (eql :font)))
-  (wb:prompt-user
+  (wb::prompt-user
    :prompt-string "Enter the new font size (1 to 127): "
    :result-type 'integer
    :read-type :eval))
