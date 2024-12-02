@@ -135,7 +135,7 @@
         (setq rb  (bottom-of vp))
         (setq rw (width-of vp))
         (setq rh (height-of vp))
-        (wb:canvas-clear  w
+        (wb::canvas-clear  w
                           :canvas-left rl :canvas-bottom rb
                           :width rw :height rh)))))
 
@@ -217,7 +217,7 @@
   (with-exposed-viewports self viewport 
     vp
     (multiple-value-bind (l r b tp) (bounds-of vp)
-      (wb:canvas-invert (window-of vp) :canvas-left l
+      (wb::canvas-invert (window-of vp) :canvas-left l
                         :canvas-bottom b  :width (+ 1 (- r l ) )
                         :height (+ 1 (- tp b))))
     ))
@@ -233,7 +233,7 @@
   (with-exposed-viewports self viewport
     vp
     (multiple-value-bind (l r b tp) (bounds-of vp)
-      (wb:canvas-highlight-rectangle (window-of vp) l r b tp  :color color
+      (wb::canvas-highlight-rectangle (window-of vp) l r b tp  :color color
                           :operation operation))))
                          
 
@@ -308,7 +308,7 @@
 
 (defun which-viewport (view)  
   "which viewport of the view if any, contains the mouse"
-  (let* ((click-pos (make-2d-position (wb:screen-mouse-x) (wb:screen-mouse-y)))
+  (let* ((click-pos (make-2d-position (wb::screen-mouse-x) (wb::screen-mouse-y)))
         (w (which-window click-pos)))
     (loop for vp in (viewports-of view)
           until (eql w (window-of vp))
@@ -417,10 +417,10 @@
     
     (unless (eq axis :none)
       
-      (if (and (null new-location) (not (wb:mouse-down-p)))
+      (if (and (null new-location) (not (wb::mouse-down-p)))
         ;; called on next mouse left button
         (progn
-          (wb:draw-rect&corners win (wb-region viewport) :corner-width d :color wb:*gray-color*)
+          (wb::draw-rect&corners win (wb-region viewport) :corner-width d :color wb::*gray-color*)
           (temporary-left-fn self (list #'move-view :viewport)  viewport))
         (progn
           (setq new-location
@@ -433,11 +433,11 @@
                       (if (> (max (width-of viewport) (height-of viewport)) d)
                         (multiple-value-setq 
                           (rl rb rw rh)
-                          (wb:reshape-canvas-rect win wb-region 
+                          (wb::reshape-canvas-rect win wb-region 
                                                   :limit-region limit 
                                                   :draw? nil
                                                   :corner-width d)))
-                      (wb:erase-rect&corners win (wb-region viewport) :corner-width d)
+                      (wb::erase-rect&corners win (wb-region viewport) :corner-width d)
                       
                       (if rl
                         (make-region rl (+ rl rw) rb (+ rb rh))
@@ -474,7 +474,7 @@
   ;; of self's parent, this is the same as move-view
   
   (setq viewport (or viewport (car (viewports-of self))))
-  (if (and (null new-location) (not (wb:mouse-down-p)))
+  (if (and (null new-location) (not (wb::mouse-down-p)))
     ;; called on next mouse left button in viewport
     (temporary-left-fn self (list #'copy-image :viewport) viewport)
     
@@ -528,24 +528,24 @@
   (if (active-viewport-p vp)
     (multiple-value-bind (l r b tp) (bounds-of vp)
       (if (zerop margin)
-        (wb:canvas-draw-rectangle 
+        (wb::canvas-draw-rectangle 
        (window-of vp) l  r b tp
        :color color :operation operation )
-      (wb:canvas-draw-rectangle 
+      (wb::canvas-draw-rectangle 
        (window-of vp) (- l margin)  (+ margin r) (- b margin) (+ tp margin)
        :color color :operation operation )))))
 
 (defun erase-viewport (vp &key  operation (margin 0))
   (if (active-viewport-p vp)
     (multiple-value-bind (l r b tp) (bounds-of vp)
-      (wb:canvas-erase-rectangle 
+      (wb::canvas-erase-rectangle 
        (window-of vp) (- l margin)  (+ margin r) (- b margin) (+ tp margin)
        :operation operation ))))
 
 (defun fill-viewport (vp &key color operation)
   (if (active-viewport-p vp)
     (multiple-value-bind (l r b tp) (bounds-of vp)
-      (wb:canvas-draw-filled-rectangle 
+      (wb::canvas-draw-filled-rectangle 
        (window-of vp) l  r b tp
        :color color :operation operation ))))
 
@@ -687,7 +687,7 @@
 
 (defmethod prompt-position (self &optional ignore)
   (declare (ignorable self ignore)) ;(declare (ignore  self ignore)) ; 29JUL2023
-  (make-2d-position 10 (- (wb:screen-height) 30)))
+  (make-2d-position 10 (- (wb::screen-height) 30)))
 
 (defmethod prompt-position ((self view) &optional viewport)
   (declare (ignorable self)) ;(declare (ignore  self )) ; 29JUL2023
@@ -773,7 +773,7 @@
           (case region
             (:prompt
              (apply #'make-region
-                    (wb:prompt-user :result-type 'list :read-type :read
+                    (wb::prompt-user :result-type 'list :read-type :read
                                     :prompt-string "(left right bottom top)")))
             (:original (original-bounds self :draw? t) nil )
             (t nil))))
@@ -804,8 +804,8 @@
                           (highlit? *selected-subviews-only*))
   (if (has-draw-style-p self :font)
     
-  (let* ((font (wb:copy-canvas-font (draw-style self :font)))
-         (old-size (wb:canvas-font-size font)))
+  (let* ((font (wb::copy-canvas-font (draw-style self :font)))
+         (old-size (wb::canvas-font-size font)))
     (if (null font)
       (setq font *default-label-font*)
       (let ()
@@ -817,17 +817,17 @@
                 (t size)))
         
         (if (eq name :prompt)
-          (setq name (first (wb:prompt-for-items (wb:canvas-font-names)))))
+          (setq name (first (wb::prompt-for-items (wb::canvas-font-names)))))
         (if (eq style :prompt)
-          (setq style (wb:prompt-for-items
-                       (wb:canvas-font-styles) :selection-type :disjoint)))
+          (setq style (wb::prompt-for-items
+                       (wb::canvas-font-styles) :selection-type :disjoint)))
         
         (if size
-          (wb:set-canvas-font-size font size))
+          (wb::set-canvas-font-size font size))
         (if name
-          (wb:set-canvas-font-name font name))
+          (wb::set-canvas-font-name font name))
         (if style
-          (wb:set-canvas-font-style font style))))
+          (wb::set-canvas-font-style font style))))
     (set-drawing-style self :font font  :highlit? highlit?))))
 
 (defmethod constrain-bounds ((self view)  &key draw? (views t)
