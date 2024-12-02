@@ -250,17 +250,19 @@
 (defmethod valid-coord-test ((self 1d-view) c)
   (realp c))
 
-(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline active-status-p invalid-status-p ignore-status-p)))
+#-:sbcl-linux(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline active-status-p invalid-status-p ignore-status-p)))
 
-
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline active-status-p)) ;25NOV2024
 (defun active-status-p (s)
   "Checks for active case status "
   (eq s t))
 
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline invalid-status-p)) ;25NOV2024
 (defun invalid-status-p (s)
   "Checks for invalid case status "
   (or (eq s :invalid)  (eq s :invalid-ignore)))
 
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline ignore-status-p)) ;25NOV2024
 (defun ignore-status-p (s)
   "Checks for ignore case status"
   (or (eq s :ignore)  (eq s :invalid-ignore)))
