@@ -48,13 +48,13 @@
   
 ;;;----------------------------------------
 
-(defconstant *cos-18* (cos (* pi 0.1)) )
+(defconstant +cos-18+ (cos (* pi 0.1)) ) ;14NOV2024 these were *cos-18* etc. - conventions!
 
-(defconstant *cos-54* (cos (* pi 0.3)))
+(defconstant +cos-54+ (cos (* pi 0.3)))
 
-(defconstant *sin-18* (sin (* pi 0.1)))
+(defconstant +sin-18+ (sin (* pi 0.1)))
 
-(defconstant *sin-54* (sin (* pi 0.3)))
+(defconstant +sin-54+ (sin (* pi 0.3)))
 
 
 
@@ -79,7 +79,7 @@
   (cond
    ((member sym *point-symbol-types*) sym)
    ((stringp sym)  :text)
-   ((wb:bitmap-p sym) :bitmap)
+   ((wb::bitmap-p sym) :bitmap)
    (t nil)))
 
 (defmethod set-draw-style :after ((self point-symbol) (style (eql :size)) new &key)
@@ -121,10 +121,10 @@
         xc yc rad  )
     (with-point-symbol-center&radius self viewport xc yc rad 
       (if  (not (draw-style self :fill?))
-        (wb:canvas-draw-polygon 
+        (wb::canvas-draw-polygon 
          bw (list (cons (- xc rad)  (- yc rad)) (cons xc (+ yc rad))
                   (cons  (+ xc rad)  (- yc rad))) :color color :width 1)            
-        (wb:canvas-draw-filled-polygon 
+        (wb::canvas-draw-filled-polygon 
          bw (list (cons (- xc rad)  (- yc rad)) (cons xc (+ yc rad))
                   (cons  (+ xc rad)  (- yc rad))) :color color)))))
                                       
@@ -165,7 +165,7 @@
     (declare (ignorable xc yc rad))
      
     (with-point-symbol-center&radius self viewport xc yc rad 
-       (wb:canvas-draw-string  bw (draw-style self :symbol) 
+       (wb::canvas-draw-string  bw (draw-style self :symbol) 
                               :region (wb-region viewport)
                               :color color))))
 
@@ -176,10 +176,10 @@
   (let ((bw (window-of viewport))
         xc yc rad  )
     (with-point-symbol-center&radius self viewport xc yc rad 
-      (let* ((r*c18 (round (* rad *cos-18*)))
-             (r*s18 (round (* rad *sin-18*)))
-             (r*c54 (round (* rad *cos-54*)))
-             (r*s54 (round (* rad *sin-54*)))
+      (let* ((r*c18 (round (* rad +cos-18+)))
+             (r*s18 (round (* rad +sin-18+)))
+             (r*c54 (round (* rad +cos-54+)))
+             (r*s54 (round (* rad +sin-54+)))
              (x1  (+ xc r*c18))
              (y1 (+ yc r*s18))
              (x2 xc)
@@ -188,12 +188,12 @@
              (x4 (- xc r*c54))
              (x5 (+ xc r*c54))
              (y5 (- yc r*s54)))
-        (wb:with-pen-values bw (draw-style self :color) 1 nil
-          (wb:canvas-draw-line bw xc yc x1 y1)
-          (wb:canvas-draw-line bw xc yc x2 y2)
-          (wb:canvas-draw-line bw xc yc x3 y1) 
-          (wb:canvas-draw-line bw xc yc x4 y5)  
-          (wb:canvas-draw-line bw xc yc x5 y5))))))
+        (wb::with-pen-values bw (draw-style self :color) 1 nil
+          (wb::canvas-draw-line bw xc yc x1 y1)
+          (wb::canvas-draw-line bw xc yc x2 y2)
+          (wb::canvas-draw-line bw xc yc x3 y1) 
+          (wb::canvas-draw-line bw xc yc x4 y5)  
+          (wb::canvas-draw-line bw xc yc x5 y5))))))
 
 
 
@@ -205,11 +205,11 @@
         xc yc rad  )
     (with-point-symbol-center&radius self viewport xc yc rad 
      (if (draw-style self :fill?)
-       (wb:canvas-draw-filled-polygon 
+       (wb::canvas-draw-filled-polygon 
         bw (list  (cons (- xc rad) yc)  (cons xc (+ yc rad))
                     (cons (+ xc rad) yc) (cons xc (- yc rad)))
         :color color)
-       (wb:canvas-draw-polygon 
+       (wb::canvas-draw-polygon 
         bw (list  (cons (- xc rad) yc)  (cons xc (+ yc rad))
                     (cons (+ xc rad) yc) (cons xc (- yc rad)))
         :color color :width 1)))))
@@ -222,9 +222,9 @@
   (let ( (bw (window-of viewport))
          xc yc rad  )
     (with-point-symbol-center&radius self viewport xc yc rad 
-      (wb:with-pen-values bw (draw-style self :color) 1 nil
-        (wb:canvas-draw-line bw (- xc rad) yc (+ xc rad) yc)
-        (wb:canvas-draw-line bw xc (+ yc rad) xc (- yc rad))))))
+      (wb::with-pen-values bw (draw-style self :color) 1 nil
+        (wb::canvas-draw-line bw (- xc rad) yc (+ xc rad) yc)
+        (wb::canvas-draw-line bw xc (+ yc rad) xc (- yc rad))))))
 
 
 (defmethod draw-point-symbol ((self point-symbol)
@@ -235,8 +235,8 @@
         xc yc rad  )
     (with-point-symbol-center&radius self viewport xc yc rad 
      (if (draw-style self :fill?)
-       (wb:canvas-draw-filled-circle bw xc yc rad :color color)
-       (wb:canvas-draw-circle bw xc yc rad :color color :width 1)))))
+       (wb::canvas-draw-filled-circle bw xc yc rad :color color)
+       (wb::canvas-draw-circle bw xc yc rad :color color :width 1)))))
                                       
 
 (defmethod draw-point-symbol ((self point-symbol)
@@ -256,8 +256,8 @@
         xmin xmax ymin ymax  )
     (with-point-symbol-bounds self viewport  xmin xmax ymin ymax
       (if (draw-style self :fill?)
-       (wb:canvas-draw-filled-rectangle bw xmin xmax ymin ymax :color color)
-       (wb:canvas-draw-inside-rectangle bw xmin xmax ymin ymax :color color :width 1)))))
+       (wb::canvas-draw-filled-rectangle bw xmin xmax ymin ymax :color color)
+       (wb::canvas-draw-inside-rectangle bw xmin xmax ymin ymax :color color :width 1)))))
                                
 (defmethod draw-point-symbol ((self point-symbol)
                               (symbol (eql :poly-star))
@@ -266,10 +266,10 @@
         (color (draw-style self :color))
         xc yc rad  ) 
     (with-point-symbol-center&radius self viewport xc yc rad 
-      (let* ((r*c18 (round (* rad *cos-18*)))
-             (r*s18 (round (* rad *sin-18*)))
-             (r*c54 (round (* rad *cos-54*)))
-             (r*s54 (round (* rad *sin-54*)))
+      (let* ((r*c18 (round (* rad +cos-18+)))
+             (r*s18 (round (* rad +sin-18+)))
+             (r*c54 (round (* rad +cos-54+)))
+             (r*s54 (round (* rad +sin-54+)))
              (r (truncate rad 2))
               (x1  (+ xc r*c18))
              (y1 (+ yc r*s18))
@@ -295,9 +295,9 @@
              (q1 (cons u1 v1)) (q2 (cons u2 v2)) (q3 (cons u3 v3))
              (q4 (cons u4 v4)) (q5 (cons u5 v5)))
         (if  (not (draw-style self :fill?))
-        (wb:canvas-draw-polygon 
+        (wb::canvas-draw-polygon 
          bw (list p1 q1 p2 q2 p3 q3 p4 q4 p5 q5) :color color :width 1)            
-        (wb:canvas-draw-filled-polygon 
+        (wb::canvas-draw-filled-polygon 
          bw (list p1 q1 p2 q2 p3 q3 p4 q4 p5 q5) :color color))))))
      
 
