@@ -297,7 +297,7 @@
                             "window-basics" 
                             "new-math"      
                             "quail-kernel"
-                            ) (load "~/RESERVE/canvas-test-cases.lsp")
+                            ) 
   "Collection of Quail systems loaded into the current Quail image."
   ))
 ;(format t "~%Just after defining *quail-systems*")
