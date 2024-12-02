@@ -166,7 +166,7 @@
 
 (defmethod compute-sub-viewports ((self display-list)
                                   &optional viewport new-start)
-  (declare (ignore subviews))
+  ;(declare (ignore subviews)) ;25NOV2024
   (if (and new-start (listp new-start))
     (setq new-start (if (numberp (first new-start))
                       (first new-start) (second new-start))))
