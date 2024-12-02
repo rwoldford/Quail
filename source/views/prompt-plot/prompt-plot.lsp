@@ -20,15 +20,9 @@
           prompt-variable-display prompt-case-display prompt-case-display-by
            )))
 
-
-
-
-
-
 (defgeneric default-group-variable(obj)
   )
   
-
 (defmethod default-group-variable ((self t)) nil)
 
 (defun prompt-plot(&key data views dim plot-fn)
@@ -78,7 +72,7 @@
 
 (defun prompt-variable-display(&key data views)
   "Prompts the user for inputs to construct a variable display"
-  (declare (ignore ignore))
+  ;(declare (ignore ignore)) ;25NOV2024
    (setq views (or views (top-views)))
     (setq data (or data (selected-dataset views) ))
     (let ((cases (or (list-plot-cases views  :highlit? t)
