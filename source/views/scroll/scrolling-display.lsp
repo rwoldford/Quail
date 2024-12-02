@@ -70,7 +70,7 @@
       (setf (bottom-scroller-of self) bs))))
 
 
-
+#|
 (defmethod compute-sub-viewports ((self scrolling-display)
                                   &optional viewport subviews)
   (declare (ignore subviews))
@@ -103,7 +103,7 @@
                   do (setf (bounds-of sv-vp) reg)
                   (add-viewport di sv-vp vp)
                   (setq reg-l (min scr-left (+ reg-l reg-w ))))) )) )                    
-            
+       
  (defmethod reshape-sub-viewports ((self scrolling-display) viewport  
                                   &key new-location transform )
   (declare (ignore new-location transform))
@@ -138,7 +138,7 @@
              :top (- (wb:screen-height) topi))))
     (make-viewport win)))
 
-        
+|# 
 
   
 
