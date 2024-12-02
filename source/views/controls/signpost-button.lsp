@@ -44,7 +44,7 @@
    (max-width :initform 100 :initarg :max-width
               :accessor max-width
               :documentation "Maximum width of the button"))
-  (:default-initargs :font wb:*small-graphics-font*
+  (:default-initargs :font wb::*small-graphics-font*
     :color *signpost-button-text-color* :button-color *signpost-button-color*
     :justification :left
     ))
@@ -52,7 +52,7 @@
 (defun signpost-button (&rest keyword-args &key
                              (text "Unnamed signpost")
                              (text-color *signpost-button-text-color*)
-                             (font wb:*small-graphics-font*)
+                             (font wb::*small-graphics-font*)
                              (button-color *signpost-button-color*)
                              (button-fn NIL)
                              (draw? NIL)
