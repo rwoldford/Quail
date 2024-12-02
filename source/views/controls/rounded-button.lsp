@@ -46,7 +46,7 @@
               :documentation "Maximum width of the button"))
 
   
-  (:default-initargs :font wb:*small-graphics-font*
+  (:default-initargs :font wb::*small-graphics-font*
     :color *rounded-button-text-color* :button-color *rounded-button-color* 
     ))
 
@@ -98,10 +98,10 @@
         (col (draw-style self :color))
         (string (get-text self))
         (button-color (draw-style self :button-color)))
-    (unless (wb:canvas-font-p font)
+    (unless (wb::canvas-font-p font)
       (setq font
             (let ((vp (car (viewports-of self))))
-              (wb:canvas-make-font 
+              (wb::canvas-make-font 
                :size
                (max 7
                     (min 16 
@@ -159,57 +159,57 @@
           (setf bottom-right-colour (wb::darken button-color))
           )
          )
-        (wb:canvas-draw-filled-polygon canvas list-of-points :color button-color)
-        (wb:canvas-draw-line canvas left (+ bottom curve) left (- top curve)
+        (wb::canvas-draw-filled-polygon canvas list-of-points :color button-color)
+        (wb::canvas-draw-line canvas left (+ bottom curve) left (- top curve)
                              :width button-height
                              :color left-top-colour)
-        (wb:canvas-draw-line canvas left (- top curve) (+ left curve) top 
+        (wb::canvas-draw-line canvas left (- top curve) (+ left curve) top 
                              :width button-height
                              :color left-top-colour)
-        (wb:canvas-draw-line canvas (+ left curve) top (- right curve) top
+        (wb::canvas-draw-line canvas (+ left curve) top (- right curve) top
                              :width button-height
                              :color left-top-colour)
-        (wb:canvas-draw-line canvas (- right curve) top right (- top curve)
+        (wb::canvas-draw-line canvas (- right curve) top right (- top curve)
                              :width button-height
                              :color (wb::lighten button-color :factor .1))
-        (wb:canvas-draw-line canvas right (- top curve) right (+ bottom curve)
+        (wb::canvas-draw-line canvas right (- top curve) right (+ bottom curve)
                              :width button-height
                              :color bottom-right-colour)
-        (wb:canvas-draw-line canvas right (+ bottom curve) (- right curve) bottom
+        (wb::canvas-draw-line canvas right (+ bottom curve) (- right curve) bottom
                              :width button-height
                              :color bottom-right-colour)
-        (wb:canvas-draw-line canvas (- right curve) bottom (+ left curve) bottom
+        (wb::canvas-draw-line canvas (- right curve) bottom (+ left curve) bottom
                              :width button-height
                              :color bottom-right-colour)
-        (wb:canvas-draw-line canvas (+ left curve) bottom left (+ bottom curve)
+        (wb::canvas-draw-line canvas (+ left curve) bottom left (+ bottom curve)
                              :width button-height
                              :color (wb::lighten button-color :factor .1))
 ;;outline
-        (wb:canvas-draw-line canvas (- left half-button-height) (- (+ bottom curve) button-height) (- left half-button-height) (+ (- top curve) half-button-height)
+        (wb::canvas-draw-line canvas (- left half-button-height) (- (+ bottom curve) button-height) (- left half-button-height) (+ (- top curve) half-button-height)
                              :width 1
                              :color wb::*black-colour*)
-        (wb:canvas-draw-line canvas (- left half-button-height) (+ (- top curve) half-button-height) (- (+ left curve) button-height) (+ half-button-height top) 
+        (wb::canvas-draw-line canvas (- left half-button-height) (+ (- top curve) half-button-height) (- (+ left curve) button-height) (+ half-button-height top) 
                              :width 1
                              :color wb::*black-colour*)
-        (wb:canvas-draw-line canvas (- (+ left curve) button-height) (+ half-button-height top) (+ button-height (- right curve)) (+ half-button-height top)
+        (wb::canvas-draw-line canvas (- (+ left curve) button-height) (+ half-button-height top) (+ button-height (- right curve)) (+ half-button-height top)
                              :width 1
                              :color wb::*black-colour*)
-        (wb:canvas-draw-line canvas (+ button-height (- right curve)) (+ half-button-height top) (+ button-height right) (+ (- top curve) half-button-height)
+        (wb::canvas-draw-line canvas (+ button-height (- right curve)) (+ half-button-height top) (+ button-height right) (+ (- top curve) half-button-height)
                              :width 1
                              :color wb::*black-colour*)
-        (wb:canvas-draw-line canvas (+ button-height right) (+ (- top curve) half-button-height) (+ button-height right) (- (+ bottom curve) button-height)
+        (wb::canvas-draw-line canvas (+ button-height right) (+ (- top curve) half-button-height) (+ button-height right) (- (+ bottom curve) button-height)
                              :width 1
                              :color wb::*black-colour*)
-        (wb:canvas-draw-line canvas (+ button-height right) (- (+ bottom curve) button-height) (+ button-height (- right curve)) (- bottom button-height)
+        (wb::canvas-draw-line canvas (+ button-height right) (- (+ bottom curve) button-height) (+ button-height (- right curve)) (- bottom button-height)
                              :width 1
                              :color wb::*black-colour*)
-        (wb:canvas-draw-line canvas (+ button-height (- right curve)) (- bottom button-height) (- (+ left curve) half-button-height) (- bottom button-height)
+        (wb::canvas-draw-line canvas (+ button-height (- right curve)) (- bottom button-height) (- (+ left curve) half-button-height) (- bottom button-height)
                              :width 1
                              :color wb::*black-colour*)
-        (wb:canvas-draw-line canvas (- (+ left curve) half-button-height) (- bottom button-height) (- left half-button-height) (- (+ bottom curve) button-height)
+        (wb::canvas-draw-line canvas (- (+ left curve) half-button-height) (- bottom button-height) (- left half-button-height) (- (+ bottom curve) button-height)
                              :width 1
                              :color wb::*black-colour*)
-        (wb:canvas-draw-string canvas string
+        (wb::canvas-draw-string canvas string
                                :left (+ left button-height)
                                :width (- width button-height button-height)
                                :bottom (+ bottom button-height)
