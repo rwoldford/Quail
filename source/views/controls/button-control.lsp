@@ -105,7 +105,7 @@
 (defun button-color-menu-items ()
   (declare (special  *color-menu-list* *shade-menu-list*))
     (loop for c in 
-          (if (wb:color-device-p)
+          (if (wb::color-device-p)
             *color-menu-list* *shade-menu-list*)
           collect 
           (if (eq (cadr c) :prompt)
