@@ -94,7 +94,7 @@
 
 (defmethod start-input ((self key-input-view) viewport)
   "Does nothing"
-  (declare (ignorable setf viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
+  (declare (ignorable self viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
   )
 
 (defmethod start-input :before ((self key-input-view) viewport)
@@ -104,7 +104,7 @@
 
 (defmethod stop-input ((self key-input-view) viewport)
   "Does nothing"
-  (declare (ignorable setf viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
+  (declare (ignorable self viewport)) ;(declare (ignore self viewport)) ; 29JUL2023
   NIL
   )
 
