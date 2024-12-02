@@ -127,7 +127,8 @@
         (or (eql (svref ,r 0) 'region)
             (eql (svref ,r 0) 'viewport))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline make-region)))
+#-:sbcl-linux(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline make-region)))
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline make-region)) ;25NOV2024
 (defun make-region 
        (&optional (b1 0.0)  (b2 1.0)
                   (b3 0.0) (b4 1.0))
@@ -147,7 +148,7 @@
   `(setf (svref ,viewport 5), window))
 
 (defmacro active-viewport-p (viewport)
-  `(and (wb:canvas-visible-p (svref ,viewport 5) )
+  `(and (wb::canvas-visible-p (svref ,viewport 5) )
         (svref ,viewport 6)))
 
 (defmacro deactivate-viewport (viewport)
@@ -161,13 +162,14 @@
 (defmacro viewport-p (r) `(and (vectorp ,r) (eql (svref ,r 0) 'viewport)))
 ;;=================================================================    
 
-(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline bounds-of)))
-
+#-:sbcl-linux(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline bounds-of)))
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline bounds-of)) ;25NOV2024
 (defun bounds-of (region)
   (values (left-of region) (right-of region) (bottom-of region)
           (top-of region)))
 
-(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline valid-region-check)))
+#-:sbcl-linux(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline valid-region-check)))
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline valid-region-check)) ;25NOV2024
 (defun valid-region-check(region &optional (signal-error? t ))
        (multiple-value-bind (l r b tp) (bounds-of region)
          (if (or (>= l r) (>= b tp))
@@ -232,21 +234,25 @@
           minimize (left-of r) into left
           finally (return (make-region left right  bottom top) )))
 
-(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline bottom-left-of bottom-right-of top-left-of
+#-:sbcl-linux(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline bottom-left-of bottom-right-of top-left-of
             top-right-of  centre-of coerce-bounds-to-integer distance-from)))
-
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline bottom-left-of)) ;25NOV2024
 (defun bottom-left-of (region)
   ;;; return the POSITON coresponding to bottom-left of region
  (make-2d-position (left-of region) (bottom-of region)))
 
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline bottom-right-of)) ;25NOV2024
 (defun bottom-right-of (region)
   ;; return the POSITON coresponding to bottom-right of REGION
   (make-2d-position (right-of region) (bottom-of region)))
-  
+
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline top-left-of)) ;25NOV2024  
 (defun top-left-of (region)
   ;; return the POSITON coresponding to top-left of REGION
   (make-2d-position (left-of region) (top-of region)))
   
+  
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline top-right-of)) ;25NOV2024  
 (defun top-right-of (region)
   ;; return the POSITON coresponding to top-right of REGION
   (make-2d-position (right-of region) (top-of region)))
@@ -345,8 +351,8 @@
   (apply-transform (make-transform-for-regions from-region to-region)
                    self))
 
-(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline radius-of)))
-
+#-:sbcl-linux(eval-when (:compile-toplevel :load-toplevel :execute) (proclaim '(inline radius-of)))
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline radius-of)) ;25NOV2024
 (defun radius-of (region)
   ;;;  returns min of width and height times .5
   
@@ -504,30 +510,34 @@
 ;;;=================================================================
 
 
-(eval-when (:compile-toplevel :load-toplevel :execute) 
+#-:sbcl-linux(eval-when (:compile-toplevel :load-toplevel :execute) 
   (proclaim '(inline wb-region wb-position view-region view-position)))
 
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline wb-region)) ;25NOV2024
 (defun wb-region ( region)
   ;; returns coords of region as a wb:region
 
-  (wb:make-region (left-of region ) (bottom-of region ) 
+  (wb::make-region (left-of region ) (bottom-of region ) 
                    (1+ (width-of region )) (1+  (height-of region ))))
 
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline wb-position)) ;25NOV2024
 (defun wb-position (p)
   ;; returns coords of p as a wb:position
-  (wb:make-position 
+  (wb::make-position 
    (2d-position-x p) 
    (2d-position-y p)))
 
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline wb-region)) ;25NOV2024
 (defun view-region (wb-region)
-  (make-region (wb:region-left wb-region)
-               (wb:region-right wb-region)
-               (wb:region-bottom wb-region)
-               (wb:region-top wb-region)))
+  (make-region (wb::region-left wb-region)
+               (wb::region-right wb-region)
+               (wb::region-bottom wb-region)
+               (wb::region-top wb-region)))
 
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline view-position)) ;25NOV2024
 (defun view-position (wb-position)
-  (make-2d-position (wb:position-x wb-position)
-                 (wb:position-y wb-position)))
+  (make-2d-position (wb::position-x wb-position)
+                 (wb::position-y wb-position)))
 
 (defmacro set-viewport-size (viewport size)
   "Sets smaller of viewport width and height to size"
@@ -619,9 +629,9 @@
   (copy-seq r))
     
 
-(eval-when (:compile-toplevel :load-toplevel :execute) 
+#-:sbcl-linux(eval-when (:compile-toplevel :load-toplevel :execute) 
   (proclaim '(inline line-segment-intersectp)))
-
+#+:sbcl-linux(proclaim '(sb-ext:maybe-inline line-segment-intersectp)) ;25NOV2024
 (defun line-segment-intersectp(x1 y1 x2 y2 u1  v1 u2 v2)
   (let* ((dx (- x2 x1))
         (dy (- y2 y1))
