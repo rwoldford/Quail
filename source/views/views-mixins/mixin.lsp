@@ -133,7 +133,7 @@
    (bg-color-menu? :initarg :bg-color-menu?
                       :initform t
                       :accessor bg-color-menu-p))
-  (:default-initargs  :bg-color wb:*default-canvas-background-color* )
+  (:default-initargs  :bg-color wb::*default-canvas-background-color* )
   (:documentation "Mix this in last for a background color.~
                    Should also add bg-color to style-keys"))
 
@@ -224,7 +224,7 @@
 (defmethod orientation-of :before ((self orientation-mixin))
   (if (eq :prompt (slot-value self 'orientation))
     (setf (slot-value self 'orientation)
-          (car (wb:prompt-for-items 
+          (car (wb::prompt-for-items 
                 (list :horizontal :vertical) 
                 :prompt-text "Choose orientation")))))
 
@@ -269,7 +269,7 @@
 (defmethod justification-of :before ((self justification-mixin))
   (if (eq :prompt (slot-value self 'justification))
     (setf (slot-value self 'justification)
-          (car (wb:prompt-for-items (list-legal-justifications self)
+          (car (wb::prompt-for-items (list-legal-justifications self)
                 :prompt-text "Choose justification")))))
 
 
@@ -323,17 +323,17 @@
                                      (slot-name (eql 'middle-menu)))
   (let* ((m (slot-value self slot-name)))
      (if (box-menu-p self) 
-       (wb:check-menu-item m "Boxes?" (box-p self)))
+       (wb::check-menu-item m "Boxes?" (box-p self)))
      (if (box-color-menu-p self)
      (if (box-p self)
-      (wb:enable-menu-item  m "BoxColor")
-      (wb:disable-menu-item  m "BoxColor")))))
+      (wb::enable-menu-item  m "BoxColor")
+      (wb::disable-menu-item  m "BoxColor")))))
 
 ;;;----------------------------------------------------------------------------------
 (defun box-color-menu-items ()
   (declare (special  *color-menu-list* *shade-menu-list*))
   (loop for c in 
-        (if (wb:color-device-p)
+        (if (wb::color-device-p)
           *color-menu-list* *shade-menu-list*)
         collect 
         (list (car c) `(set-drawing-style :box-color ,(cadr c)))))
@@ -363,11 +363,11 @@
                                      (slot-name (eql 'middle-menu)))
   (let* ((m (slot-value self slot-name)))
     (if (box-views-menu-p self)
-      (wb:check-menu-item m "Boxes?" (box-views-p self)))
+      (wb::check-menu-item m "Boxes?" (box-views-p self)))
     (if (box-color-menu-p self)
      (if (box-views-p self)
-      (wb:enable-menu-item  m "BoxColor")
-      (wb:disable-menu-item  m "BoxColor")))))
+      (wb::enable-menu-item  m "BoxColor")
+      (wb::disable-menu-item  m "BoxColor")))))
 
 
 (defmethod set-box-views-p ((self boxed-subview-mixin) val &key (draw? t))
@@ -423,7 +423,7 @@
 (defun bg-color-menu-items ()
   (declare (special  *color-menu-list* *shade-menu-list*))
   (loop for c in 
-        (if (wb:color-device-p)
+        (if (wb::color-device-p)
           *color-menu-list* *shade-menu-list*)
         collect 
         (list (car c) `(set-drawing-style :bg-color ,(cadr c)))))
@@ -442,7 +442,7 @@
   (if (has-draw-style-p self :bg-color)
     (let ((bg-color (draw-style self :bg-color)))   
       (with-exposed-viewports self viewport vp 
-        (unless (wb:eq-colors bg-color (wb:canvas-background-color (window-of vp)))
+        (unless (wb::eq-colors bg-color (wb::canvas-background-color (window-of vp)))
           (fill-viewport vp :color bg-color))))))
  
 ;;;----------------------------------------------------------------------------------
@@ -605,7 +605,7 @@
       (case new
               (:larger (+  old inc)) 
               (:smaller (-  old inc))
-              (:prompt (wb:prompt-user :result-type 'number 
+              (:prompt (wb::prompt-user :result-type 'number 
                                        :read-type :eval
                                        :prompt-string 
                                        (format nil "Change size from ~A" old)))
@@ -685,7 +685,7 @@
       (case new
               (:larger (+  old inc)) 
               (:smaller (-  old inc))
-              (:prompt (wb:prompt-user :result-type 'number 
+              (:prompt (wb::prompt-user :result-type 'number 
                                        :read-type :eval
                                        :prompt-string 
                                        (format nil "Change width from ~A" old)))
@@ -698,7 +698,7 @@
         (case new
               (:larger (+  old inc)) 
               (:smaller (-  old inc))
-              (:prompt (wb:prompt-user :result-type 'number 
+              (:prompt (wb::prompt-user :result-type 'number 
                                        :read-type :eval
                                        :prompt-string 
                                        (format nil "Change height from ~A" old)))
