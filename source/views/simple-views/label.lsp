@@ -75,7 +75,7 @@
     ;;(format *quail-query-io* "~&New text for ~S :" self)
     ;;(setq text (string (read *quail-query-io*))))
     (erase-view self)
-    (setq text (wb:prompt-user :result-type 'string
+    (setq text (wb::prompt-user :result-type 'string
                                :prompt-string "Enter text")))
   (if text (setf (text-of self) text))
   )
@@ -98,7 +98,7 @@
         (setq dir (if (> (height-of vp) (width-of vp))
                     :vertical
                     :horizontal))))
-     (unless (wb:canvas-font-p font)
+     (unless (wb::canvas-font-p font)
        (let ((vp (car (viewports-of self))))
        (setq size
              (max 6
@@ -109,13 +109,13 @@
                          (truncate (min (* 0.5  (width-of vp)) 
                                         (/ (height-of vp) (max 3 (* 1.2 (length string))))))))))
       (setq font
-            (wb:canvas-make-font
+            (wb::canvas-make-font
                :name nil
                :size
                size))))
     (with-exposed-viewports self viewport vp
       (if (> (min (height-of vp) (width-of vp)) 5)
-      (wb:canvas-draw-string (window-of vp)
+      (wb::canvas-draw-string (window-of vp)
                                string
                                :region (wb-region vp) :font font
                                :orientation dir
