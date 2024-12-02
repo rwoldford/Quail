@@ -33,11 +33,11 @@
 (defgeneric toplevel-clone-list (view)
   (:documentation "Toplevel part of argument list for cloning"))
 
-(defgeneric subview-keys-of (view)
-  (:documentation "Returns a list of keywords. ~
-                   When constructing a view, if a keyword in this list~
-                   appears more than once in the view construction arglist~
-                   the values are appended."))
+;(defgeneric subview-keys-of (view)  ;;; 11NOV2024  in odd-clone/clone.lsp
+;  (:documentation "Returns a list of keywords. ~
+;                   When constructing a view, if a keyword in this list~
+;                   appears more than once in the view construction arglist~
+;                   the values are appended."))
 
 (defgeneric clone-view-fn (view &optional new-name)
   (:documentation "Returns an function which will construct a clone of view"))
@@ -85,7 +85,7 @@
 
 
 
-(defmethod subview-keys-of ((self view)))
+;(defmethod subview-keys-of ((self view))) ;; 11NOV2024 in odd-clone/clone.lsp
 
 
 
