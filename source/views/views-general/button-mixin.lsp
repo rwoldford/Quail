@@ -131,7 +131,7 @@
 (defun color-menu-items ()
   (declare (special  *color-menu-list* *shade-menu-list*  *selected-subviews-only*))
   (loop for c in 
-                (if (wb:color-device-p)
+                (if (wb::color-device-p)
                   *color-menu-list*
                   *shade-menu-list*)
                 collect 
@@ -139,10 +139,10 @@
 
 (defun font-menu-items ()
   (let ((font-name
-         (loop for f in (wb:canvas-font-names)
+         (loop for f in (wb::canvas-font-names)
                collect (list f `(set-view-font :name ,f))))
         (font-style
-         (loop for f in (wb:canvas-font-styles)
+         (loop for f in (wb::canvas-font-styles)
                collect (list f `(set-view-font :style ,f))))
         (font-size 
          '(("smaller" (set-view-font :size :smaller ))
@@ -298,11 +298,11 @@
     (remake-menu self slot-name))
   (let ((it (slot-value self slot-name))
         m)
-    (when  (and it (not (wb:menu-p it)))
-      (setq m (wb:make-menu :items it :when-selected-fn
+    (when  (and it (not (wb::menu-p it)))
+      (setq m (wb::make-menu :items it :when-selected-fn
                             #'button-mixin-when-selected-fn ))
       (loop for p in (menu-properties self slot-name) do
-            (wb:put-menu-prop m (car p) (cdr p)))
+            (wb::put-menu-prop m (car p) (cdr p)))
       (add-menu-to-button-mixin-cache m (list self slot-name))
       (setf (slot-value self slot-name) m)))
   
@@ -335,7 +335,7 @@
     (invert-view self :viewport viewport))
   
   (let* ((m (menu-of self slot-name))
-         (choice (if m (wb:menu m))))
+         (choice (if m (wb::menu m))))
     
     (if (typep self 'simple-view)
     (invert-view self :viewport viewport))
@@ -432,14 +432,14 @@
   (declare (ignore viewport ) (special *display-viewed-data-viewport* ))
   (if (and *display-viewed-data-viewport* (active-viewport-p *display-viewed-data-viewport*))
     (let ((w (window-of *display-viewed-data-viewport*)))
-      (wb:canvas-clear w)
+      (wb::canvas-clear w)
       (remove-view-from-window w :viewport *display-viewed-data-viewport*)
       (display-viewed-object self :as-dataset? t :draw? t :signposts? nil
                         :viewport *display-viewed-data-viewport*))
-  (let* ((r (view-region wb:*default-canvas-region*))
-         (right (min (+ (wb:screen-mouse-x) (width-of r))
+  (let* ((r (view-region wb::*default-canvas-region*))
+         (right (min (+ (wb::screen-mouse-x) (width-of r))
                                          (- (wb::window-max-width) 15) ))
-         (top (min (+ (wb:screen-mouse-y) (height-of r))
+         (top (min (+ (wb::screen-mouse-y) (height-of r))
                                       (- (wb::window-max-height) 30)))
           (w (make-view-window  :left (max 0 (- right (width-of r)))
                              :bottom (max 0 (- top (height-of r)))
@@ -597,17 +597,17 @@
   ;; and being used
   
   (declare (ignorable slot-name)) ;(declare (ignore slot-name)) ; 29JUL2023
-  (append (call-next-method) (list (cons :use-color (wb:color-device-p)))))
+  (append (call-next-method) (list (cons :use-color (wb::color-device-p)))))
 
 
 (defmethod need-new-menu-p ((self button-mixin) slot-name)
   (let* ((m (slot-value self slot-name)))
     (or (null m)
-        (and (wb:menu-p m)
+        (and (wb::menu-p m)
              (loop for p in (menu-properties self slot-name)
                    thereis 
                    (not (eql (cdr p)
-                             (wb:get-menu-prop m (car p)))))))))
+                             (wb::get-menu-prop m (car p)))))))))
 
 
 (defmethod update-menu-items ((self button-mixin)  slot-name)
@@ -619,11 +619,11 @@
 (defmethod update-menu-items :before ((self button-mixin) 
                                       (slot-name (eql 'middle-menu)))
   (let* ((m (slot-value self slot-name)))
-    (wb:check-menu-item m "Highlight?" (draw-style self :highlight?))
-    (wb:check-menu-item m "Invisible?" (draw-style self :invisible?))
+    (wb::check-menu-item m "Highlight?" (draw-style self :highlight?))
+    (wb::check-menu-item m "Invisible?" (draw-style self :invisible?))
     
     (if (and m (has-draw-style-p self :fill?))
-      (wb:check-menu-item m "Fill?" (draw-style self :fill?))
+      (wb::check-menu-item m "Fill?" (draw-style self :fill?))
       )))
 
 
