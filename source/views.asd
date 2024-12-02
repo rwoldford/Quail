@@ -20,13 +20,15 @@
 (asdf:defsystem "views"
     :default-component-class cl-source-file.lsp
   :components
-  ((:file "views/views-package")
+  (
+   (:file "views/views-package")
+
    (:module "views/views-macros"
             :components
             ((:file "region")
              (:file "draw-macros")
              (:file "linkbounds-macros")))
-   
+  
    (:module "views/utilities"
             :components
             (
@@ -38,7 +40,7 @@
              (:file "stats")
              )
             :depends-on ("views/views-macros"))
-   
+
    (:module "views/views-data"
             :components
             ((:file "data")
@@ -52,6 +54,11 @@
              (:file "data-subsets")
              (:file "prompt-data")
              ))
+
+   (:module "views/odd-clone"  ;; out 11NOV2024 hoping things are caught by the clone module below.
+      :components              ;; see the log -ALL2- 
+      ((:file "clone")         ;; put back with clone.lsp in module clone modified to exclude these contents
+         ))
 
    (:module "views/views-general"
             :components
@@ -67,10 +74,10 @@
              (:file "view-window")
              (:file "abstract-views" )
              (:file "make-views" )
-             (:file "display"))
+             (:file "display")
+             )
             :depends-on ("views/views-macros"))
- #|  
-   
+
    (:module "views/views-mixins"
             :components
             ( (:file "brush" )
@@ -82,7 +89,7 @@
               (:file "tic-mixin")
              (:file "bordered-view-mixin"))
             :depends-on ("views/views-macros"))
-   
+
    (:module "views/controls"
             :components
             ((:file "button-control")
@@ -95,12 +102,12 @@
              (:file "double-slider")
              (:file "range-slider"))
             :depends-on ("views/views-macros"))
-   
+
    (:module "views/simple-views"
             :components
             ((:file "label")
              (:file "point-symbol")
-             (:file "bar"  )
+             ;(:file "bar"  )
              (:file "pie"  )
              (:file "line-segment")
              (:file "function-view")
@@ -110,8 +117,8 @@
              (:file "key-input")
              (:file "editable-text")
              )
-            :depends-on ("views/views-macros"))
-   
+            :depends-on ("views/views-macros")) 
+
    (:module "views/dview-def"
             :components
             ((:file "d-view-mixins"  )
@@ -122,7 +129,7 @@
              (:file "change-cases" )
              (:file "text-link" ))
             :depends-on ("views/views-macros"))
-   
+
    (:module "views/d-views"
             :components
             ((:file "one-per-case")
@@ -144,7 +151,7 @@
              (:file "rotating-lines")
              )
             :depends-on ("views/views-macros"))
-   
+
    (:module "views/layout"
             :components
             ((:file "view-layers")
@@ -159,7 +166,7 @@
              (:file "table")
              )
             :depends-on ("views/views-macros"))
-   
+
    (:module "views/plots"
             :components
             ((:file "plot-mixins")
@@ -171,7 +178,7 @@
              (:file "overlay-plots" )
              (:file "make-plots" ))
             :depends-on ("views/views-macros"))
-   
+
    (:module "views/scroll"
             :components
             ((:file "arrow")
@@ -180,7 +187,7 @@
              (:file "display-list")
              (:file "scrolling-display"))
             :depends-on ("views/views-macros"))
-   
+
    (:module "views/prompt-plot"
             :components
             ((:file "prompt-selections")
@@ -189,21 +196,23 @@
              ;; (:file "prompt-projection-trace" )
              (:file "prompt-plot")
              (:file "prompt-plot-menu")))
+
    (:module "views/clone"
             :components
             ((:file "clone")
              (:file "copy")
              (:file "combine-args")))
+
    (:module "views/display"
             :components
             ((:file "display-methods")
              (:file "display-data")
              (:file "signposts-methods")
              ))
+
    (:module "views/other"
             :components
             ((:file "connected-points")
              ))
-|#             
    )
 )
