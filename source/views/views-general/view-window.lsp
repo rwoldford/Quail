@@ -33,7 +33,7 @@
              create-region-with-mouse *current-dataset*
              )))
 
-(defclass view-window (wb:canvas)
+(defclass view-window (wb::canvas)
   ((region :accessor region-of
            :initform (make-region)))
   )
@@ -74,15 +74,15 @@
 ;;;
 
 (defmethod viewports-and-views-of ((c view-window))
-  (wb:display-of c))
+  (wb::display-of c))
 
 (defmethod (setf viewports-and-views-of) ( new-value (c view-window) )
-  (setf (wb:display-of c) new-value))
+  (setf (wb::display-of c) new-value))
 
 ;;;--------------------------------------------------------------------------------------
 
 (defmethod set-bounds ((w view-window))
-  (multiple-value-bind (l r b tp) (wb:canvas-bounds w)
+  (multiple-value-bind (l r b tp) (wb::canvas-bounds w)
     (setf (bounds-of (region-of w)) (list l r b tp))))
 
 ;;; 2 added forms 27SEP2024 to allow for mcclim's defining things in window-basics, and its definition
@@ -92,7 +92,7 @@
        Output: a matching views region #(REGION 10 20 30 40)"
       (vector 'region (svref wb-region 0) (svref wb-region 1) (svref wb-region 2) (svref wb-region 3)))
 
-#+:sbcl-linux(defmethod set-bounds ((w wb::color-canvas))
+#+:sbcl-linux(defmethod set-bounds ((w wb::canvas)) ;wb::color-canvas))
                (multiple-value-bind (l r b tp) (wb::canvas-bounds w)
                                     (setf (bounds-of (wb-to-vw (wb::region-of w))) (list l r b tp))))
 
@@ -206,7 +206,7 @@
 
 (defun view-window-size-changed-p (view-window)
   (multiple-value-bind (l r b tp) 
-                       (wb:canvas-bounds view-window)
+                       (wb::canvas-bounds view-window)
     (not (and (= (- r l) (width-of (region-of view-window)))
               (= (- tp b) (height-of (region-of view-window)))))))
 
@@ -215,10 +215,10 @@
 
 
 (defun view-window-redisplay-fn (view-window)
-  (wb:canvas-clear view-window)
+  (wb::canvas-clear view-window)
   (when (view-window-size-changed-p view-window)
     (multiple-value-bind
-      (l r b tp)  (wb:canvas-bounds view-window)
+      (l r b tp)  (wb::canvas-bounds view-window)
       
       (let ((at (make-transform-for-regions
                  (region-of view-window) (make-region l r b tp ) )))
@@ -255,7 +255,7 @@
     (multiple-value-setq (left right bottom top)
       (bounds-of region)))
   (let ((canvas (if (and left right bottom top)
-                  (apply #'wb:make-canvas
+                  (apply #'wb::make-canvas
                          :canvas-class view-window-class
                          :title title
                          :left left
@@ -265,7 +265,7 @@
                                       wb::*default-canvas-background-color*);background-color
                          :height (1+ (- top bottom))
                          canvas-keywords)
-                  (apply #'wb:make-canvas
+                  (apply #'wb::make-canvas
                          :canvas-class view-window-class
                          :title title
                          :background-color (or background-color
@@ -275,19 +275,19 @@
                 )
         )
     
-    (wb:set-left-button-fn canvas #'*view-left-button-fn*)
-    (wb:set-middle-button-fn canvas #'*view-middle-button-fn*)
-    (wb:set-right-button-fn canvas #'*view-right-button-fn*)
-    (wb:set-ctrl-left-button-fn canvas #'*view-ctrl-left-button-fn*)
-    (wb:set-ctrl-middle-button-fn canvas #'*view-ctrl-middle-button-fn*)
-    (wb:set-ctrl-right-button-fn canvas #'*view-ctrl-right-button-fn*)
+    (wb::set-left-button-fn canvas #'*view-left-button-fn*)
+    (wb::set-middle-button-fn canvas #'*view-middle-button-fn*)
+    (wb::set-right-button-fn canvas #'*view-right-button-fn*)
+    (wb::set-ctrl-left-button-fn canvas #'*view-ctrl-left-button-fn*)
+    (wb::set-ctrl-middle-button-fn canvas #'*view-ctrl-middle-button-fn*)
+    (wb::set-ctrl-right-button-fn canvas #'*view-ctrl-right-button-fn*)
     
-    (wb:set-shift-left-button-fn canvas #'*view-shift-left-button-fn*)
-    (wb:set-shift-middle-button-fn canvas #'*view-shift-middle-button-fn*)
-    (wb:set-shift-right-button-fn canvas #'*view-shift-right-button-fn*)
+    (wb::set-shift-left-button-fn canvas #'*view-shift-left-button-fn*)
+    (wb::set-shift-middle-button-fn canvas #'*view-shift-middle-button-fn*)
+    (wb::set-shift-right-button-fn canvas #'*view-shift-right-button-fn*)
     
-    (wb:set-redisplay-test canvas #'view-window-size-changed-p)
-    (wb:set-redisplay-fn canvas #'view-window-redisplay-fn)
+    (wb::set-redisplay-test canvas #'view-window-size-changed-p)
+    (wb::set-redisplay-fn canvas #'view-window-redisplay-fn)
     (set-bounds canvas)
     canvas))
 
@@ -306,7 +306,7 @@
   
   (let*
     ((l (if (region-p location) (centre-of location ) location))
-     (canvas  (wb:which-canvas (wb-position l))))
+     (canvas  (wb::which-canvas (wb-position l))))
     (if (and canvas
                (typep canvas 'view-window)
                (or (2d-position-p location)
@@ -406,11 +406,11 @@
     (setq view-window (window-of location)))
   (if (2d-position-p location)
     (make-2d-position 
-     (+ (2d-position-x location)  (wb:screen-x view-window))
-     (+ (2d-position-y location ) (wb:screen-y view-window)))
+     (+ (2d-position-x location)  (wb::screen-x view-window))
+     (+ (2d-position-y location ) (wb::screen-y view-window)))
     (shift-by (make-region location ) 
-              (wb:screen-x view-window)
-              (wb:screen-y view-window))))
+              (wb::screen-x view-window)
+              (wb::screen-y view-window))))
 
 
 (defun window-location (location
@@ -421,12 +421,12 @@
     (setq view-window (window-of location)))
   (if (2d-position-p location)
     (make-2d-position 
-     (+ (2d-position-x location ) (- (wb:screen-x view-window)))
-     (+ (2d-position-y location) (- (wb:screen-y view-window))))
+     (+ (2d-position-x location ) (- (wb::screen-x view-window)))
+     (+ (2d-position-y location) (- (wb::screen-y view-window))))
     ;;else
     (let ((new-region (make-region location)))
       (shift-by new-region
-                (- (wb:screen-x view-window)) (- (wb:screen-y view-window)))
+                (- (wb::screen-x view-window)) (- (wb::screen-y view-window)))
       (if (viewport-p location)
         (make-viewport view-window new-region)
         new-region))))
@@ -448,12 +448,12 @@
     (if limit (setq wb-limit (wb-region limit)))
     (setq wb-location
           (if in-window?
-            (wb:drag-region-on-canvas 
+            (wb::drag-region-on-canvas 
              window
              :region (wb-region region) 
              :limit-region wb-limit
              :axis axis)
-            (wb:drag-region-on-screen 
+            (wb::drag-region-on-screen 
              window
              :region (wb-region region) 
              :axis axis)))
@@ -468,7 +468,7 @@
 (defun create-region-with-mouse (&optional window width height)
   (let (l b w h)
     (multiple-value-setq (l b w h)
-      (wb:select-rectangle :canvas window
+      (wb::select-rectangle :canvas window
                            :width width
                            :height height))
     (make-region l (+ l w) b (+ b h))))
