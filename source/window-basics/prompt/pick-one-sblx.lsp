@@ -16,7 +16,10 @@
 (in-package :wb)
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(pick-one)))
 
-;;; pipck-one itself
+;;; (pick-one (list (cons "a" "a1") (cons "b" "b1") (cons "c" "c1"))) 
+;;; click on b ==>> ("b" . "b1")
+
+;;; pick-one itself
 (defun pick-one (items &key (prompt-text "Pick one of the following") 
                                         (item-print-function NIL) 
                                         (action-function 
