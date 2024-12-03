@@ -37,6 +37,10 @@
         (accept 'string :prompt "A string" :stream stream)
     ))
 |#
+
+;;; (collect-input (list (cons "a" "a1") (cons "b" "b1") (cons "c" "c1")))
+;;; click on a -> a11, on b -> b11, on c ; ==>> (("a" . "a11") ("b" . "b11") ("c" ."c1"))
+
 ;;; collect-input itself
 (defun collect-input (items &key (columns 1) (prompt-text "Please enter responses ...")
                       (item-print-function NIL)
