@@ -90,6 +90,9 @@
       (frame-exit *application-frame*))))
     ))))
 
+;;; (prompt-user)
+;;; Click on Accept input! -> Dialog -> Enter "zot" then OK
+;;; Back to original dialog, click OK in bottom bar ==>> "zot"
 
 ;;; prompt-user itself
 (defun prompt-user (&key (result-type 'string)
