@@ -28,6 +28,9 @@
       (cons (car (elt copy-list2 x)) t)))
   (return-from copy-result-list  copy-list2)))
 
+;;; (check-items (list (cons "a" "a1") (cons "b" "b1") (cons "c" "c1")))
+;;; click on a,c [using ctrl] ==>> (("a" . T) ("b" , "b1") ("c" T))
+
 ;;; check-items itself
 (defun check-items (items &key (prompt-text "Check one or more ...") 
                                         (item-print-function NIL) 
