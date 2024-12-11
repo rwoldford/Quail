@@ -882,7 +882,7 @@
                                           :items aux-args))
                 (when body-args
                   (qk::format-arg-element destination
-                                          :line-args-size 1000
+                                          :line-size 1000 ;27NOV2024
                                           :title "Body"
                                           :items body-args))
                 (when allow-other-keys-args
@@ -1500,7 +1500,7 @@
          )
         
         (unless doc-capsule
-          (setf doc-capsule (documentation slot)))
+          (setf doc-capsule (documentation slot doc-type))) ;27NOV2024
         (if doc-capsule
           (nconc views
                  (make-view-paragraph 
