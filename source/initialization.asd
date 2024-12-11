@@ -17,7 +17,7 @@
 (asdf:defsystem "initialization"
     :default-component-class cl-source-file.lsp
   :components ((:file "initialization/update-special-vars") ;; contains vw:
-               (:file "initialization/synonyms")
+               ;(:file "initialization/synonyms") ;; 17NOV2024 contents moved to quail-kernel/basic/synonym.lsp
                ;; no longer supported
                ;; (:file (add-system-extension "ffenv-std"))
                (:file "initialization/load-quail-init")
