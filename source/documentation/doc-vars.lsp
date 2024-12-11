@@ -23,7 +23,7 @@
 
 (in-package :quail-kernel)
 
-(defconstant *CLtL*
+(defconstant +CLtL+
   "Guy L. Steele, Jr. (1990) \"Common Lisp: The Language (second edition).\" ~
    Digital Press."
   "Most recent reference for the language definition of Common Lisp.")
