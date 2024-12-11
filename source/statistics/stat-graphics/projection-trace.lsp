@@ -184,7 +184,7 @@
           (eval (read-from-string (cdr l))))
     :nlines
     (wb:prompt-user
-     :type 'number
+     :result-type 'number ;24NOV2024
      :read-type :eval
      :prompt-string
      "Number of line segments to use to plot the ~
