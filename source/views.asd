@@ -74,6 +74,7 @@
              (:file "view-window")
              (:file "abstract-views" )
              (:file "make-views" )
+             (:file "make-view-constructors")
              (:file "display")
              )
             :depends-on ("views/views-macros"))
@@ -214,5 +215,6 @@
             :components
             ((:file "connected-points")
              ))
+             
    )
 )
