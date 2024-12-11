@@ -16,7 +16,7 @@
 
 #+:cl-2
 (defpackage #:window-basics
-  #+:sbcl-linux (:use :clim-lisp :clim :clim-extensions) ; "COMMON-LISP" 19 November 2019
+  #+:sbcl-linux (:use :clim-lisp :clim :clim-extensions :clim-listener) ; "COMMON-LISP" 19 November 2019
   #+:aclpc-linux (:use :common-lisp)
   (:nicknames "WB")
   ;(:import-from "QUAIL-KERNEL"
