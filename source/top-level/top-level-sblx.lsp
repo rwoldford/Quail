@@ -57,10 +57,13 @@
 (defun get-next-form ()
   "Retrieves the next form to be evaluated."
   (declare (special *forms-awaiting-evaluation*))
-  (or ;; don't know how to do this yet
-      ;; (ccl:get-next-queued-form) 
-      (pop *forms-awaiting-evaluation*)
-      (quail-toplevel-reader-function)))
+  ;(or ;; don't know how to do this yet
+  ;    ;; (ccl:get-next-queued-form) 
+  ;    (pop *forms-awaiting-evaluation*)
+  ;    (quail-toplevel-reader-function))
+  (inform-user "New top level functions cannot be installed yet in ~
+              this system.")
+  )
 
 (defun get-function-name (function)
   (qk::function-name function))
@@ -70,5 +73,5 @@
 
 (defun system-quit-lisp ()
   "System dependent function that quits Lisp."
-  (excl::exit) ;(acl:quit) from help 15jun2004
+  (sb-ext::exit) ;(excl::exit) ;(acl:quit) from help 15jun2004
   )
