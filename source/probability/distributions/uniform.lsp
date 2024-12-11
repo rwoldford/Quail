@@ -179,6 +179,7 @@
     )
   )
 
+(proclaim '(sb-ext:maybe-inline random-uniform)) ;24NOV2024
 (defun random-uniform (&key (n 1) (from 0.0) (to 1.0))
   "Returns n pseudo-random values from the uniform. ~
    (:key ~
