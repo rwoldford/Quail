@@ -26,7 +26,8 @@
            make-view-constructor-with-doc
            make-view-constructor-fn 
            make-view-constructor-doc-string
-           choose-view-from-menu *view-constructors*
+           choose-view-from-menu 
+           *view-constructors*
            )))
 
 
@@ -98,7 +99,8 @@
   
   (let ((doc (make-view-constructor-doc-string
               default-class)))
-    
+    (format t "~%[1] Just inside make-view-constructor-with-doc")
+    (format t "~%[2] doc is ~s " doc)
     (apply #'make-view-constructor 
            function-name default-class doc default-args)))
 
@@ -143,11 +145,7 @@
           finally (return (if (and nmax (> (length result-list) nmax))
                             (mapcar #'second (subseq result-list 0 nmax))
                             (mapcar #'second result-list))))))
-
-
-
-
-
+#|
 (make-view-constructor-with-doc 'view 'view )
 (make-view-constructor-with-doc 'point-symbol 'point-symbol )
 (make-view-constructor-with-doc 'box 'point-symbol :symbol :box)
@@ -170,8 +168,6 @@
 (make-view-constructor-with-doc 'horizontal-line 'line :orientation :horizontal )
 (make-view-constructor-with-doc 'vertical-line 'line :orientation :vertical )
 (make-view-constructor-with-doc 'text-view 'text-view )
-
-
 (make-view-constructor-with-doc 'control-button 'control-button )
 (make-view-constructor-with-doc 'rounded-button 'rounded-button )
 (make-view-constructor-with-doc 'signpost-button 'signpost-button )
@@ -212,7 +208,6 @@
 (make-view-constructor-with-doc 'bar-chart 'bar-chart )
 (make-view-constructor-with-doc 'pairs-layout 'pairs-layout )
 (make-view-constructor-with-doc 'view-layers 'view-layers )
-
 (make-view-constructor-with-doc 'scroll-bar 'scroll-bar )
 (make-view-constructor-with-doc 'scrolling-display 'scrolling-display )
-
+|#
