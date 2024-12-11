@@ -176,12 +176,12 @@
         (loop for vp in (viewports-of self) do
               (draw-view self :viewport vp))))))
 
-(defconstant *image-margin-percent* 0.05)
+(defconstant +image-margin-percent+ 0.05)
 
 (defmethod draw-view :before ((self 2d-image) &key viewport)
   ;;(setq foo self vp viewport) 
-  (let* ((image-margin-width (truncate (* *image-margin-percent* (width-of viewport))))
-         (image-margin-height (truncate (* *image-margin-percent* (height-of viewport))))
+  (let* ((image-margin-width (truncate (* +image-margin-percent+ (width-of viewport))))
+         (image-margin-height (truncate (* +image-margin-percent+ (height-of viewport))))
          (vp-width (- (width-of viewport) (* 2 image-margin-width)))
          (vp-height (- (height-of viewport) (* 2 image-margin-height)))
          (image-width (car (dimensions-of self)))
@@ -201,8 +201,8 @@
 
 
 (defmethod get-draw-portion ((self 2d-image) viewport)
-  (let* ((image-margin-width (truncate (* *image-margin-percent* (width-of viewport))))
-         (image-margin-height (truncate (* *image-margin-percent* (height-of viewport))))
+  (let* ((image-margin-width (truncate (* +image-margin-percent+ (width-of viewport))))
+         (image-margin-height (truncate (* +image-margin-percent+ (height-of viewport))))
          (vp-width (- (width-of viewport) (* 2 image-margin-width)))
          (vp-height (- (height-of viewport) (* 2 image-margin-height)))
          (image-width (car (dimensions-of self)))
@@ -413,7 +413,7 @@
     (case new
       (:larger (+  old inc)) 
       (:smaller (-  old inc))
-      (:prompt (wb:prompt-user :type 'number 
+      (:prompt (wb:prompt-user :result-type 'number ;24NOV2024
                                :read-type :eval
                                :prompt-string 
                                (format nil "Change width from ~A" old)))
@@ -426,7 +426,7 @@
    (case new
       (:larger (+  old inc)) 
       (:smaller (-  old inc))
-      (:prompt (wb:prompt-user :type 'number 
+      (:prompt (wb:prompt-user :result-type 'number ;24NOV2024
                                :read-type :eval
                                :prompt-string 
                                (format nil "Change height from ~A" old)))
