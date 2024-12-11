@@ -48,7 +48,7 @@
      (:see-also prompt-user quail-yes-or-no-p *quail-query-io* quail-y-or-n-p ~
      quail-query)"
     (wb::prompt-user
-     :type T
+     :result-type T ;24NOV2024
      :read-type :read
      :prompt-string (apply #'format NIL format-string args))
     )
