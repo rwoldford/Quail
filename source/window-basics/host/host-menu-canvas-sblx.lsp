@@ -41,35 +41,35 @@
 	(:geometry :height (set-system-default-menubar-base-height))
  )
 
-(define-qmbar-command com-quail ()
+(define-qmbar-command com-left ()
 	)
 
-(define-qmbar-command com-plots ()
+(define-qmbar-command com-middle ()
 	)
 
-(define-qmbar-command com-extra-menus ()
+(define-qmbar-command com-right ()
 	)
 
 (define-qmbar-command com-inactive ()
 	)
 
-(make-command-table 'quail-command-table 
+(make-command-table 'left-command-table 
 	:errorp NIL
 	:menu '(("Inactive" :command com-inactive)))
 
-(make-command-table 'plots-command-table
+(make-command-table 'middle-command-table
 	:errorp nil
 	:menu '(("Inactive" :command com-inactive)))
 
-(make-command-table 'extra-menus-command-table
+(make-command-table 'right-command-table
 	:errorp nil
 	:menu '(("Inactive" :command com-inactive)))
 
 (make-command-table 'qmbar-command-table
 	:errorp nil
-	:menu '(("Quail" :menu quail-command-table)
-		("Plots" :menu plots-command-table)
-		("Extra Menus" :menu extra-menus-command-table)))
+	:menu '(("Left" :menu left-command-table)
+		("Middle" :menu middle-command-table)
+		("Right" :menu right-command-table)))
 
 (defvar *system-default-menubar-thread-name* "QMB")
 
