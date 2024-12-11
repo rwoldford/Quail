@@ -16,17 +16,24 @@
 
 (in-package :quail)
 
+(eval-when (:compile-toplevel :load-toplevel :execute) (export '(edit-file)))
 
-;;;  Just tries to ensure that expressions can be evaluated from a Fred
-;;;  window when the the top-level Quail loop is running.
+;;; Enables a second copy of emacs to be opened as an editor running
+;;; on its own stream, thus not interfering with the main repl  
 
-#|
-(defmethod ccl::ed-eval-or-compile-current-sexp :around ((w ccl::fred-mixin))
-  (when (quail-running-p)
-    (ccl::eval-enqueue (ccl::ed-current-sexp w))
-    (ccl::toplevel)
-    )
-  (call-next-method))
+(setf sb-ext:*ed-functions*
+               (list
+                (lambda (f)
+                  (when (probe-file f)
+                    (sb-thread::make-thread
+                    (lambda () (sb-ext:run-program "emacs" (list f)
+                                        :search t)))
+                    ))))
 
-|#
+;;; Opens that editor
 
+(defun edit-file (&optional pathname)
+  "Opens an edit window.  If pathname is given, it opens ~
+   the window to edit the file named by pathname."
+  (ed pathname)
+  )
