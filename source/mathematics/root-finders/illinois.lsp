@@ -17,6 +17,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(illinois)))
 
+(proclaim '(sb-ext:maybe-inline illinois)) ;24NOV2024
 (defun illinois (funtn l r &key (max-iterations 1000) (epsilon .0000001) )
 
   "Takes a function and two points, one on the left of ~
