@@ -17,38 +17,38 @@
 (in-package :quail-kernel)
 
 (eval-when (:compile-toplevel :load-toplevel :execute) 
-    (export '(*months* *days* current-day current-month current-date
+    (export '(+months+ +days+ current-day current-month current-date
           get-quail-release-info auto-doc-release
           make-release quail-release)))
 
 ;--------------------------------------------------------------------------------
 
-(defconstant *months*
+(defconstant +months+
   '("January" "February" "March" "April" "May" "June" "July" "August" "September"
     "October" "November" "December")
   "A list containing the names of the twelve months of the year.")
 
-(defconstant *days*
+(defconstant +days+
   '("Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" "Sunday")
   "A list containing the days of the week beginning with Monday.")
 
 (defun current-month ()
   "Returns the current calendar month"
-  (declare (special *months*))
-  (elt *months* (- (elt (multiple-value-list (get-decoded-time)) 4) 1)))
+  ;(declare (special +months+))
+  (elt +months+ (- (elt (multiple-value-list (get-decoded-time)) 4) 1)))
 
 (defun current-day ()
   "Returns the current day of the week."
-  (declare (special *days*))
-  (elt *days* (elt (multiple-value-list (get-decoded-time)) 6)))
+  ;(declare (special +days+))
+  (elt +days+ (elt (multiple-value-list (get-decoded-time)) 6)))
 
 (defun current-date ()
   "Returns the current date as a string: Dayname month day, year."
-  (declare (special *months* *days*))
+  ;(declare (special +months+ +days+))
   (let* ((date-info (multiple-value-list (get-decoded-time)))
-         (month (elt *months* (- (elt date-info 4) 1)))
+         (month (elt +months+ (- (elt date-info 4) 1)))
          (day-number (elt date-info 3))
-         (day-name (elt *days* (elt date-info 6)))
+         (day-name (elt +days+ (elt date-info 6)))
          (year (elt date-info 5)))
     (concatenate 'string
                  day-name
