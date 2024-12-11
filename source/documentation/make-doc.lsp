@@ -43,7 +43,7 @@
     (make-instance (quail-doc-class type)
              :name (string-downcase (format NIL"~s" thing))
              :document 
-             (interpret-quail-documentation (documenation thing 'type)) ;(documentation thing)) 05SEP2023
+             (interpret-quail-documentation (documentation thing 'type)) ;(documentation thing)) 05SEP2023
              )
     )
 
@@ -98,7 +98,7 @@
    element is a method object."
   (let* ((doc-class (quail-doc-class type))
          (document
-          (interpret-quail-documentation (documentation (second thing))))
+          (interpret-quail-documentation (documentation (second thing) doc-type))) ;27NOV2024
          )
     (make-instance doc-class
            :symbol (first thing)
@@ -492,7 +492,7 @@
     (unless package
       (setf package (package-name (symbol-package (slot-definition-name slot)))))
     (unless doc-capsule
-      (setf doc-capsule (documentation slot)))
+      (setf doc-capsule (documentation slot doc-type))) ;27NOV20224
     )
   me)
 
