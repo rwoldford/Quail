@@ -10,7 +10,8 @@
   (declare (type fixnum lda))
   ;; (declare (type (simple-array double-float (* *)) abd))
   (prog ((wkm 0.0d0) (wk 0.0d0) (t_ 0.0d0) (ek 0.0d0) (ynorm 0.0d0)
-         (sm 0.0d0) (s 0.0d0) (anorm 0.0d0) (mm 0d0) (m 0) (lz 0) (lm 0)
+         (sm 0.0d0) (s 0.0d0) (anorm 0.0d0) (mm 0) ;(mm 0d0) 25OCT2024 - declared fixnum below
+         (m 0) (lz 0) (lm 0)
          (la 0) (l 0) (kp1 0) (kb 0) (k 0) (ju 0) (j 0) (info 0) (is 0))
         (declare (type fixnum is))
         (declare (type fixnum info))
