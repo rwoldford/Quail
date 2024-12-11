@@ -36,7 +36,7 @@
 ;;;
 ;;;------------------------------------------------------------------------------
 
-
+(proclaim '(sb-ext:maybe-inline choose)) ;24NOV2024
 (defun choose (n k)
   
   "Returns the binomial coefficient nCk or n!/(k! (n-k)!).  ~
