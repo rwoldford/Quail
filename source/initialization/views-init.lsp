@@ -17,6 +17,6 @@
 
 (in-package :quail)
 
-(eval-when (load eval compile)
+(eval-when (:load-toplevel :execute  :compile-toplevel)
     (vw::get-function 'vw::median)
     (vw::get-function 'vw::mean))
