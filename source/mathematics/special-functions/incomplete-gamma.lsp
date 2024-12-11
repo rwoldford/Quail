@@ -58,6 +58,7 @@
 ;;;
 ;;;---------------------------------------------------------------------------------
 
+(proclaim '(sb-ext:maybe-inline incomplete-gamma)) ;24NOV2024
 (defun incomplete-gamma
        (a x &key (epsilon 1.0D-7) (max-iterations 100))
   "Returns two values.  The first is the incomplete gamma function P(a,x) ~
