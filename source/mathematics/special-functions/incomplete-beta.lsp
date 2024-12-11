@@ -43,7 +43,7 @@
 ;;;
 ;;;-----------------------------------------------------------------------------------
 
-
+(proclaim '(sb-ext:maybe-inline incomplete-beta)) ;24NOV2024
 (defun incomplete-beta (a b x &key (max-iterations 100)
                                    (epsilon 3.0D-7))
   "Returns the value of the cumulative distribution ~
@@ -86,7 +86,7 @@
                                           :max-iterations max-iterations))
                    b)))))))
 
-
+(proclaim '(sb-ext:maybe-inline incomplete-beta-cf)) ;24NOV2024
 (defun incomplete-beta-cf (a b x &key (max-iterations 100)
                                       (epsilon 3.0D-7))
   "Continued fraction for incomplete-beta function."
