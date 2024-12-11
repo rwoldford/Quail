@@ -212,8 +212,11 @@
                     nsubviews))
                   ((numberp nsubviews) (make-list nsubviews))
                   ((and (null subviews) (eql nsubviews :prompt)  (null subview-type) (null default-subview-type))
-                   (choose-views-from-menu :superclass subview-superclass
-                                           :prompt-string  "Select layout views" ))
+                   (choose-view-from-menu :superclass subview-superclass
+                                          :prompt-string "Select layout views"))
+                   
+                   ;(choose-views-from-menu :superclass subview-superclass
+                   ;                        :prompt-string  "Select layout views" ))
                   (t nil)))
       
       (let ((layout-status
