@@ -16,7 +16,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(newton)))
 
 
-
+(proclaim '(sb-ext:maybe-inline newton)) ;24NOV2024
 (defun newton (f  &key (start 0.0) (tolerance .0000001) (max-iterations 150) (deriv NIL))
   "Finds the root of the equation f(x) = 0 where f is a real-valued ~
    continuous function of a single numerical argument.  Uses Newton's method.~
