@@ -28,6 +28,7 @@
 ;;;
 ;;;------------------------------------------------------------------------------
 
+(proclaim '(sb-ext:maybe-inline log-gamma)) ;24NOV2024
 (defun log-gamma (x)
    ;(declare (special pi)
  ;)
