@@ -30,16 +30,30 @@
   "The default menubar put up for the Quail system.~
    This is to be the main menubar for ACL.")
 |#
+
+;;; Get the items on a command-table for a frame
+(defun command-table-items (frame-symbol)
+  "Get command table items from an application frame identified by frame-symbol"
+  (let (foo)
+    (clim::map-over-command-table-commands
+      (lambda (elt) (push elt foo))
+      (clim::frame-command-table (clim::find-application-frame frame-symbol))) 
+    (nreverse foo)))
+
 (defvar *quail-menubar* NIL
   "The default menubar put up for the Quail system.")
 
 (defvar *system-default-menubar-items*
-  (cg::menu-items wb::*system-default-menubar*)
+  (command-table-items 'wb::qmbar)
+  ;(cg::menu-items wb::*system-default-menubar*)
   "The default menubar items of the system.")
+;;; This *could* be NIL depending on where the user is in Quail
+;;; It isn't used later.   08NOV2024 GWB
 
 
 ;; Added 042098 gwb
-
+;;; Commented out 07NOV2024 - options for this too limited
+#|
 (defun add-menu-in-quail-menubar (menu)
    "Adds the menu to Quail's menubar. ~
    if it is not already there. Adjusts the width of the menubar if necessary.~
@@ -69,26 +83,30 @@
          (warn "To get the default one back type ~%(install-default-quail-menubar). ")
          (install-quail-menubar)))
  )
-
+|#
 
 ;; Nov 11+ changed wb::*sy-def-mnb-its* to *sy-def-mnb-its*
 ;; since that variable is defined at the top of this file!
 (defun install-default-quail-menubar ()
   "Creates and installs the default top level Quail menubar."
+  #|
   (declare (special *quail-menubar* wb::*system-default-menubar*))
-  ;;   #|
   (when (and *quail-menubar* (cg::streamp *quail-menubar*))
     (cg::close *quail-menubar*)
     (cg::close (cg::parent *quail-menubar*)))
-  ;;   |#
   (when (or (null wb::*system-default-menubar*)
             ;;             (typep wb::*system-default-menubar* 'cg::closed-stream)
             (not (cg::open-stream-p (cg::parent wb::*system-default-menubar*)))
             )
     (wb::set-system-default-menubar))
   (setf *quail-menubar* wb::*system-default-menubar*)
-  (add-menu-in-quail-menubar (quail-menu))
-  (add-menu-in-quail-menubar (quail-plot-menu))
+  |#
+  ;(add-menu-in-quail-menubar (quail-menu))
+  ;(add-menu-in-quail-menubar (quail-plot-menu))
+  ;;; Unless Quail and Plots are on Quail's menu-bar, replace its contents by just Quail and Plots menus
+  (unless (and (member 'wb::com-quail (wb::command-table-items 'wb::qmbar))
+                        (member 'wb::com-plots (wb::command-table-items 'wb::qmbar)))
+    (execute-frame-command wb::*system-default-menubar* '(wb::com-change-menu-bar wb::qp-command-table)))
   ) 
 
 (defun install-quail-menubar ()
@@ -107,7 +125,7 @@
 ;;;
 ;;;  Spot to get rid of pop-up menus when a view-window is closed
 ;;;
-
+#|
 (defmethod cg::device-close :around ((w vw::view-window) abort)
    (declare (ignore abort))
    (let ((vps-vws (viewports-and-views-of w))
@@ -138,4 +156,4 @@
          )
       result)
    )
-
+|#
