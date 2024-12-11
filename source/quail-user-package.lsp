@@ -16,7 +16,9 @@
 
 #+:cl-2
 (defpackage "QUAIL-USER" 
-  (:use "QUAIL" "COMMON-LISP")
+  #+:sbcl-linux (:use :clim-lisp :clim :clim-extensions)
+  #+:aclpc-linux (:use :common-lisp)
+  ;(:use "QUAIL" "COMMON-LISP")
   (:IMPORT-FROM "QUAIL-KERNEL"
                  "<-"  ;28JUN2020
                  "CGLUE" ;03AUG2023
