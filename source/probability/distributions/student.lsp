@@ -207,7 +207,7 @@
 
 
 (defmethod random-value ((dist student) &optional (n 1))
-  (declare (ignore start)
+  (declare ;(ignore start) ;28NOV2024
            (optimize (speed 3) (safety 0)
                      (space 0) (compilation-speed 0))
            )
