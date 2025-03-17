@@ -35,12 +35,43 @@
 ;;;  Redefining shadowed symbols  SEE DEFPACKAGE
 ;;;(shadow '(mouse-down-p shift-key-p control-key-p)) ;now in window-basics-package.lsp 01SEP2021
 
+#|
 (defun mouse-down-p ()
   "Determines whether the mouse pointer in down"
   (if (>  (pointer-button-state (port-pointer (find-port))) 0)
     T
     NIL))
+|#
+;;; From DK 24JAN2025
+;;; Check left mouse button done in pane-type, which defaults to host-pane
 
+;(defun mouse-down-p (canvas) 
+;  (let* ((pointer (port-pointer (find-port)))
+;         (sheet (pointer-sheet pointer))
+;         (state (pointer-button-state pointer)))
+;    (and (typep sheet canvas)
+;         (not (zerop (logand state clim:+pointer-left-button+ ))))))
+
+;(defun mouse-down-p (pane-type)
+;  (let* ((pointer (port-pointer (find-port)))
+;         (sheet (pointer-sheet pointer))
+;         (state (pointer-button-state pointer)))
+;    (when (equal (type-of (pane-frame pane-type)) 'host-window)
+;    (and (typep sheet pane-type)
+;         (not (zerop (logand state clim:+pointer-left-button+ )))))))
+
+;;; in McCLIM port there is no CLASS host-pane, as there is in other versions.
+;;; host-pane is the symbol for the pane of a host-window, so 
+;;; I want to check that the left mouse button is down in the host-pane of a host-window
+(defun mouse-down-p (window)
+  (let* ((pointer (port-pointer (find-port)))
+         (sheet (get-frame-pane window 'host-pane))
+         ;(sheet (pointer-sheet pointer))
+         (state (pointer-button-state pointer))
+         )
+    (when (typep window 'host-window)
+      ;(and (typep sheet 'host-pane)
+           (not (zerop (logand state clim:+pointer-left-button+))))))
 
 (defun shift-key-p ()
      "Tests whether a shift key is being held down."
@@ -86,14 +117,19 @@
 ;;; New version
  (defun mouse-position (canvas)
       (let* ((mp (get-frame-pane canvas 'host-pane))
-       (coord-list (multiple-value-list (stream-cursor-position mp))))
-  (h-draw:make-point (first coord-list) (host-to-canvas-y canvas (second coord-list)))))          
+       (coord-list (multiple-value-list (stream-pointer-position mp)))) ;(stream-cursor-position mp)))) ;18JAN2025
+        (make-position (first coord-list) (host-to-canvas-y canvas (second coord-list))))) ;15DEC2024
+  ;(h-draw:make-point (first coord-list) (host-to-canvas-y canvas (second coord-list)))))          
 
 (defun mouse-x (canvas)
-     (h-draw:point-x (mouse-position canvas)))
+  (position-x (mouse-position canvas)) ;15DEC2024
+     ;(h-draw:point-x (mouse-position canvas))
+     )
 
 (defun mouse-y (canvas)
-      (h-draw:point-y (mouse-position canvas)))
+  (position-y (mouse-position canvas)) ;15DEC2024
+      ;(h-draw:point-y (mouse-position canvas))
+      )
 
 ;;;========================================================================================
 ;;; mouse position in screen coordinates, cbh
