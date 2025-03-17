@@ -28,20 +28,242 @@
                 sweep-for-canvas reshape-canvas-rect)))
 
 (defun calc-region (canvas &optional region left bottom width height)
-     "Returns left bottom, width height as multiple values ~
-if region is provided, its left bottom etc are used ~
-if left or bottom are not provided, the mouse position is used instead."
-     (when region
-          (setq left (region-left region))
-          (setq bottom (region-bottom region))
-          (setq height (region-height region))
-          (setq width (region-width region)))
-     (setq left (or left (if canvas (mouse-x canvas) (screen-mouse-x))))
-     (setq bottom (or bottom (- (if canvas (mouse-y canvas)
-                                                   (screen-mouse-y))
-                                                height)))
-     (values left bottom width height))
+  "Returns left bottom, width height as multiple values ~
+  if region is provided, its left bottom etc are used ~
+  if left or bottom are not provided, the mouse position is used instead."
+  (when region
+    (setq left (region-left region))
+    (setq bottom (region-bottom region))
+    (setq height (region-height region))
+    (setq width (region-width region)))
+  (setq left (or left (if canvas (mouse-x canvas) (screen-mouse-x))))
+  (setq bottom (or bottom (- (if canvas (mouse-y canvas)
+                                     (screen-mouse-y))
+                                 height)))
+  (values left bottom width height))
 
+;;; New version of drag-region-on-canvas from ~/RESERVE/test-drag-region-on-canvas.lsp
+;;; NOTE the 2 wrappers (with-focusec-canvas ..) and (with-pen-values ..) are
+;;; not active !
+;;; It tested OK
+
+(defun drag-region-on-canvas
+      (canvas &key region (limit-region (canvas-region canvas))
+         left bottom (width 50) (height 50) (axis :both))
+     "With mouse already depressed, ~
+drags a region around following mouse position.   ~
+If left or bottom are not provided, the mouse position is used instead.  ~
+Axis = :x or :y limits motion to x or y axis respectively. ~
+Returns a region."
+     ;; bounds for top ... remember we're in the upside down host mode
+     ;; which means that a zero is the top of the screen and
+     ;; 600 is its bottom ...  
+     ;; AND we are drawing with the cursor at the bottom-right of
+     ;; little region we are dragging about.
+     ;; SO .. the minimum value for the bottom-right is
+     ;; the top of the screen (0) + the height of the region
+     ;; otherwise the region's top will poke above the top of the
+     ;; screen ..  
+     ;; and the maximum value for the bottom-right is 
+     ;; limit-bottom or the bottom of the region
+     ;; will slip below the end of the screen.
+     ;; Hence gwb has re-named some things as follows
+     ;; min-draw-corner -> min-draw-corner
+     ;; max-draw-corner -> max-draw-corner
+     ;; top -> draw-pt        
+     ;(declare (special :boole-xor cg::invert))
+     (sleep 5)
+     (multiple-value-setq (left bottom width height)
+         (calc-region canvas region left bottom width height))
+     (if (eql :none axis) ;allow no motion
+         (setq limit-region (make-region left bottom width height)))
+  ;;+ Wrap all this in a with-device-context
+  ;;+ to see whether this will allow sweeping rather than freezing
+  ;;+ 08 Dec 2014  gwb
+  
+     (let* ((old-mouse NIL)
+              (new-mouse NIL)
+              ;(top (canvas-to-host-y canvas
+              ;          (+ bottom height))) ;13MAY2024
+              (limit-left 
+               (region-left limit-region))
+              (limit-top 
+               (canvas-to-host-y canvas (region-top limit-region)))
+              (limit-bottom 
+               (canvas-to-host-y canvas (region-bottom limit-region)))
+              (limit-right 
+               (region-right limit-region))
+              (draw-pt (screen-to-host-y (+ bottom height)))
+              ;(drawable (graft canvas));(drawable (cg::parent canvas)) ;13MAY2024
+              (mp (get-frame-pane canvas 'host-pane))
+              left-lower left-upper
+              ;;right-lower right-upper
+              ;;bottom-lower bottom-upper
+              min-draw-corner max-draw-corner
+              )    
+         ;; Get width right
+         (setf width (min width (- limit-right limit-left)))
+         ;; Get height right
+         (setf height (min height (- limit-bottom limit-top)))
+         ;; bounds Left
+         (setf left-lower limit-left)
+         (setf left-upper (max limit-left (- limit-right width)))
+         ;; bounds Right
+         ;;(setf right-upper limit-right)
+         ;;(setf right-lower (min limit-right (+ limit-left width)))
+         ;; bound draw-pt
+         (setf min-draw-corner  (+ limit-top height))
+         (setf max-draw-corner  limit-bottom )         
+         ;; bounds Bottom ... remember we're in the upside down host mode
+         ;;(setf bottom-upper limit-bottom)
+         ;;(setf bottom-lower (min limit-bottom (+ limit-top height)))
+         ;; starting position Left
+         (cond
+                   ((< left left-lower) (setf left left-lower))
+                   ((> left left-upper) (setf left left-upper)))
+         ;; starting position draw-pt
+         (cond
+                   ((< draw-pt min-draw-corner) (setf draw-pt min-draw-corner))
+                   ((> draw-pt max-draw-corner) (setf draw-pt max-draw-corner)))     
+          (flet ((host-mouse-position ()
+                    (let ((position (multiple-value-bind (z1 z2) (stream-pointer-position mp) (list z1 z2))));(cg::cursor-position canvas)
+                        position));(cg::position-x position) (cg::position-y position)))
+                    )
+            (setf old-mouse (host-mouse-position))
+            (setf new-mouse (copy-tree old-mouse))
+             ;(with-focused-canvas canvas
+              ; (with-pen-values canvas NIL 1 :boole-xor
+                 ;; draw rectangle        
+                  (h-draw:draw-rectangle canvas left draw-pt (+ left width) (+ draw-pt height))
+                  ;(cg::draw-box canvas
+                   ;(::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                  (ecase axis
+                     (:both
+                      (loop 
+                        ;; until mouse button is released
+                        (unless (mouse-down-p canvas) (return))
+                        (unless (equal old-mouse new-mouse)
+                             ;; erase rectangle
+                             (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
+                             ;(cg::draw-box canvas
+                              ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                             ;; update to get new one
+                             (setf left (max left-lower
+                                               (min
+                                                   (first new-mouse)
+                                                   left-upper)))
+                             (setf draw-pt (max min-draw-corner
+                                                      (min
+                                                          (second new-mouse)
+                                                          max-draw-corner)))
+                             ;; draw it
+                             (h-draw:draw-rectangle canvas left draw-pt (+ left width) (+ draw-pt height))
+                             ;(cg::draw-box canvas
+                              ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                             ;; slow down
+                             (sleep 1/60)
+                             ;; update iteration
+                             (setq old-mouse new-mouse))
+                        (setq new-mouse (host-mouse-position))
+                        )
+                      ;; Finally erase it.
+                      (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
+                      ;(cg::draw-box canvas
+                       ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                      ) ; end :both
+                     (:x
+                      (loop 
+                        ;; until mouse button is released
+                        (unless (mouse-down-p canvas) (return))
+                        (unless (equal old-mouse new-mouse)
+                             ;; erase rectangle
+                             (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
+                             ;(cg::draw-box canvas
+                              ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))                  
+                             ;; update to get new one
+                             (setf left (max left-lower
+                                               (min
+                                                   (first new-mouse)
+                                                   left-upper)))                 
+                             ;; draw it
+                             (h-draw:draw-rectangle canvas left draw-pt (+ left width) (+ draw-pt height))
+                             ;(cg::draw-box canvas
+                              ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                             ;; slow down
+                             (sleep 1/60)
+                             ;; update iteration
+                             (setq old-mouse new-mouse))
+                        (setq new-mouse (host-mouse-position))
+                        )
+                      ;; Finally erase it.
+                      (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
+                      ;(cg::draw-box canvas
+                       ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                      ) ; end x:
+                     (:y
+                      (loop 
+                        ;; until mouse button is released
+                        (unless (mouse-down-p canvas) (return))
+                        (unless (equal old-mouse new-mouse)
+                             ;; erase rectangle
+                             (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
+                             ;(cg::draw-box canvas
+                              ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                             ;; update to get new one                 
+                             (setf draw-pt (max min-draw-corner
+                                                      (min
+                                                          (second new-mouse)
+                                                          max-draw-corner)))
+                             ;; draw it
+                             (h-draw:draw-rectangle canvas left draw-pt (+ left width) (+ draw-pt height))
+                             ;(cg::draw-box canvas
+                              ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                             ;; slow down
+                             (sleep 1/60)
+                             ;; update iteration
+                             (setq old-mouse new-mouse))
+                        (setq new-mouse (host-mouse-position))
+                        )
+                      ;; Finally erase it.
+                      (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
+                      ;(cg::draw-box canvas
+                       ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                      ) ; end y:
+                     (:none
+                      (loop 
+                        ;; until mouse button is released
+                        (unless (mouse-down-p canvas) (return))
+                        ;; erase rectangle
+                        (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
+                        ;(cg::draw-box canvas
+                         ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                        ;; slow down
+                        (sleep 1/60)
+                        ;; draw it
+                        (h-draw:draw-rectangle canvas left draw-pt (+ left width) (+ draw-pt height))
+                        ;(cg::draw-box canvas
+                         ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                        ;; slow down
+                        (sleep 1/60)
+                        )
+                      ) ; end :none
+                     ) ; end ecase
+                  ;; Finally erase it.
+                  (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
+                  ;(cg::draw-box canvas
+                   ;(cg::make-box left draw-pt (+ left width) (+ draw-pt height)))
+                  ;) ; with-pen-values
+                  ;) ; end with-focused-canvas
+            (make-region left
+                (host-to-canvas-y canvas
+                   (+ draw-pt height))
+                width height)
+            
+            ) ; end flet
+           ) ;; end of let*
+       ) ;; end defun
+
+#|
 (defun drag-region-on-canvas
       (canvas &key region (limit-region (canvas-region canvas))
          left bottom (width 50) (height 50) (axis :both))
@@ -257,6 +479,7 @@ Returns a region."
             ) ; end flet
            ) ;; end of let*
        )
+|#
 
 (defun drag-region-on-screen
       (canvas &key region left bottom (width 50) (height 50) (axis :both)
@@ -475,6 +698,69 @@ Returns a region."
    (select-canvas-rect canvas width height limit-region)
    (select-screen-rect width height limit-region)))
 
+;;; From wb-mouse-flash4 in wb-drag-test-draw.lsp  29JAN2025
+(defun select-canvas-rect (canvas &optional (width 0) (height 0) limit-region)
+  "Mouse-selects a rectangle on the canvas by selecting in canvas and ~
+sweeping out the region to be selected.  ~
+The rectangle selected is confined to limit-region ~
+which defaults to the boundary of the canvas. ~
+Returns the region information as ~
+multiple values (left bottom width height) in canvas ~
+coordinates."
+  (loop until (mouse-down-p canvas))
+  (let* ((anchor-point NIL)
+         (new-mouse NIL)
+         (left NIL)
+         (top NIL)
+         (drawable (get-frame-pane canvas 'host-pane))
+         )
+    (flet ((host-mouse-position ()
+                                (let ((position (multiple-value-bind (z1 z2) (stream-pointer-position drawable) (list z1 z2))))
+                                  position)
+                                )
+           )
+          (setq limit-region (or limit-region (canvas-region canvas)))
+          (setf anchor-point (host-mouse-position))
+          (setf new-mouse (copy-tree anchor-point)) ;old-mouse))
+          (setf left (first anchor-point))
+          (setf top (second anchor-point))
+                (draw-rectangle* drawable left top (+ left width) (+ top height) :filled nil :ink +red+)
+                (sleep 1/60)
+          (loop while (mouse-down-p canvas)
+                do
+                (unless (equal anchor-point new-mouse))
+                (h-draw::erase-rect canvas left top (+ left width) (+ top height))
+                (sleep 1/60)
+                ;; update to get new one
+                (setf new-mouse (host-mouse-position))
+              (cond
+               ((> (first new-mouse) (first anchor-point))
+                (setf left (first anchor-point))  
+                (setf width (- (first new-mouse) left)))
+               (T
+                (setf left (first new-mouse))
+                (setf width (- (first anchor-point) left))))
+              (cond
+               ((> (second new-mouse) (second anchor-point))
+                (setf top (second anchor-point))  
+                (setf height (- (second new-mouse) top)))
+               (T
+                (setf top (second new-mouse))
+                (setf height (- (second anchor-point) top))))
+              
+                (draw-rectangle* drawable left top (+ left width) (+ top height) :filled nil :ink +red+)
+                (sleep 1/60)
+                ) ;end inner loop
+          (h-draw::erase-rect canvas left top (+ left width) (+ top height))
+         (values left 
+              (- (canvas-to-host-y canvas top) height) 
+              ;;(+ top height)
+                  width  height)
+          ) ;end flet
+    ) ;end let*
+  ) ;end defun
+
+#|
 (defun select-canvas-rect (canvas &optional (width 0) (height 0)
                                              limit-region)
      "Mouse-selects a rectangle on the canvas by selecting in canvas and ~
@@ -486,7 +772,6 @@ multiple values (left bottom width height) in canvas ~
 coordinates."
      (declare (special *gray-shade* )) ;:boole-xor cg::invert))
   (loop until (mouse-down-p ))
-  ;(format t "~%Data from select-canvas-rect:") ;06FEB2015
     (let* ((anchor-point NIL)
            ;(original-mouse-position NIL) ;07FEB2015
            ;(final-mouse-position NIL) ;07FEB2015
@@ -500,12 +785,10 @@ coordinates."
            (drawable  (get-frame-pane canvas 'host-pane))
            )
          (flet ((host-mouse-position ()
-                    (let ((position (multiple-value-bind (z1 z2) (stream-cursor-position drawable) (list z1 z2))));(cg::cursor-position canvas)
-                        position));(cg::position-x position) (cg::position-y position)))
+                    (let ((position (multiple-value-bind (z1 z2) (stream-cursor-position drawable) (list z1 z2))))
+                        position))
                     )
-           ;(format t "~%host-mouse-position is ~s " (host-mouse-position)) ;06FEB2015
            (setq limit-region (or limit-region (canvas-region canvas)))
-           ;(format t "~%limit-region is ~s " limit-region) ;06FEB2015
            (setf old-mouse (host-mouse-position))
            (setf anchor-point
                    (list
@@ -515,25 +798,17 @@ coordinates."
                          (canvas-to-host-y canvas
                             (region-top limit-region)))
                     ))
-           ;(setf original-anchor-point anchor-point) ;07FEB2015
-           ;(format t "~%anchor-point is ~s " anchor-point) ;06FEB2015
            (setf new-mouse (copy-tree old-mouse))
            (setf left (first anchor-point))
            (setf top (second anchor-point))
-           ;(setf original-mouse-position (host-mouse-position)) ;07FEB2015
-           ;(format t "~%original-mouse-position is ~s " original-mouse-position)
             (with-focused-canvas canvas
                ;; draw the rectangle
-               (h-draw:draw-rectangle drawable left draw-pt (+ left width) (+ draw-pt height))
-               ;(cg::draw-box drawable 
-                ;(cg::make-box left top (+ left width) (+ top height))
+               (h-draw:draw-rectangle canvas left draw-pt (+ left width) (+ draw-pt height))
                (loop
                  (unless (mouse-down-p ) (return))    ;return when the mouse lets up
                  (unless (equal old-mouse new-mouse)
                       ;; erase rectangle
-                      (h-draw:erase-rect drawable left draw-pt (+ left width) (+ draw-pt height))
-                      ;(cg::draw-box drawable 
-                       ;(cg::make-box left top (+ left width) (+ top height))
+                      (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
                        )
                       ;; update to get new one
                       (cond
@@ -551,23 +826,15 @@ coordinates."
                                    (setf top (second new-mouse))
                                    (setf height (- (second anchor-point) top))))
                       ;; draw it
-                      (h-draw:draw-rectangle drawable left draw-pt (+ left width) (+ draw-pt height))
-                   ;(cg::draw-box drawable 
-                    ;             (cg::make-box left top (+ left width) (+ top height))
-                     ;            )
-                      ;; slow down
+                      (h-draw:draw-rectangle canvas left draw-pt (+ left width) (+ draw-pt height))
                       ;;(sleep 1/60)
                       ;; update iteration
                       (setq old-mouse new-mouse)) ;end loop
                  (setq new-mouse (host-mouse-position))
                ;(setf final-mouse-position (host-mouse-position)) ;07FEB2015
-               ;(format t "~% final-mouse-position is ~s " final-mouse-position)
                ;; Finally erase it.
-               (h-draw:erase-rect drawable left draw-pt (+ left width) (+ draw-pt height))
-               ;(cg::draw-box drawable
-                ;(cg::make-box left top (+ left width) (+ top height))
+               (h-draw:erase-rect canvas left draw-pt (+ left width) (+ draw-pt height))
               );; end (with-focused-canvas
-                   ;; HERE
           (values left 
               (- (canvas-to-host-y canvas top) height) 
               ;;(+ top height)
@@ -575,7 +842,7 @@ coordinates."
            );; end (flet ((host-mouse-position
        );; end (let* ((anchor-point
      );; end (defun select-canvas-rect
-
+|#
 (defun select-screen-rect ( &optional (width 50) (height 50) limit-region)
      "Mouse-selects a rectangle on the screen by selecting a location on the~
 screen with the mouse and ~
@@ -604,8 +871,8 @@ screen coordinates."
             (draw-pt (screen-to-host-y (+ limit-bottom height)))
               )
          (flet ((host-mouse-position ()
-                    (let ((position (multiple-value-bind (z1 z2) (stream-cursor-position drawable) (list z1 z2))));(cg::cursor-position canvas)
-                        position));(cg::position-x position) (cg::position-y position)))
+                    (let ((position (multiple-value-bind (z1 z2) (stream-cursor-position drawable) (list z1 z2))))
+                        position))
            (check-bound (old-list new-list)
    "Assumes old-left is current drawing left ~
     old-draw is current drawing bottom ~
@@ -658,23 +925,15 @@ screen coordinates."
            (setf top (second anchor-point))
            ;; draw-rectangle
            (h-draw:draw-rectangle drawable left draw-pt (+ left width) (+ draw-pt height))
-            ;(cg::draw-box  drawable 
-             ;(cg::make-box left top (+ left width) (+ top height)))
             (loop
               (unless (mouse-down-p) (return))    ;return when the mouse lets up
               (unless (equal old-mouse new-mouse)
                    ;; erase rectangle
                    (h-draw:erase-rect drawable left draw-pt (+ left width) (+ draw-pt height))
-                  ;(cg::with-device-context (hdc root-window)
-                   ;(cg::draw-box drawable 
-                    ;(cg::make-box left top (+ left width) (+ top height))))
                    ;; update to get new one
            (check-bound anchor-point old-mouse )
                    ;; draw it
                    (h-draw:draw-rectangle drawable left draw-pt (+ left width) (+ draw-pt height))
-                  ;(cg::with-device-context (hdc root-window)
-                   ;(cg::draw-box drawable 
-                    ;(cg::make-box left top (+ left width) (+ top height))))
                    ;; slow down
                    (sleep 1/60)
                    ;; update iteration
@@ -683,9 +942,6 @@ screen coordinates."
               );; end (loop
             ;; Finally erase it.
             (h-draw:erase-rect drawable left draw-pt (+ left width) (+ draw-pt height))
-            ;(cg::with-device-context (hdc root-window)
-            ;(cg::draw-box drawable 
-             ;(cg::make-box left top (+ left width) (+ top height))))
            (values left 
                    (- (screen-to-host-y top) height) width height)
            );; end (flet ((host-mouse-position

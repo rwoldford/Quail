@@ -42,6 +42,11 @@ if left or bottom are not provided, the mouse position is used instead."
                                                 height)))
      (values left bottom width height))
 
+(let (left bottom)
+  (setq left 10)
+  (setq bottom 20)
+  (values left bottom))
+
 (defun drag-region-on-canvas
       (canvas &key region (limit-region (canvas-region canvas))
          left bottom (width 50) (height 50) (axis :both))
