@@ -499,7 +499,7 @@
                   (space 0) (compilation-speed 0)))
        (when ,color
          ;(cg::set-foreground-color ,mp ,color) 18oct05
-         (setf (medium-foreground mp) ,color) ;18oct05
+         (setf (medium-ink mp) ,color) ;18dec2024
           ))
    ;)
   )
@@ -514,7 +514,7 @@
           (if (colored-canvas-p ,canvas)
              (if (colorp ,color)
                  ;(cg::set-foreground-color ,mp ,color) 18oct05
-                 (setf (medium-foreground mp) ,color) ;18oct05
+                 (setf (medium-ink mp) ,color) ;18dec2024
                 ))))
    ;)
   )
@@ -535,7 +535,7 @@
    `(let ((mp (get-frame-pane ,canvas 'host-pane))) 
        (if (colored-canvas-p ,canvas)
            ;(cg::set-foreground-color ,mp ,color) 18oct05
-           (setf (medium-foreground mp)  ,color) ;18oct05
+           (setf (medium-ink mp)  ,color) ;18dec2024
           ))
    ;)
   )

@@ -229,7 +229,7 @@ Results with color background are undefined."
       :single-color? single-color?
       :erase? t))
 ;;;
-(proclaim '(sb-ext:maybe-inline canvas-move-symbols)) ;17NOV2024
+(declaim (sb-ext:maybe-inline canvas-move-symbols)) ;15DEC2024
 (defun canvas-move-symbols (canvas old-points new-points
                                                  &key size symbol color fill? invisible? 
                                                  (old-size size)
