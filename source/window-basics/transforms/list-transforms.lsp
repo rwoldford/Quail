@@ -440,7 +440,7 @@
 (defclass 3d-z-rotate&2d-shift (3d-z-rotate 2d-shift)
   ())
 
-(proclaim '(sb-ext:maybe-inline mapply-transform-store)) ;17NOV2024
+#+:sbcl-linux(declaim (sb-ext:maybe-inline mapply-transform-store)) ;15DEC2024
 (defmethod mapply-transform-store ((self 3d-x-rotate&2d-shift) (a list) store)
   "Rotates each sublist around x-axis, and shifts along x and y~
    A sublist has fixnums  in the order x,y,z. 
@@ -459,7 +459,7 @@
                 (second ai) (+ ys (ash (- (* y c) (* z s)) -10))
                 (third ai) (ash (+ (* y s) (* z c)) -10)))))
 
-(proclaim '(sb-ext:maybe-inline mapply-transform-store)) ;17NOV2024        
+#+:sbcl-linux(declaim (sb-ext:maybe-inline mapply-transform-store)) ;15DEC2024        
 (defmethod mapply-transform-store ((self 3d-y-rotate&2d-shift) (a list) store)
   "Rotates each sublist around y axis, and shifts along x and y~
    A sublist has fixnums  in the order x,y,z. 
@@ -479,7 +479,7 @@
                 (third ai) (ash (- (* z c) (* x s)) -10)))))
               
 
-(proclaim '(sb-ext:maybe-inline mapply-transform-store)) ;17NOV2024
+#+:sbcl-linux(declaim (sb-ext:maybe-inline mapply-transform-store)) ;15DEC2024
 (defmethod mapply-transform-store ((self 3d-z-rotate&2d-shift) (a list) store)
   "Rotates each sublist around z-axis, and shifts along x and y~
    A sublist has fixnums  in the order x,y,z. 
