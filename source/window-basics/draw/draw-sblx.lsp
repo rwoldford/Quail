@@ -23,31 +23,6 @@
 (in-package :wb)
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(canvas-highlight-rectangle canvas-highlight-arc)))
 
-;;; Highlight forms exist in cg:: but I need explanation from
-;;; Franz about their functioning
-;;; They turned out to be stubs to old stuff !!
-;;; Thus highlight forms for drawing don't exist
-#| original acl version
-(defun canvas-highlight-rectangle (canvas left right bottom top
-                                                        &key
-                                                        color
-                                                        (operation :boole-xor)
-                                                        )
-     "Highlights a rectangle of canvas using color"
-     (declare (special cg::po-paint cg::po-replace cg::po-invert cg::po-erase))
-     (if (eql operation :boole-xor)
-        (progn     ; for highlight mode on color
-           (with-focused-canvas canvas
-            (let ((old-op (pen-operation-of canvas)))
-                (cg::with-foreground-color (canvas color)
-                 (canvas-draw-filled-rectangle canvas left right bottom top 
-                  :color color   ))
-;               (format "~%[h-d:c-h-rect:1] new-op to go to s-p-mode is ~s " new-op)
-                (h-draw::set-pen-mode canvas (boole-to-op old-op)))))
-        (cg::with-foreground-color (canvas color)
-         (canvas-draw-filled-rectangle canvas left right bottom top 
-          :color color :operation operation))))
-|#          
 
 (defun canvas-highlight-rectangle (canvas left top right bottom ;top
                                                         &key
@@ -64,38 +39,6 @@
               )
         ;)
      )
-
-#| original acl version
-(defun canvas-highlight-arc (canvas
-                                              start-angle arc-angle
-                                              x-centre y-centre
-                                              x-radius y-radius
-                                              &key
-                                              color
-                                              (operation :boole-xor)
-                                              )
-     "Highlights an arc of canvas using color"
-     (declare (special cg::po-invert cg::po-erase cg::po-paint cg::po-replace))
-     (if (eql operation :boole-xor)
-        (progn     ; for highlight mode on color
-           (with-focused-canvas canvas
-            (let ((old-op (pen-operation-of canvas)))
-                (cg::with-foreground-color (canvas color)
-                 (canvas-draw-filled-arc canvas
-                  start-angle arc-angle
-                  x-centre y-centre
-                  x-radius y-radius
-                  :color color   ))
-;           (format "~%[h-d:c-h-arc:1] new-op to go to s-p-mode is ~s " new-op)
-                (h-draw::set-pen-mode canvas (boole-to-op old-op)))))
-        (cg::with-foreground-color (canvas color)   
-         (canvas-draw-filled-arc canvas 
-          start-angle arc-angle
-          x-centre y-centre
-          x-radius y-radius
-          :color color :operation operation))
-        ))
-|#
 
 (defun canvas-highlight-arc (canvas
                                               start-angle arc-angle
@@ -117,7 +60,6 @@
                   x-centre y-centre
                   x-radius y-radius
                   :color color   ))
-;           (format "~%[h-d:c-h-arc:1] new-op to go to s-p-mode is ~s " new-op)
                 (h-draw::set-pen-mode canvas (boole-to-op old-op)))))
                 (with-drawing-options (pane-of-canvas :ink color)
          (canvas-draw-filled-arc canvas 
