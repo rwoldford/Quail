@@ -1,4 +1,4 @@
-;;; This is ~/RESERVE/lc2-Quail/source/window-basics/canvas/new-bw-canvas-sblx.lsp
+;;; This is ~/RESERVE/lc2-Quail/source/window-basics/canvas/bw-canvas-sblx.lsp
 ;;; to try to fix :left and :bottom args
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;                         bw-canvas-sblx.lsp
@@ -29,17 +29,6 @@
 (defun set-bw-initial-penproperties (self &rest initargs
                                        &key pen-color pen-width pen-operation)
 (declare (ignore initargs))
-(format t "~%Entering set-color-inital-pen&properties")
-(format t "~%s-bw-i-pp input pen-color is ~s " pen-color)
-(format t "~%s-bw-i-pp input pen-width is ~s " pen-width)
-(format t "~%s-bw-i-pp input pen-operation is ~s " pen-operation)
-(format t "~%s-bw-i-pp input self is ~s " self)
-(format t "~%s-bw-i-pp is self a frame ? ~s " (clim:application-frame-p self))
-(format t "~%s-bw-i-pp does is have a host-pane ? ~s " (clim:get-frame-pane self 'host-pane))
-(format t "~%s-bw-i-pp is self a pen-mixin ? ~s" (member (find-class 'pen-mixin)
-      (sb-mop:class-direct-superclasses
-       (first (sb-mop:class-direct-superclasses
-         (class-of self))))))
 (unless (pen-of self)
   (setf (slot-value self 'pen)
     (make-instance 'pen)))
@@ -51,17 +40,6 @@
 (defun set-bw-initial-font (self &rest initargs
                                        &key font)
 (declare (ignore initargs))
-(format t "~%Entering set-inital-font")
-(format t "~%s-i-f input font is ~s " font)
-(format t "~%s-i-f is it a canvas-font ~s" (canvas-font-p font))
-(format t "~%s-i-f is it a host-font ~s " (eql (type-of font) 'standard-text-style))
-(format t "~%s-i-f input self is ~s " self)
-(format t "~%s-i-f is self a frame ? ~s " (clim:application-frame-p self))
-(format t "~%s-i-f does is have a host-pane ? ~s " (clim:get-frame-pane self 'host-pane))
-(format t "~%s-i-f is self a font-mixin ? ~s" (member (find-class 'font-mixin)
-      (sb-mop:class-direct-superclasses
-       (first (sb-mop:class-direct-superclasses
-         (class-of self))))))
 (if (canvas-font-p font);(canvas-font-p self)
   (setf (canvas-font self) font)
   (setf (canvas-font self)
