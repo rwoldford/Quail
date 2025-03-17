@@ -19,7 +19,7 @@
   #+:sbcl-linux (:USE :clim :clim-lisp :clim-extensions) ;"COMMON-LISP")  ; 19 November 2019
   #+:aclpc-linux (:USE :common-lisp)
   (:nicknames "VI" "VW")
-  (:SHADOW "DRAW-LINES" "DRAW-ARROW" "SCROLL-BAR" "SLIDER") ;; from the CLIM: defintions  19MAR2022  gwb and 22NOV2024
+  (:SHADOW "DRAW-LINES" "DRAW-ARROW" "SCROLL-BAR" "SLIDER" "VIEW") ;;from the CLIM: defintions  19MAR2022  gwb and 22NOV2024 and 03MAR2025
   (:IMPORT-FROM "QUAIL-KERNEL"
                 *QUAIL-RESTORE-LISP-FUNCTIONS*
                 *QUAIL-STANDARD-INPUT* 
