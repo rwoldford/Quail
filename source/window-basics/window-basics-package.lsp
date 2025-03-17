@@ -19,21 +19,21 @@
   #+:sbcl-linux (:use :clim-lisp :clim :clim-extensions :clim-listener) ; "COMMON-LISP" 19 November 2019
   #+:aclpc-linux (:use :common-lisp)
   (:nicknames "WB")
-  ;(:import-from "QUAIL-KERNEL"
-  ;              *QUAIL-RESTORE-LISP-FUNCTIONS*
-  ;              *QUAIL-STANDARD-INPUT* 
-  ;              *QUAIL-STANDARD-OUTPUT* 
-  ;              *QUAIL-QUERY-IO*
-  ;              *QUAIL-DEBUG-IO*
-  ;              *QUAIL-ERROR-OUTPUT*
-  ;              *QUAIL-TRACE-OUTPUT*
-  ;              *QUAIL-TERMINAL-IO*
-  ;              QUAIL-PRINT
-  ;              QUAIL-ERROR
-  ;              QUAIL-CERROR
-  ;              QUAIL-QUERY
-  ;              QUAIL-Y-OR-N-P 
-  ;              QUAIL-YES-OR-NO-P)
+  (:import-from "QUAIL-KERNEL"
+                *QUAIL-RESTORE-LISP-FUNCTIONS*
+                *QUAIL-STANDARD-INPUT* 
+                *QUAIL-STANDARD-OUTPUT* 
+                *QUAIL-QUERY-IO*
+                *QUAIL-DEBUG-IO*
+                *QUAIL-ERROR-OUTPUT*
+                *QUAIL-TRACE-OUTPUT*
+                *QUAIL-TERMINAL-IO*
+                QUAIL-PRINT
+                QUAIL-ERROR
+                QUAIL-CERROR
+                QUAIL-QUERY
+                QUAIL-Y-OR-N-P 
+                QUAIL-YES-OR-NO-P)
   (:shadow
    "MAKE-POINT" "POINT-X" "POINT-Y" 
    "DRAW-LINE" "DRAW-RECTANGLE" "DRAW-ELLIPSE" "DRAW-POLYGON"
