@@ -19,7 +19,7 @@
 (defun pos-list (a-list a-sublist)
   "returns the positions of the elements of a-sublist in a-list"
   (mapcar #'(lambda (x) (position x a-list :test #'equal)) a-sublist))
-
+#|
 (defun copy-result-list (plist1 list2)
   "returns a copy of list2 with cdrs updated to T at positions plist"
   (let ((copy-list2 (copy-tree list2)))
@@ -27,9 +27,17 @@
     (setf (elt copy-list2 x)
       (cons (car (elt copy-list2 x)) t)))
   (return-from copy-result-list  copy-list2)))
+|#
+(defun copy-result-list (items positions)
+  "Returns a copy of items with cdr set to T at positions"
+  (let ((copy-items (copy-tree items)))
+    (dolist (x positions (return copy-items))
+      (setf (elt copy-items x)
+            (cons (elt copy-items x) t)))
+    (return-from copy-result-list copy-items)))
 
-;;; (check-items (list (cons "a" "a1") (cons "b" "b1") (cons "c" "c1")))
-;;; click on a,c [using ctrl] ==>> (("a" . T) ("b" , "b1") ("c" T))
+;;; (check-items (list "a"  "b"  "c" ))
+;;; click on a,c [using ctrl] ==>> (("a" . T) ("b" . "b1") ("c" . T))
 
 ;;; check-items itself
 (defun check-items (items &key (prompt-text "Check one or more ...") 
@@ -44,8 +52,8 @@
       (make-application-frame 'check-items :pretty-name prompt-text :items items :prompt-text prompt-text :item-print-function item-print-function
         :action-function action-function :select-text select-text :cancel-text cancel-text)))
   (run-frame-top-level frame)
-  (return-from check-items (copy-result-list (pos-list items (reverse (frame-result frame)))
-    items))
+  (return-from check-items (copy-result-list items (pos-list items (reverse (frame-result frame)))
+  ))
   ))
 
 ;;; The application frame to collect the elements selected
@@ -72,7 +80,7 @@
     (make-pane 'list-pane
       :mode :nonexclusive
                :items (items *application-frame*)
-               :name-key #'car
+               ;:name-key #'car
                )))
   (:layouts
    (default
@@ -88,6 +96,8 @@
           (lambda (ignore)
             ignore
             (setf (frame-result *application-frame*) (gadget-value options))
+            ;(format t "~%(gadget-value options) is ~s " (gadget-value options))
+          ;(format t "~%(frame-result *application-frame*) is ~s " (frame-result *application-frame*))
       (frame-exit *application-frame*))
           )
      (make-pane 'push-button

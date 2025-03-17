@@ -16,8 +16,8 @@
 (in-package :wb)
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(pick-one)))
 
-;;; (pick-one (list (cons "a" "a1") (cons "b" "b1") (cons "c" "c1"))) 
-;;; click on b ==>> ("b" . "b1")
+;;; (pick-one (list "a"  "b"  "c" )) 
+;;; click on b ==>> "b" 
 
 ;;; pick-one itself
 (defun pick-one (items &key (prompt-text "Pick one of the following") 
@@ -58,7 +58,7 @@
    (options
     (make-pane 'list-pane
                :items (items *application-frame*)
-               :name-key #'car
+               ;:name-key #'car
                )))
   (:layouts
    (default

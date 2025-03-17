@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; prompt-sblx.lsp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;  Copyright (c) Statistical Computing Laboratory
@@ -218,7 +218,7 @@
 ;;; prompt-for-items
 (defun prompt-for-items (list
                          &key (prompt-text "Choose")
-                         (item-function NIL)
+                         (item-function #'identity)
                          (selection-type :single))
   "Prompts user to select one or more items from the list.  ~
    Prompt-text is displayed to help the user choose.  ~
