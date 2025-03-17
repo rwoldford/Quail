@@ -114,12 +114,6 @@
 
 (defun set-pen-size (canvas h &optional v)
   #-:sbcl(declare (inline point-x point-y))
-  (format t "~%Just inside set-pen-size")
-  (format t "~%s-p-s h is ~s " h)
-  (format t "~%s-p-s v is ~s " v)
-  (format t "~%s-p-s canvas is ~s " canvas)
-  (format t "~%s-p-s is it a frame ? ~s " (clim:application-frame-p canvas))
-  (format t "~%s-p-s its host-pane pane is ~s " (clim:get-frame-pane canvas 'wb::host-pane))
   (let* ((its-pane (clim::get-frame-pane canvas 'wb::host-pane)) ;,_ from 'wb::host-pane 09FE21
       (its-line-style (clim:medium-line-style its-pane))
     (its-unit (clim:line-style-unit its-line-style))
@@ -131,20 +125,6 @@
     (new-style (clim:make-line-style :unit its-unit :thickness new-thickness :dashes its-dashes
       :joint-shape its-joint-shape :cap-shape its-cap-shape))
     )
-    (format t "~%s-p-s In set-pen-size after defvar new-thickness check current values BEFORE make-line-style")
-    (format t "~%s-p-s input canvas is ~s " canvas)
-    (format t "~%s-p-s is canvas a frame ? ~s " (clim:application-frame-p canvas))
-
-    (format t "~%s-p-s input h is ~s " h)
-    (format t "~%s-p-s input v is ~s " v)
-    (format t "~%s-p-s its-pane is ~s " its-pane)
-    (format t "~%s-p-s its-line-style is ~s " its-line-style)
-    (format t "~%s-p-s its-unit is ~s " its-unit)
-    (format t "~%is-p-s ts-dashes is ~s " its-dashes)
-    (format t "~%s-p-s its-joint-shape is ~s " its-joint-shape)
-    (format t "~%s-p-s its-cap-shape is ~s " its-cap-shape)
-    (format t "~%s-p-s new-thickness is ~s " new-thickness)
-    (format t "~%s-p-s new-style is ~s " new-style)
   (setf (clim:medium-line-style its-pane) new-style)
   )
   )
@@ -178,12 +158,9 @@
 (defun set-pen-color (canvas new-color)
   "Sets the drawing color of canvas to (Q)new-color"
   (let ((mp (clim::get-frame-pane canvas 'wb::host-pane)))
-    (format t "~% Just inside h-draw:set-pen-color")
-    (format t "~%s-p-c new-color is ~s " new-color)
-    (format t "~%s-p-c canvas is ~s " canvas)
-    (format t "~%s-p-c is canvas a frame ? ~s " (clim:application-frame-p canvas))
-    (format t "~%s-p-c does canvas have a host-pane ~s " (clim:get-frame-pane canvas 'wb::host-pane))
-    (setf (clim:medium-foreground mp)  new-color)))
+    (setf (clim::medium-ink mp) new-color)
+    ;(setf (clim:medium-foreground mp)  new-color) ;18DEC2024
+    ))
 
 ;; move-to will depend on setting the position of the mouse.
 ;; Said mouse is an instance of a clim pointer (p283). 
@@ -306,11 +283,6 @@
          (rx (third ltrb))
          (bx (fourth ltrb))
          )
-  ;(format t "~% mp is ~s " mp)
-  ;(format t "~% lx is ~d " lx)
-  ;(format t "~% tx is ~d " tx)
-  ;(format t "~% rx is ~d " rx)
-  ;(format t "~% bx is ~d " bx)
          (if (or (> (1+ lx) (1- rx)) (> (1+ tx) (1- bx))) 
               NIL
               (if (eq (1+ lx) (1- rx))
@@ -324,7 +296,7 @@
 
 
 ;; mcclim erases by drawing with the background color explicitly, it seems.
-
+#|
 (defun erase-rect (canvas left &optional top right bot)
   (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
          (ltrb (unpack-rectangle-args canvas left top right bot))
@@ -343,6 +315,22 @@
                 ;(clim-user::draw-rectangle* mp (1+ lx) (1+ tx) (1- rx) (1- bx) :filled NIL :ink (clim-user::medium-background mp)))
               ))
     ))
+|#
+;;; New version 02JAN2025
+;;; Forget the inside stuff, as -mcl does
+(defun erase-rect (canvas left &optional top right bot)
+  (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
+         (ltrb (unpack-rectangle-args canvas left top right bot))
+         (lx (first ltrb))
+         (tx (second ltrb))
+         (rx (third ltrb))
+         (bx (fourth ltrb))
+         )
+                  (clim-user::with-drawing-options (mp :ink (clim-user::medium-background mp))
+                (clim-user::draw-rectangle* mp lx tx rx bx :filled NIL ))
+              ))
+    ;)))
+
 
 
 (defun erase-filled-rectangle (canvas left &optional top right bot)
@@ -355,16 +343,17 @@
          (rx (third ltrb))
          (bx (fourth ltrb))
          )
-         (if (or (> (1+ lx) (1- rx)) (> (1+ tx) (1- bx))) 
-              NIL
-              (if (eq (1+ lx) (1- rx))
-                (clim-user::draw-line* mp (1+ lx) tx (1+ lx) bx :ink (clim-user::medium-background mp))
-              (if (eq (1+ tx) (1- bx))
-                (clim-user::draw-line* mp lx (1+ tx) rx (1+ tx) :ink (clim-user::medium-background mp))
-                (clim-user::draw-rectangle* mp lx tx rx bx :ink (clim-user::medium-background mp)))
+         ;(if (or (> (1+ lx) (1- rx)) (> (1+ tx) (1- bx))) 
+         ;     NIL
+         ;     (if (eq (1+ lx) (1- rx))
+         ;       (clim-user::draw-line* mp (1+ lx) tx (1+ lx) bx :ink (clim-user::medium-background mp))
+         ;     (if (eq (1+ tx) (1- bx))
+         ;       (clim-user::draw-line* mp lx (1+ tx) rx (1+ tx) :ink (clim-user::medium-background mp))
+                (clim-user::with-drawing-options (mp :ink (clim-user::medium-background mp))
+                (clim-user::draw-rectangle* mp lx tx rx bx ))
                 ;(clim-user::draw-rectangle* mp (1+ lx) (1+ tx) (1- rx) (1- bx) :ink (clim-user::medium-background mp)))
               ))
-    ))
+    
 
 
 
@@ -376,7 +365,7 @@
 (defun comp-color (canvas)
      "Takes the complement of the current rgb-color triple of stream - returns this new triple"
      (let*     ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
-               (current (clim-user::medium-foreground mp))
+               (current (clim-user::background-ink mp))
                (its-rgb  (mapcar #'(lambda (x) (truncate x)) 
                 (mapcar #'(lambda (y) (* 255 y)) (multiple-value-list (clim-user::color-rgb current)))))
                (new_red (/ (- 255 (first its-rgb)) 255))
@@ -388,12 +377,31 @@
 ;;(comp-color *test-frame*) {whose foreground color is +black+} ->
 ;; #<NAMED-COLOR "white">
 
+;;; NEW
+(defun color-comp (canvas)
+     "Takes the complement of the current rgb-color triple of background of canvas - returns this new triple"
+     (let*     ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
+               (current (clim-user::medium-background mp))
+               (its-rgb  (mapcar #'(lambda (x) (truncate x)) 
+                (mapcar #'(lambda (y) (* 255 y)) (multiple-value-list (clim-user::color-rgb current)))))
+               (new_red (/ (- 255 (first its-rgb)) 255))
+               ( new_green (/ (- 255.0 (second its-rgb)) 255))
+               ( new_blue (/ (- 255.0 (third its-rgb)) 255))
+               (newbgcol (clim-user::make-rgb-color  new_red  new_green
+                                 new_blue)))
+       ;(format t "~% Original background was ~s " current)
+       ;(format t "~% New background is ~s " newbgcol)
+         newbgcol)) 
+
 ;; The following seems to work
 ;; using :ink rather than wrapping with cg::po-invert as the Allegro version does
 ;; NOTE:: This requires that the rectangle be drawn after something like
 ;; (setf (medium-foreground *some-color*)) since invert-rectangle takes the inverse
 ;; or complement of that foreground. If the drawing is not done this way, there is no way
 ;; to get the color with which the rectangle was drawn.
+;;; WARNING THE FOLLOWING FORM INVERTS THE BACKGROUND COLOR OF THE CANVAS, NOT JUST THE RECTANGLE
+;;; FORMS WHICH ACCESS MEDIUM-BACKGROUND MIGHT YIELD UNEXPECTED RESULTS!!
+
 (defun invert-rectangle (canvas left &optional top right bot)
        "A mcclim version"
        (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
@@ -402,7 +410,8 @@
          (tx (second ltrb))
          (rx (third ltrb))
          (bx (fourth ltrb)))
-         (clim-user::draw-rectangle* mp lx tx rx bx :ink (comp-color canvas))
+         (clim-user::draw-rectangle* mp lx tx rx bx :ink (color-comp canvas))
+         (setf (clim-user::medium-background mp)(color-comp canvas))
         ))
 #|         
          
@@ -467,10 +476,11 @@
 (defun erase-arc (canvas start-angle arc-angle x-centre y-centre x-radius y-radius)
      "Erases a SECTOR of an ellipse which includes the radii and the contents, if any"
      (let ((mp (clim-user::get-frame-pane canvas 'wb::host-pane)))
+       (clim-user::with-drawing-options (mp :ink (clim-user::medium-background mp))
         (clim-user::draw-ellipse* mp x-centre y-centre x-radius 0 0 y-radius :start-angle start-angle :end-angle arc-angle 
-          :filled NIL :ink (clim-user::medium-background mp))
-        (clim-user::draw-ellipse* mp x-centre y-centre x-radius 0 0 y-radius :start-angle start-angle :end-angle arc-angle 
-          :ink (clim-user::medium-background mp))
+          :filled NIL ))
+        ;(clim-user::draw-ellipse* mp x-centre y-centre x-radius 0 0 y-radius :start-angle start-angle :end-angle arc-angle 
+         ; :ink (clim-user::medium-background mp))
         ))
 
 
@@ -584,8 +594,6 @@
    (let* ((mp (clim-user::get-frame-pane canvas 'wb::host-pane))
           (cur-pos (multiple-value-list (clim-user::stream-cursor-position mp)))
           (position (clim-user::make-point (first cur-pos) (second cur-pos))))
-   ;(format t "~%mp is ~s " mp)
-   ;(format t "~%current-position is ~s " current-position)
      (clim-user::draw-text mp string position :text-style (clim:make-text-style :fix :bold :large))
       ))
 
