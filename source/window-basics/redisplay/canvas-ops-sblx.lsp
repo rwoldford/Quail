@@ -36,19 +36,17 @@
   "set *current-canvas* to be canvas, remove the canvas entry from *q-c,*~
   (cons (cons canvas (frame-state canvas)) *q-c*"
   (setf *current-canvas* canvas)
-  (setf *quail-canvases* (cons (cons canvas :ENABLED) ;(frame-state canvas))
+  ;;; add canvas to the front of [*quail-canvases* with canvas removed, if it was there.]
+  (setf *quail-canvases* (append (list (cons canvas :ENABLED)) ;(frame-state canvas))
     (remove-if #'(lambda (x) (eql (car x) canvas)) *quail-canvases*)))
   )
 
   (defun revise-ccqc (canvas)
   "set *current-canvas* to be the first :ENABLED car on *quail-canvases*~
-  minus the entry for canvas itself [NIL if find-if fails - OK]~
-  if there is a *current-canvas*,  set *quail-canvases* to be (update-ccqc *current-canvas*)~
-  otherwise exit"
-  (setf *current-canvas* (car (find-if #'(lambda (x) (eql (cdr x) :ENABLED)) 
-    (remove-if #'(lambda (y) (eql (car y) canvas)) *quail-canvases*))))
-  (if *current-canvas*
-  (update-ccqc *current-canvas*) NIL)
+  then reset *quail-canvases* to be [*current-canvas* ]
+  minus the entry for canvas itself NIL if find-if fails - OK]~"
+  (setf *current-canvas* (car (find-if #'(lambda (x) (eql (cdr x) :ENABLED)) *quail-canvases*))) 
+    (setf *quail-canvases* (remove-if #'(lambda (y) (eql (car y) canvas))  *quail-canvases*))
   )
 
 
