@@ -40,7 +40,7 @@
 ;;; Bitmaps
 ;;;============================================================
 
-(proclaim '(sb-ext:maybe-inline bitmap)) ;17NOV2024
+
 (defstruct bitmap
   width height host-bitmap)
 
