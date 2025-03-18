@@ -16,7 +16,7 @@
 
 #+:cl-2
 (defpackage "QUAIL-USER" 
-  #+:sbcl-linux (:use :clim-lisp :clim :clim-extensions)
+  #+:sbcl-linux (:use "QUAIL" :clim-lisp :clim :clim-extensions)
   #+:aclpc-linux (:use :common-lisp)
   ;(:use "QUAIL" "COMMON-LISP")
   (:IMPORT-FROM "QUAIL-KERNEL"
