@@ -106,7 +106,7 @@
   ;;; Unless Quail and Plots are on Quail's menu-bar, replace its contents by just Quail and Plots menus
   (unless (and (member 'wb::com-quail (wb::command-table-items 'wb::qmbar))
                         (member 'wb::com-plots (wb::command-table-items 'wb::qmbar)))
-    (execute-frame-command wb::*system-default-menubar* '(wb::com-change-menu-bar wb::qp-command-table)))
+    (wb::execute-frame-command wb::*system-default-menubar* '(wb::com-change-menu-bar wb::qp-command-table)))
   ) 
 
 (defun install-quail-menubar ()
@@ -119,7 +119,7 @@
 
 (eval-when (:load-toplevel :execute)
   (add-restore-lisp-functions
-    #'wb::set-system-default-menubar
+    ;#'wb::set-system-default-menubar
     #'q::install-default-quail-menubar))
 
 ;;;

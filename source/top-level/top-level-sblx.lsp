@@ -17,6 +17,7 @@
 
 (in-package :quail)
 
+#|
 (eval-when (:compile-toplevel :load-toplevel :execute) (export '(*system-top-level-loop-function* install-top-level current-top-level
           get-next-form get-function-name setup-system-top-level-loop-variable)))
 
@@ -70,7 +71,7 @@
 
 ;;;(defun set-listener-package (&optional (package :cl-user))
 ;;;  (ccl:eval-enqueue `(in-package ,package)))
-
+|#
 (defun system-quit-lisp ()
   "System dependent function that quits Lisp."
   (sb-ext::exit) ;(excl::exit) ;(acl:quit) from help 15jun2004
